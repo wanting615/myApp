@@ -1,0 +1,28 @@
+ion-content{
+  --padding-top: 15%;
+  --padding-start: 5%;
+  --padding-end: 5%;
+  .login-title{
+    font-size: 20px;
+    font-weight: bolder;
+  }
+  form{
+    padding-top: 20px;
+    ion-input{
+      border-bottom: 1px solid #e5e5e5;
+      line-height: 40px;
+    }
+    ion-button{
+      width: 100%;
+      margin-top: 50px;
+      color: #fff;
+      background: #54b5f3;
+      border-radius: 20px;
+      opacity: 1;
+      &.button-disabled{
+        color: #999;
+        background: #e0e0e0;
+      }
+    }
+  }
+}

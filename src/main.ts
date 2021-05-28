@@ -22,11 +22,43 @@ import '@ionic/vue/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import {
+  IonPage,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonBackButton,
+  IonIcon,
+  IonButton,
+  IonButtons,
+  IonRefresher,
+  IonRefresherContent,
+  IonInfiniteScroll,
+  IonInfiniteScrollContent,
+} from "@ionic/vue";
 
 const app = createApp(App)
-  .use(IonicVue)
+  .use(IonicVue, {
+    backButtonText: '',
+    hardwareBackButton: true
+  })
   .use(router);
-  
+
+app.component('IonPage', IonPage)
+  .component('IonHeader', IonHeader)
+  .component('IonToolbar', IonToolbar)
+  .component('IonTitle', IonTitle)
+  .component('IonContent', IonContent)
+  .component('IonBackButton', IonBackButton)
+  .component('IonIcon', IonIcon)
+  .component('IonButton', IonButton)
+  .component('IonButtons', IonButtons)
+  .component('IonRefresher', IonRefresher)
+  .component('IonRefresherContent', IonRefresherContent)
+  .component('IonInfiniteScroll', IonInfiniteScroll)
+  .component('IonInfiniteScrollContent', IonInfiniteScrollContent)
+
 router.isReady().then(() => {
   app.mount('#app');
 });
