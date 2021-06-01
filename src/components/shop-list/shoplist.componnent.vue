@@ -6,7 +6,12 @@
 -->
 <template>
   <div class="shop-list">
-    <div v-for="item in shopsList" :key="item.id" class="shop-list-item">
+    <div
+      v-for="item in shopsList"
+      :key="item.id"
+      class="shop-list-item"
+      @click="goDetail(item.id)"
+    >
       <span class="is_premium" v-if="item.is_premium">品质</span>
       <img :src="'https://elm.cangdu.org/img/' + item.image_path" alt="" />
       <div class="shop-inner">
@@ -43,11 +48,22 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { useRoute } from "vue-router";
 
 export default defineComponent({
   name: "ShopList",
   props: {
     shopsList: Array,
+  },
+  setup() {
+    const route = useRoute();
+  },
+  methods: {
+    goDetail(id: number): void {
+      this.$router.push({
+        path: `/shop/${id}`,
+      });
+    },
   },
 });
 </script>

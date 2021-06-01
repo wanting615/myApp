@@ -37,6 +37,10 @@ const routes: Array<RouteRecordRaw> = [
     path: '/login',
     component: () => import("@/pages/public/login/login.vue")
   },
+  {
+    path: '/shop/:id',
+    component: () => import("@/pages/public/shop/shop.vue")
+  }
 ]
 
 const router = createRouter({
