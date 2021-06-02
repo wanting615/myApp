@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router';
+import Vuex from "./store";
 
 import { IonicVue } from '@ionic/vue';
 
@@ -43,7 +44,13 @@ const app = createApp(App)
     backButtonText: '',
     hardwareBackButton: true
   })
-  .use(router);
+  .use(router).use(Vuex);
+
+app.config.errorHandler = function (err, vm, info) {
+  console.log(err);
+  console.log(vm);
+  console.log(info);
+};
 
 app.component('IonPage', IonPage)
   .component('IonHeader', IonHeader)

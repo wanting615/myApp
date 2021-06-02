@@ -7,10 +7,13 @@
 import { HttpService } from "./http.service";
 import { UrlService } from "./url.service";
 
+
+//根据ip获取定位
 export const getPosstionByIp = (): Promise<any> => {
   return HttpService.get(UrlService.getPosstionByIp);
 };
 
+//获取定位-经纬度
 export const getPosition = (
   latitude: string,
   longitude: string
@@ -19,10 +22,12 @@ export const getPosition = (
   return HttpService.get(UrlService.getPosition, { latitude, longitude });
 };
 
+//获取商铺分类
 export const getShopsClassify = (): Promise<any> => {
   return HttpService.get(UrlService.getShopsClassify);
 };
 
+//获取商铺列表
 export const getShopList = (params: {
   latitude: string; //纬度
   longitude: string; //经度
@@ -36,3 +41,10 @@ export const getShopList = (params: {
 }): Promise<any> => {
   return HttpService.get(UrlService.getShopList, params);
 };
+
+export const loginUser = (username: string, password: string): Promise<any> => {
+  const str = "username=" + username + "&password=" + password;
+  const jiamiStr = HttpService.getEncrypt(str);
+  console.log(jiamiStr)
+  return HttpService.post(UrlService.login, { token: jiamiStr })
+}

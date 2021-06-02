@@ -19,11 +19,13 @@
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "install": "^0.13.0",
+    "jsencrypt": "^3.2.0",
     "node-sass": "^4.14.1",
     "sass-loader": "^9.0.0",
     "swiper": "^6.6.2",
     "vue": "^3.0.0-0",
-    "vue-router": "^4.0.0-0"
+    "vue-router": "^4.0.0-0",
+    "vuex": "^4.0.0"
   },
   "devDependencies": {
     "@capacitor/cli": "3.0.0",

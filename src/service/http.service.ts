@@ -4,7 +4,10 @@
  * @LastEditTime: 2021-05-19 15:29:48
  * @FilePath: /elm-app/src/service/http.service.ts
  */
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import JSEncrypt from "jsencrypt";
+import qs from "qs";
+
 axios.defaults.withCredentials = true;//允许带cookie
 
 // 请求拦截器
@@ -34,7 +37,7 @@ axios.interceptors.response.use((response: AxiosResponse) => {
 );
 
 export class HttpService {
-  public static axiosInstance: AxiosInstance;
+  static publicKey = 'MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKtTCoqjzzwVqKwfDA92N4J1TIIz4eq4CpI0wHhS3RNew9e47ZdwJec4SmRTyxFkG/FlrJC7VwG0rP9gJPqUk4MCAwEAAQ==';
 
   public static get<R = AxiosResponse>(
     url: string,
@@ -53,13 +56,24 @@ export class HttpService {
     });
   }
 
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   public static post<R = AxiosResponse>(
     url: string,
-    params: unknown
+    params: any
   ): Promise<R> {
-    this.axiosInstance.defaults.headers.post["Content-Type"] =
-      "application/x-www-form-urlencoded";
-    return axios.post(url, params, { headers: "" });
+    return axios.post(url, qs.stringify(params), {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      }
+    });
+  }
+
+  public static getEncrypt(data: string) {
+    const encrypt = new JSEncrypt({
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      default_key_size: "512"
+    });
+    // 设置公钥
+    encrypt.setPublicKey(this.publicKey);
+    return encodeURIComponent(encrypt.encrypt(data));
   }
 }

@@ -27,7 +27,7 @@
           @ionChange="changeInput"
         ></ion-input>
 
-        <ion-button :disabled="isDisabled">登陆</ion-button>
+        <ion-button :disabled="isDisabled" @click="login">登陆</ion-button>
       </form>
     </ion-content>
   </ion-page>
@@ -36,6 +36,7 @@
 <script lang="ts">
 import { defineComponent, ref } from "vue";
 import { IonInput } from "@ionic/vue";
+import { loginUser } from "@/service/api.service";
 interface User {
   username: string;
   password: string;
@@ -57,6 +58,15 @@ export default defineComponent({
     };
   },
   methods: {
+    login(): void {
+      loginUser(this.user.username, this.user.password).then((res) => {
+        if (res.state) {
+          this.$router.back();
+        } else {
+          alert(res.message);
+        }
+      });
+    },
     changeInput(): void {
       if (this.user.username && this.user.password) {
         this.isDisabled = false;
