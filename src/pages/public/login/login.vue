@@ -36,7 +36,7 @@
 <script lang="ts">
 import { defineComponent, ref } from "vue";
 import { IonInput } from "@ionic/vue";
-import { loginUser } from "@/service/api.service";
+import { loginUser } from "@/api/user/user";
 interface User {
   username: string;
   password: string;

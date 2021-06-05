@@ -17,6 +17,10 @@ export class UrlService {
 
   public static getShopList = UrlService.baseUrl + "shops/list"; //获取商店列表
 
+  public static getShopDetail = UrlService.baseUrl + "shop/";//获取商铺详情
+
+  public static getShopMenu = UrlService.baseUrl + "shopMenu/";//获取商店商品清单
+
   /**
    * 登陆模块
    */

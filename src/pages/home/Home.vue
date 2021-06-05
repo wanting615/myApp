@@ -9,8 +9,9 @@
         <ion-toolbar color="danger">
           <ion-button>
             <ion-icon :icon="locationOutline"></ion-icon>
+            {{ address }}
           </ion-button>
-          <ion-title>{{ address }}</ion-title>
+          <ion-title></ion-title>
           <ion-buttons slot="end">
             <ion-button>
               <ion-icon :icon="cartOutline"></ion-icon>
@@ -51,17 +52,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent } from "vue";
 import ShopList from "@/components/shop-list/shoplist.componnent.vue";
-import NavComponnet from "./components/nav.component.vue";
-import { ShopInfo } from "@/components/shop-list/shopInfoInterface";
-import { Possiton } from "./homeInterface";
-import {
-  getPosition,
-  getPosstionByIp,
-  getShopList,
-} from "@/service/api.service";
-
+import NavComponnet from "../../components/home/nav.component.vue";
+import { ShopInfo } from "@/api/shop/shopInfoInterface";
+import { getPosition, getPosstionByIp } from "@/api/posstion/posstion";
+import { getShopList } from "@/api/shop/shop";
 import { scanOutline, locationOutline, cartOutline } from "ionicons/icons";
 
 export default defineComponent({
@@ -78,10 +74,11 @@ export default defineComponent({
     };
   },
   data() {
+    const shopsList: ShopInfo[] = [];
     return {
       address: "定位中",
       page: 1,
-      shopsList: ref<ShopInfo[]>([]),
+      shopsList: shopsList,
       searchArea: Element as any,
       latitude: "",
       longitude: "",
@@ -90,7 +87,7 @@ export default defineComponent({
     };
   },
 
-  beforeCreate(): void {
+  created(): void {
     getPosstionByIp().then((res) => {
       if (res.state) {
         this.latitude = res.data.latitude;
@@ -122,7 +119,7 @@ export default defineComponent({
     //通过经纬度获取位置信息
     getPostion(e?: CustomEvent): void {
       this.getShopList(e);
-      getPosition(this.latitude, this.longitude).then((res: Possiton) => {
+      getPosition(this.latitude, this.longitude).then((res) => {
         if (res.state) {
           this.address = res.city + res.name;
         } else {
@@ -137,17 +134,15 @@ export default defineComponent({
         page: this.page,
         latitude: this.latitude,
         longitude: this.longitude,
-      }).then(
-        (res: { msg: string; shopslist: ShopInfo[]; status: boolean }) => {
-          if (!res.status) return;
-          if (loadMore) {
-            this.shopsList = this.shopsList.concat(res.shopslist);
-          } else {
-            this.shopsList = res.shopslist;
-          }
-          if (e) (e.target as any).complete();
+      }).then((res) => {
+        if (!res.status) return;
+        if (loadMore) {
+          this.shopsList = this.shopsList.concat(res.data);
+        } else {
+          this.shopsList = res.data;
         }
-      );
+        if (e) (e.target as any).complete();
+      });
     },
     doRefresh(e: CustomEvent): void {
       this.page = 1;

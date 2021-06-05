@@ -28,27 +28,36 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, onMounted, reactive, toRefs } from "vue";
 import { IonSlides, IonSlide } from "@ionic/vue";
-import { getShopsClassify } from "@/service/api.service";
-import { ShopClassifyInfo, ShopClassify } from "../homeInterface";
+import { getShopsClassify } from "@/api/shop/shop";
+import { ShopClassify } from "@/api/shop/shopInfoInterface";
 export default defineComponent({
   name: "NavComponnet",
   components: {
     IonSlides,
     IonSlide,
   },
-  data() {
-    return {
-      shopClassify: ref<ShopClassify[]>([]),
-    };
-  },
-  beforeCreate(): void {
-    getShopsClassify().then((res: ShopClassifyInfo) => {
-      if (res.status) {
-        this.shopClassify = res.data;
-      }
+
+  setup() {
+    const dataMap = reactive({
+      shopClassify: Array<ShopClassify>(),
+      getData() {
+        getShopsClassify().then((res) => {
+          if (res.status) {
+            this.shopClassify = res.data;
+          }
+        });
+      },
     });
+    onMounted(() => {
+      dataMap.getData();
+    });
+    return {
+      IonSlides,
+      IonSlide,
+      ...toRefs(dataMap),
+    };
   },
 });
 </script>

@@ -1,7 +1,15 @@
-import vuex from "vuex";
-export default new vuex.Store({
+import { createStore } from "vuex";
+
+
+const vuex = createStore({
   state: {},
   mutations: {},
   actions: {},
-  modules: {},
+  modules: {}
 })
+
+export default vuex;
+  // state: {},
+  // mutations: {},
+  // actions: {},
+  // modules: {},

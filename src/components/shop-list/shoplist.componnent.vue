@@ -13,7 +13,7 @@
       @click="goDetail(item.id)"
     >
       <span class="is_premium" v-if="item.is_premium">品质</span>
-      <img :src="'https://elm.cangdu.org/img/' + item.image_path" alt="" />
+      <img :src="config.imagePath + item.image_path" alt="" />
       <div class="shop-inner">
         <h6>
           <i class="ellipsis">{{ item.name }}</i>
@@ -47,16 +47,19 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import { useRoute } from "vue-router";
+import { defineComponent, PropType } from "vue";
+import config from "@/config/config";
+import { ShopInfo } from "@/interface/shopInfoInterface";
 
 export default defineComponent({
   name: "ShopList",
   props: {
-    shopsList: Array,
+    shopsList: Array as PropType<ShopInfo[]>,
   },
   setup() {
-    const route = useRoute();
+    return {
+      config,
+    };
   },
   methods: {
     goDetail(id: number): void {

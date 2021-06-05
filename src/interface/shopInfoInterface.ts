@@ -77,4 +77,17 @@ export interface Support {
   _id: string;
 }
 
+//商店分类
+export interface ShopClassify {
+  description: string; //描述
+  icon_url: string;
+  id: 20;
+  image_url: string;
+  is_in_serving: boolean;
+  link: string;
+  title: string;
+  title_color: string;
+}
+
+
 export type ShopListType = ShopInfo[];

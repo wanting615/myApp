@@ -1,7 +1,9 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router';
-import Vuex from "./store";
+import vuex from "./store";
+import vuexState from "./until/vuex.mixin";
+import { registerGlobComp } from "@/components/registerGlobComp";
 
 import { IonicVue } from '@ionic/vue';
 
@@ -23,28 +25,17 @@ import '@ionic/vue/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
-import {
-  IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonContent,
-  IonBackButton,
-  IonIcon,
-  IonButton,
-  IonButtons,
-  IonRefresher,
-  IonRefresherContent,
-  IonInfiniteScroll,
-  IonInfiniteScrollContent,
-} from "@ionic/vue";
+
 
 const app = createApp(App)
   .use(IonicVue, {
     backButtonText: '',
     hardwareBackButton: true
   })
-  .use(router).use(Vuex);
+  .use(router).use(vuex).use(vuexState);
+
+//注册全局组件
+registerGlobComp(app);
 
 app.config.errorHandler = function (err, vm, info) {
   console.log(err);
@@ -52,19 +43,6 @@ app.config.errorHandler = function (err, vm, info) {
   console.log(info);
 };
 
-app.component('IonPage', IonPage)
-  .component('IonHeader', IonHeader)
-  .component('IonToolbar', IonToolbar)
-  .component('IonTitle', IonTitle)
-  .component('IonContent', IonContent)
-  .component('IonBackButton', IonBackButton)
-  .component('IonIcon', IonIcon)
-  .component('IonButton', IonButton)
-  .component('IonButtons', IonButtons)
-  .component('IonRefresher', IonRefresher)
-  .component('IonRefresherContent', IonRefresherContent)
-  .component('IonInfiniteScroll', IonInfiniteScroll)
-  .component('IonInfiniteScrollContent', IonInfiniteScrollContent)
 
 router.isReady().then(() => {
   app.mount('#app');

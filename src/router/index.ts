@@ -21,11 +21,11 @@ const routes: Array<RouteRecordRaw> = [
       },
       {
         path: 'find',
-        component: () => import('@/views/Tab2.vue')
+        component: () => import('@/pages/ucenter/ucenter.vue')
       },
       {
         path: 'order',
-        component: () => import('@/views/Tab3.vue')
+        component: () => import('@/pages/ucenter/ucenter.vue')
       },
       {
         path: 'ucenter',

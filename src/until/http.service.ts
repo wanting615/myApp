@@ -7,6 +7,7 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import JSEncrypt from "jsencrypt";
 import qs from "qs";
+import config from "@/config/config";
 
 axios.defaults.withCredentials = true;//允许带cookie
 
@@ -37,7 +38,6 @@ axios.interceptors.response.use((response: AxiosResponse) => {
 );
 
 export class HttpService {
-  static publicKey = 'MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKtTCoqjzzwVqKwfDA92N4J1TIIz4eq4CpI0wHhS3RNew9e47ZdwJec4SmRTyxFkG/FlrJC7VwG0rP9gJPqUk4MCAwEAAQ==';
 
   public static get<R = AxiosResponse>(
     url: string,
@@ -73,7 +73,7 @@ export class HttpService {
       default_key_size: "512"
     });
     // 设置公钥
-    encrypt.setPublicKey(this.publicKey);
+    encrypt.setPublicKey(config.pulickKey);
     return encodeURIComponent(encrypt.encrypt(data));
   }
 }
