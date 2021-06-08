@@ -55,7 +55,7 @@
 import { defineComponent } from "vue";
 import ShopList from "@/components/shop-list/shoplist.componnent.vue";
 import NavComponnet from "../../components/home/nav.component.vue";
-import { ShopInfo } from "@/api/shop/shopInfoInterface";
+import { ShopInfo } from "@/interface/shopInfoInterface";
 import { getPosition, getPosstionByIp } from "@/api/posstion/posstion";
 import { getShopList } from "@/api/shop/shop";
 import { scanOutline, locationOutline, cartOutline } from "ionicons/icons";

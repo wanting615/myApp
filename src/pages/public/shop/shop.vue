@@ -18,7 +18,7 @@
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
-    <ion-content>
+    <ion-content @ionScroll="onScroll($event)" :scroll-events="true">
       <div class="shop-inner" v-if="shopInfo">
         <div class="header-img">
           <img :src="config.imagePath + shopInfo.image_path" />
@@ -32,9 +32,17 @@
           </ul>
           <div class="line"></div>
         </div>
-        <ion-slides centeredSlides="false" zoom="false" :options="slideOpts">
+        <ion-slides
+          centeredSlides="false"
+          zoom="false"
+          :options="slideOpts"
+          ref="slideEl"
+        >
           <ion-slide class="slides-page">
-            <FoodMenu :shopMenu="shopMenu" />
+            <div class="slide-item" v-if="shopMenu">
+              <HotFood :hotFoods="hotFoods" />
+              <FoodMenu :shopMenu="shopMenu" />
+            </div>
           </ion-slide>
           <ion-slide class="slides-page"> 2 </ion-slide>
           <ion-slide class="slides-page"> 3 </ion-slide>
@@ -45,14 +53,15 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, reactive, toRefs } from "vue";
-import { useRoute } from "vue-router";
+import { defineComponent, onBeforeMount, reactive, ref, toRefs } from "vue";
 import { IonSlides, IonSlide } from "@ionic/vue";
+import { useRoute } from "vue-router";
 import config from "@/config/config";
-import ShopInfoComp from "@/components/shop/shopInfo.vue";
-import FoodMenu from "@/components/shop/foodMenu.vue";
+import ShopInfoComp from "@/components/shop/shopInfo/shopInfo.vue";
+import FoodMenu from "@/components/shop/foodmenu/foodMenu.vue";
+import HotFood from "@/components/shop/hotFood.vue";
 import { getShopDetail, getShopMenu } from "@/api/shop/shop";
-import { FoodsMenu } from "@/interface/foodsInterface";
+import { Food, FoodsMenu } from "@/interface/foodsInterface";
 import {
   searchOutline,
   heartOutline,
@@ -66,13 +75,16 @@ export default defineComponent({
     IonSlide,
     ShopInfoComp,
     FoodMenu,
+    HotFood,
   },
   setup() {
     const shopId = useRoute().params.id as string;
+    const slideEl = ref(null);
     const shopData = reactive({
       segmentValue: "order",
       shopInfo: (null as unknown) as ShopInfo,
       shopMenu: Array<FoodsMenu>(),
+      hotFoods: Array<Food>(),
       slideOpts: {
         resistance: true,
         resistanceRatio: 0, //左右触底 不弹
@@ -82,18 +94,26 @@ export default defineComponent({
         const menuDetail = await getShopMenu(shopId);
         shopData.shopInfo = shopDetail.data;
         shopData.shopMenu = menuDetail.data;
+        shopData.hotFoods = shopData.shopMenu[0].foods.filter(
+          (item: Food, index: number) => index < 3
+        );
       },
     });
-
-    onMounted(() => {
+    const onScroll = (event: CustomEvent) => {
+      console.log(slideEl.value);
+      console.log(event);
+    };
+    onBeforeMount(() => {
       shopData.getData();
     });
     return {
       config,
       ...toRefs(shopData),
+      slideEl,
       searchOutline,
       heartOutline,
       ellipsisHorizontalOutline,
+      onScroll,
     };
   },
 });

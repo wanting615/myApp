@@ -1,0 +1,57 @@
+@import "../../../theme/theme.scss";
+  .menu{
+    display: flex;
+    font-size: 13px;
+    .menu-left{
+      width: 20%;
+      padding-left: 10px;
+      background: #f2f2f2;
+      color: #666;
+      li{
+        min-height: 50px;
+        display: flex;
+        align-items: center;
+      }
+    }
+    .menu-right{
+      width: 80%;
+      .menu-title{
+        padding-left: 10px;
+        background: #f2f2f2;
+        text-align: left;
+        line-height: 40px;
+        color: #999;
+        span{
+          color: #000;
+          font-size: 15px;
+          font-weight: bold;
+          margin-right: 5px;
+        }
+      }
+      li{
+        li{
+          display: flex;
+          padding: 10px;
+          img{
+            width: 35%;
+            border-radius: 5px;
+          }
+          .food-info{
+            display: flex;
+            width: 65%;
+            padding-left: 10px;
+            color: #999;
+            font-size: 14px;
+            text-align: left;
+            flex-flow: column;
+            justify-content: space-between;
+            .food_name{
+              color: #000;
+              font-weight: bolder;
+              font-size: 16px;
+            }
+          }
+        }
+      }
+    }
+  }
