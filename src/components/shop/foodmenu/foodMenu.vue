@@ -1,13 +1,13 @@
 <template>
-  <div class="menu">
-    <div class="menu-left">
+  <div class="menu" ref="menuEl">
+    <div class="menu-left" ref="menuLeft">
       <ul>
         <li v-for="(item, index) in shopMenu" :key="index">
           {{ item.name }}
         </li>
       </ul>
     </div>
-    <div class="menu-right">
+    <div class="menu-right" ref="menuRight">
       <ul v-for="(menu, index) in shopMenu" :key="index">
         <li v-if="menu.foods.length > 0">
           <div class="menu-title ellipsis">
@@ -35,7 +35,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, PropType } from "vue";
+import { defineComponent, PropType, ref } from "vue";
 import config from "@/config/config";
 import { FoodsMenu } from "@/interface/foodsInterface";
 
@@ -46,7 +46,13 @@ export default defineComponent({
     },
   },
   setup() {
+    const menuEl = ref();
+    const menuLeft = ref();
+    const menuRight = ref();
     return {
+      menuEl,
+      menuLeft,
+      menuRight,
       config,
     };
   },
