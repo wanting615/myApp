@@ -32,6 +32,7 @@ import { defineComponent, onMounted, reactive, toRefs } from "vue";
 import { IonSlides, IonSlide } from "@ionic/vue";
 import { getShopsClassify } from "@/api/shop/shop";
 import { ShopClassify } from "@/interface/shopInfoInterface";
+import config from "@/config/config";
 export default defineComponent({
   name: "NavComponnet",
   components: {
@@ -56,6 +57,7 @@ export default defineComponent({
     return {
       IonSlides,
       IonSlide,
+      config,
       ...toRefs(dataMap),
     };
   },

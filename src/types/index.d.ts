@@ -29,3 +29,12 @@ declare type ElRef<T extends HTMLElement = HTMLDivElement> = NonNullable<T>;
 
 declare type Nullable<T> = T | null;
 declare type NonNullable<T> = T extends null | undefined ? never : T;
+
+declare type Undefinedable<T> = T | undefined;
+
+declare type NonUndefinedable<T> = T extends null | undefined ? never : T;
+
+
+declare type DomRef = {
+  $el: ElRef;
+}

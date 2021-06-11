@@ -1,0 +1,13 @@
+.buy-cart-container{
+  position: absolute;
+  display: flex;
+  width: 100%;
+  left: 0;
+  bottom: 0;
+  z-index: 20;
+  background-color: #fff;
+  padding-bottom: var(--ion-safe-area-bottom,0);
+  img{
+    width: 80px;
+  }
+}

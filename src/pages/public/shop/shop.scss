@@ -5,7 +5,7 @@ ion-header{
   left: 0;
   ion-toolbar{
     --background: none;
-    ion-icon{
+    ion-back-button, ion-icon{
       color: #fff;
     }
   }
@@ -15,7 +15,6 @@ ion-content{
   .shop-inner{
     position: relative;
     padding-top: var(--ion-safe-area-top, 0);
-    padding-bottom: 50px;
     background-size: 100%;
     overflow: hidden;
     .header-img{

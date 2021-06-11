@@ -18,7 +18,11 @@
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
-    <ion-content @ionScroll="onScroll($event)" :scroll-events="true">
+    <ion-content
+      @ionScroll="onScroll($event)"
+      :scroll-events="true"
+      ref="contentEl"
+    >
       <div class="shop-inner" v-if="shopInfo">
         <div class="header-img">
           <img :src="config.imagePath + shopInfo.image_path" />
@@ -38,13 +42,18 @@
           <ion-slide class="slides-page">
             <div class="slide-item" v-if="shopMenu">
               <HotFood :hotFoods="hotFoods" />
-              <FoodMenu :shopMenu="shopMenu" ref="foodMenuEl" />
+              <FoodMenu
+                :shopMenu="shopMenu"
+                ref="foodMenuEl"
+                @content-scrool="scrollTo"
+              />
             </div>
           </ion-slide>
           <ion-slide class="slides-page"> 2 </ion-slide>
           <ion-slide class="slides-page"> 3 </ion-slide>
         </ion-slides>
       </div>
+      <!-- <BuyCart></BuyCart> -->
     </ion-content>
   </ion-page>
 </template>
@@ -53,6 +62,8 @@
 import {
   defineComponent,
   onBeforeMount,
+  onBeforeUnmount,
+  onMounted,
   reactive,
   ref,
   toRefs,
@@ -64,6 +75,7 @@ import config from "@/config/config";
 import ShopInfoComp from "@/components/shop/shopInfo/shopInfo.vue";
 import FoodMenu from "@/components/shop/foodmenu/foodMenu.vue";
 import HotFood from "@/components/shop/hotFood.vue";
+// import BuyCart from "@/components/shop/buyCart/buyCart.vue";
 import {
   searchOutline,
   heartOutline,
@@ -72,7 +84,15 @@ import {
 import { ShopInfo } from "@/interface/shopInfoInterface";
 import { Food, FoodsMenu } from "@/interface/foodsInterface";
 import { getShopDetail, getShopMenu } from "@/api/shop/shop";
-import { useScoll, MenuRef, ToobarlRef } from "@/hooks/shopScroll";
+import {
+  setScrollEl,
+  useScoll,
+  userScrollTo,
+  reset,
+  MenuRef,
+  ToobarlRef,
+  ContentRef,
+} from "@/hooks/shopScroll";
 
 export default defineComponent({
   components: {
@@ -81,12 +101,14 @@ export default defineComponent({
     ShopInfoComp,
     FoodMenu,
     HotFood,
+    // BuyCart,
   },
   setup() {
     const shopId = useRoute().params.id as string;
     const foodMenuEl = ref<Nullable<MenuRef>>(null);
     const navEl = ref<Nullable<ElRef>>(null);
     const toolbarEl = ref<Nullable<ToobarlRef>>(null);
+    const contentEl = ref<Nullable<ContentRef>>(null);
     const shopData = reactive({
       segmentValue: "order",
       shopInfo: null as unknown as ShopInfo,
@@ -104,11 +126,23 @@ export default defineComponent({
         );
       },
     });
+    onMounted(() => {
+      console.log(navEl, foodMenuEl);
+    });
+
     const onScroll = (event: CustomEvent) => {
-      useScoll(event, unref(navEl), unref(foodMenuEl), unref(toolbarEl));
+      setScrollEl(unref(navEl), unref(foodMenuEl), unref(toolbarEl));
+      useScoll(event);
+    };
+    const scrollTo = () => {
+      setScrollEl(unref(navEl), unref(foodMenuEl), unref(toolbarEl));
+      userScrollTo(unref(contentEl));
     };
     onBeforeMount(() => {
       shopData.getData();
+    });
+    onBeforeUnmount(() => {
+      reset();
     });
     return {
       config,
@@ -116,10 +150,12 @@ export default defineComponent({
       foodMenuEl,
       navEl,
       toolbarEl,
+      contentEl,
       searchOutline,
       heartOutline,
       ellipsisHorizontalOutline,
       onScroll,
+      scrollTo,
     };
   },
 });

@@ -1,54 +1,93 @@
 @import "../../../theme/theme.scss";
   .menu{
     display: flex;
+    position: relative;
     font-size: 13px;
+    overflow: hidden;
     .menu-left{
       width: 20%;
-      padding-left: 10px;
       background: #f2f2f2;
       color: #666;
+      height: 100%;
+      overflow-y: hidden;
       li{
-        min-height: 50px;
         display: flex;
         align-items: center;
+        padding-left: 10px;
+        min-height: 50px;
+        &.active{
+          background-color: #fff;
+          color: #000;
+          font-weight: bold;
+        }
+      }
+    }
+    .menu-title{
+      position: absolute;
+      top: 0;
+      left: 20%;
+      width: 80%;
+      padding-left: 10px;
+      text-align: left;
+      line-height: 42px;
+      color: #999;
+      background-color: #fff;
+      span{
+        color: #000;
+        font-size: 15px;
+        font-weight: bold;
+        margin-right: 5px;
       }
     }
     .menu-right{
       width: 80%;
-      .menu-title{
-        padding-left: 10px;
-        background: #f2f2f2;
-        text-align: left;
-        line-height: 40px;
-        color: #999;
-        span{
-          color: #000;
-          font-size: 15px;
-          font-weight: bold;
-          margin-right: 5px;
-        }
-      }
+      height: 100%;
+      overflow-y: hidden;
       li{
+        .menu-title{
+          position: static;
+          width: 100%;
+        }
         li{
+          position: relative;
           display: flex;
           padding: 10px;
           img{
             width: 35%;
             border-radius: 5px;
+            background-color: $themeColor;
           }
           .food-info{
             display: flex;
             width: 65%;
             padding-left: 10px;
             color: #999;
-            font-size: 14px;
+            font-size: 12px;
             text-align: left;
             flex-flow: column;
             justify-content: space-between;
             .food_name{
               color: #000;
               font-weight: bolder;
-              font-size: 16px;
+              font-size: 14px;
+            }
+          }
+          .add-icon{
+            position: absolute;
+            bottom: 10px;
+            right: 12px;
+            ion-icon{
+              font-size: 20px;
+              background: $themeColor;
+              color: #fff;
+              border-radius: 50%;
+            }
+            span{
+              font-size: 12px;
+              padding: 4px 10px;
+              color: #fff;
+              background: #54b5f3;
+              border-radius: 13px;
             }
           }
         }
