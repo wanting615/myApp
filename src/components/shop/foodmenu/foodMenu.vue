@@ -37,8 +37,22 @@
                 <div class="food_price">¥{{ item.specfoods[0].price }}</div>
               </div>
               <div class="add-icon">
-                <span v-if="item.specifications.length">选规格</span>
-                <ion-icon v-else :icon="addOutline"></ion-icon>
+                <span v-if="item.num">
+                  <ion-icon
+                    :icon="removeCircleOutline"
+                    class="del-icon"
+                    @click="delCarts(item)"
+                  ></ion-icon>
+                  <span class="food-num">{{ item.num }}</span>
+                </span>
+                <span class="choose-btn" v-if="item.specifications.length"
+                  >选规格</span
+                >
+                <ion-icon
+                  v-else
+                  :icon="addOutline"
+                  @click="addCarts($event, item)"
+                ></ion-icon>
               </div>
             </li>
           </ul>
@@ -58,7 +72,8 @@ import {
 } from "vue";
 import config from "@/config/config";
 import { FoodsMenu } from "@/interface/foodsInterface";
-import { addOutline } from "ionicons/icons";
+import { addOutline, removeCircleOutline } from "ionicons/icons";
+import { addCarts, delCarts } from "@/hooks/addCarts";
 
 export default defineComponent({
   props: {
@@ -86,6 +101,7 @@ export default defineComponent({
       }
       return obj;
     });
+
     onUpdated(() => {
       if (!foodList || foodList.length === 0) {
         foodList = unref(menuRight)?.querySelectorAll(".food-list");
@@ -118,6 +134,7 @@ export default defineComponent({
 
     return {
       addOutline,
+      removeCircleOutline,
       menuEl,
       menuLeft,
       menuRight,
@@ -126,6 +143,8 @@ export default defineComponent({
       selectMenu,
       selecIndex,
       scollEvent,
+      addCarts,
+      delCarts,
     };
   },
 });

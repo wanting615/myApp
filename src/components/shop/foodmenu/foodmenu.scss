@@ -81,8 +81,18 @@
               background: $themeColor;
               color: #fff;
               border-radius: 50%;
+              vertical-align: middle;
+              &.del-icon{
+                font-size: 24px;
+                color: $themeColor;
+                background-color: #fff;
+              }
             }
-            span{
+            .food-num{
+              margin: 0 10px;
+              vertical-align: middle;
+            }
+            .choose-btn{
               font-size: 12px;
               padding: 4px 10px;
               color: #fff;

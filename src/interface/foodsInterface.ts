@@ -1,4 +1,5 @@
 export interface FoodsMenu {
+  num: number;//购物车 食品数量
   icon_url: string;
   id: number;
   foods: Food[];
@@ -11,6 +12,7 @@ export interface FoodsMenu {
 }
 
 export interface Food {
+  num: number; //添加到购物车 食品数量
   activity: {
     image_text_color: string;
     icon_color: string;

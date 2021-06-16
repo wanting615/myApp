@@ -1,8 +1,9 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router';
-import vuex from "./store";
-import vuexState from "./until/vuex.mixin";
+import store from "./store";
+// import vuexState from "./until/vuex.mixin";
+
 import { registerGlobComp } from "@/components/registerGlobComp";
 
 import { IonicVue } from '@ionic/vue';
@@ -26,14 +27,14 @@ import '@ionic/vue/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 
-
 const app = createApp(App)
   .use(IonicVue, {
     backButtonText: '',
     hardwareBackButton: true
   })
-  .use(router).use(vuex).use(vuexState);
-
+  .use(router)
+  .use(store)
+// .use(vuexState)
 //注册全局组件
 registerGlobComp(app);
 

@@ -53,7 +53,7 @@
           <ion-slide class="slides-page"> 3 </ion-slide>
         </ion-slides>
       </div>
-      <!-- <BuyCart></BuyCart> -->
+      <BuyCart></BuyCart>
     </ion-content>
   </ion-page>
 </template>
@@ -63,7 +63,6 @@ import {
   defineComponent,
   onBeforeMount,
   onBeforeUnmount,
-  onMounted,
   reactive,
   ref,
   toRefs,
@@ -75,7 +74,7 @@ import config from "@/config/config";
 import ShopInfoComp from "@/components/shop/shopInfo/shopInfo.vue";
 import FoodMenu from "@/components/shop/foodmenu/foodMenu.vue";
 import HotFood from "@/components/shop/hotFood.vue";
-// import BuyCart from "@/components/shop/buyCart/buyCart.vue";
+import BuyCart from "@/components/shop/buyCart/buyCart.vue";
 import {
   searchOutline,
   heartOutline,
@@ -84,6 +83,7 @@ import {
 import { ShopInfo } from "@/interface/shopInfoInterface";
 import { Food, FoodsMenu } from "@/interface/foodsInterface";
 import { getShopDetail, getShopMenu } from "@/api/shop/shop";
+import { useStore } from "@/store";
 import {
   setScrollEl,
   useScoll,
@@ -95,13 +95,15 @@ import {
 } from "@/hooks/shopScroll";
 
 export default defineComponent({
+  isVuex: true,
+  name: "Shop",
   components: {
     IonSlides,
     IonSlide,
     ShopInfoComp,
     FoodMenu,
     HotFood,
-    // BuyCart,
+    BuyCart,
   },
   setup() {
     const shopId = useRoute().params.id as string;
@@ -109,6 +111,16 @@ export default defineComponent({
     const navEl = ref<Nullable<ElRef>>(null);
     const toolbarEl = ref<Nullable<ToobarlRef>>(null);
     const contentEl = ref<Nullable<ContentRef>>(null);
+
+    const store = useStore();
+    //初始化当前shop store
+    let foodStore: Food[] = [];
+    if (store.state.buyCart.shopId === shopId) {
+      foodStore = store.state.buyCart.foods;
+    } else {
+      store.commit("setShopId", shopId);
+    }
+
     const shopData = reactive({
       segmentValue: "order",
       shopInfo: null as unknown as ShopInfo,
@@ -121,13 +133,24 @@ export default defineComponent({
       async getData() {
         shopData.shopInfo = (await getShopDetail(shopId)).data;
         shopData.shopMenu = (await getShopMenu(shopId)).data;
+
+        //标记已选购的食品
+        foodStore.forEach((item: Food) => {
+          const foodId = item.item_id;
+          shopData.shopMenu.forEach((menu: FoodsMenu) => {
+            menu.foods.forEach((food: Food) => {
+              if (food.item_id === foodId) {
+                menu.num = food.num = item.num || 0; //菜单栏添加已选购数量//食品添加已选购数量
+              }
+            });
+          });
+        });
+
+        console.log(shopData.shopMenu);
         shopData.hotFoods = shopData.shopMenu[0].foods.filter(
           (item: Food, index: number) => index < 3
         );
       },
-    });
-    onMounted(() => {
-      console.log(navEl, foodMenuEl);
     });
 
     const onScroll = (event: CustomEvent) => {

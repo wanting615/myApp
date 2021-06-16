@@ -299,3 +299,16 @@ ul,li{
 .header-ios ion-toolbar:last-of-type{
   --border-width: 0;
 }
+
+/* 商店详情页添加食品到购物册 动画样式 */
+.add-carts-icon{
+  position: fixed;
+  width: 20px;
+  height: 20px;
+  color: #fff;
+  text-align: center;
+  background-color: #54b5f3;
+  border-radius: 50%;
+  z-index: 100;
+  transition: left .6s linear, top .6s cubic-bezier(0.5, -0.5, 1, 1);
+}
