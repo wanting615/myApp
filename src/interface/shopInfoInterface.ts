@@ -12,8 +12,8 @@ export interface ShopInfo {
   delivery_mode: Delivery[]; //支持配送方式
   description: string; //商店宣传语
   distance: string; //距离
-  float_delivery_fee: number; //配送距离
-  float_minimum_order_amount: number; //配送
+  float_delivery_fee: number; //配送费
+  float_minimum_order_amount: number; //最低配送金额
   id: number;
   identification: {//身份
     company_name: string; //公司名称
@@ -41,7 +41,7 @@ export interface ShopInfo {
   opening_hours: string[]; //开门时间
   order_lead_time: string; //配送时间
   phone: string;  //手机号
-  piecewise_agent_fee: { tips: string }[]; //配送分tips
+  piecewise_agent_fee: { tips: string }[]; //配送费tips
   promotion_info: string; //描述
   rating: number; //评分
   rating_count: number; //评分人数

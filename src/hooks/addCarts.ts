@@ -1,9 +1,9 @@
-import { Food } from "@/interface/foodsInterface";
+import { Food, FoodsMenu } from "@/interface/foodsInterface";
 import { useStore } from "@/store"
 
 let flag = false;
 const store = useStore();
-export function addCarts(e: MouseEvent, item: Food): void {
+export function addCarts(e: MouseEvent, item: Food, menu: FoodsMenu): void {
   if (flag) return;
   flag = true;
   const div: HTMLDivElement = document.createElement('div');
@@ -27,11 +27,13 @@ export function addCarts(e: MouseEvent, item: Food): void {
   }
 
   item.num = item.num ? item.num += 1 : 1;
+  menu.num = menu.num ? menu.num += 1 : 1;
   store.commit('setFoods', item);//存储food store
 }
 
 
-export function delCarts(item: Food): void {
-  item.num = item.num ? item.num -= 1 : 0;
+export function delCarts(item: Food, menu: FoodsMenu): void {
+  item.num--;
+  menu.num--;
   store.commit('delFoods', item)
 }

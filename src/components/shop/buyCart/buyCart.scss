@@ -21,7 +21,7 @@
       top: 5px;
       width: 14px;
       height: 14px;
-      background: red;
+      background: $redColor;
       color: #fff;
       text-align: center;
       border-radius: 50%;
@@ -45,5 +45,31 @@
     padding: 10px 10px;
     border-radius: 15px;
     background: #54b5f3;
+  }
+}
+
+.cart-foods{
+  padding-bottom: 50px;
+  ul{
+    li{
+      display: flex;
+      padding: 15px 10px;
+      img{
+        width: 65px;
+      }
+      .card-foods-inner{
+        display: flex;
+        padding-left: 10px;
+        font-weight: 500;
+        flex-direction: column;
+        justify-content: space-between;
+        div:first-child{
+          color: #333;
+        }
+        div:last-child{
+          color: $redColor;
+        } 
+      }
+    }
   }
 }

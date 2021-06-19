@@ -41,7 +41,7 @@
         <ion-slides centeredSlides="false" zoom="false" :options="slideOpts">
           <ion-slide class="slides-page">
             <div class="slide-item" v-if="shopMenu">
-              <HotFood :hotFoods="hotFoods" />
+              <HotFood :hotFoods="hotFoods" :menu="shopMenu[0]" />
               <FoodMenu
                 :shopMenu="shopMenu"
                 ref="foodMenuEl"
@@ -53,8 +53,11 @@
           <ion-slide class="slides-page"> 3 </ion-slide>
         </ion-slides>
       </div>
-      <BuyCart></BuyCart>
     </ion-content>
+    <BuyCart
+      :deliveryPrice="shopInfo?.float_delivery_fee"
+      :minimunOrder="shopInfo?.float_minimum_order_amount"
+    ></BuyCart>
   </ion-page>
 </template>
 

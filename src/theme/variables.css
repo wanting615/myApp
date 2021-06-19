@@ -253,7 +253,13 @@ ion-back-button{
 }
 
 i,em{
+ 
   font-style: normal;
+}
+.delete{
+  font-size: 12px;
+  color: #999;
+  text-decoration: line-through;
 }
 
 a{

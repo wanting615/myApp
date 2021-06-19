@@ -4,9 +4,9 @@ import {
   CommitOptions,
   MutationTree,
   Module,
-} from 'vuex'
+} from 'vuex';
+import commonUntil from "@/until/common";
 import { Food } from "@/interface/foodsInterface"
-
 import { State as RootState } from '@/store'
 
 
@@ -33,11 +33,16 @@ const mutations: MutationTree<State> & Mutations = {
   },
   setFoods(state: State, food: Food) {
     const index = state.foods.findIndex((item: Food) => item.item_id === food.item_id);
-    index === -1 ? state.foods.push(food) : state.foods[index].num + 1;
+    if (index === -1) {
+      const cloneFood = commonUntil.deepColone(food);
+      state.foods.push(cloneFood)
+    } else {
+      state.foods[index].num++;
+    }
   },
   delFoods(state: State, food: Food) {
     const index = state.foods.findIndex((item: Food) => item.item_id === food.item_id);
-    if (state.foods[index].num > 1) {
+    if (state.foods[index].num === 1) {
       state.foods.splice(index, 1);
     } else {
       state.foods[index].num -= 1;

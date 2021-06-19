@@ -9,6 +9,7 @@
           @click="selectMenu(index)"
         >
           {{ item.name }}
+          <span class="menu-num" v-if="item.num">{{ item.num }}</span>
         </li>
       </ul>
     </div>
@@ -34,14 +35,19 @@
                 <div class="food_rate">
                   月售{{ item.month_sales }} 好评率{{ item.satisfy_rate }}%
                 </div>
-                <div class="food_price">¥{{ item.specfoods[0].price }}</div>
+                <div class="food_price">
+                  ¥{{ item.specfoods[0].price }}
+                  <i v-if="item.specfoods[0].original_price" class="delete"
+                    >￥{{ item.specfoods[0].original_price }}</i
+                  >
+                </div>
               </div>
               <div class="add-icon">
                 <span v-if="item.num">
                   <ion-icon
                     :icon="removeCircleOutline"
                     class="del-icon"
-                    @click="delCarts(item)"
+                    @click="delCarts(item, menu)"
                   ></ion-icon>
                   <span class="food-num">{{ item.num }}</span>
                 </span>
@@ -51,7 +57,7 @@
                 <ion-icon
                   v-else
                   :icon="addOutline"
-                  @click="addCarts($event, item)"
+                  @click="addCarts($event, item, menu)"
                 ></ion-icon>
               </div>
             </li>
