@@ -297,6 +297,14 @@ ul,li{
   display: block;
 }
 
+.bold{
+  font-weight: bold;
+}
+
+.bolder{
+  font-weight: bolder;
+}
+
 .ellipsis{
   overflow: hidden;
   text-overflow: ellipsis;

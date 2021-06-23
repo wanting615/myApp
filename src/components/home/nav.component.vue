@@ -41,7 +41,10 @@ export default defineComponent({
   },
 
   setup() {
-    const dataMap = reactive({
+    const dataMap = reactive<{
+      shopClassify: ShopClassify[];
+      getData(): void;
+    }>({
       shopClassify: Array<ShopClassify>(),
       getData() {
         getShopsClassify().then((res) => {

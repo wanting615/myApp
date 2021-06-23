@@ -39,6 +39,12 @@ axios.interceptors.response.use((response: AxiosResponse) => {
 
 export class HttpService {
 
+  /**
+   * 
+   * @param url 请求url
+   * @param params 请求参数
+   * @returns 返回Promise<R> R返回类型
+   */
   public static get<R = AxiosResponse>(
     url: string,
     params?: unknown
@@ -56,6 +62,12 @@ export class HttpService {
     });
   }
 
+  /**
+   * 
+   * @param url 请求url
+   * @param params 请求参数
+   * @returns 返回Promise<R> R返回类型
+   */
   public static post<R = AxiosResponse>(
     url: string,
     params: any
@@ -67,6 +79,19 @@ export class HttpService {
     });
   }
 
+  /**
+   * //并发请求
+   * @param axiosArr 所并发的请求
+   * @returns reasult[]
+   */
+  public static httpAll<T>(axiosArr: Promise<T>[]): Promise<T[]> {
+    return new Promise((resovle) => {
+      axios.all(axiosArr).then(axios.spread((...args: T[]) => {
+        resovle(args)
+      }))
+    })
+  }
+
   public static getEncrypt(data: string) {
     const encrypt = new JSEncrypt({
       // eslint-disable-next-line @typescript-eslint/camelcase
@@ -76,4 +101,5 @@ export class HttpService {
     encrypt.setPublicKey(config.pulickKey);
     return encodeURIComponent(encrypt.encrypt(data));
   }
+
 }

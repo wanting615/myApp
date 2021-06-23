@@ -1,0 +1,105 @@
+@import "../../../theme/theme.scss";
+.rating-content{
+  width: 100%;
+  padding: 10px 15px;
+  font-size: 12px;
+  color: $greyColor;
+  text-align: left;
+  background-color: $backgroundColor;
+  .rating-card{
+    padding: 15px 10px;
+    background-color: #fff;
+    border-radius: 10px;
+    .fl{
+      display: flex;
+      align-items: center;
+      .rating-star{
+        margin-right: 10px;
+        font-size: 20px;
+        font-weight: bold;
+        color: $redColor;
+      }
+    }
+    .fr{
+     li{
+       margin-left: 8px;
+       &:nth-child(2){
+         padding-right: 8px;
+         border-right: 0.5px solid $borderColor;
+       }
+       div:last-child{
+         margin-top: 3px;
+         font-size: 14px;
+         color: #333;
+       }
+     }
+    }
+    .rating-tags{
+      padding-top: 40px;
+      li{
+        display: inline-block;
+        margin-right: 10px;
+        margin-top: 10px;
+        color: #333;
+        padding: 10px;
+        background-color: #f3f3f3;
+        border-radius: 10px;
+        &.active{
+          color: $themeColor;
+          background-color: #e9f7fe;
+        }
+      }
+    }
+  }
+
+  .rating-inner{
+    padding: 0 10px;
+    margin-top: 10px;
+    background-color: #fff;
+    border-radius: 10px;
+    .rating-item{
+      padding: 20px 0;
+      border-bottom: 0.5px solid $borderColor;
+      .rating-user{
+        position: relative;
+        display: flex;
+        img{
+          width: 40px;
+          height: 40px;
+          border-radius: 5px;
+        }
+        .rating-name{
+          margin-left: 10px;
+          display: flex;
+          flex-flow: column;
+          justify-content: space-around;
+        }
+        .rating-time{
+          position: absolute;
+          right: 0;
+          top: 0;
+        }
+      }
+      .item-inner{
+        margin-top: 10px;
+        color: #333;
+        .item-food span{
+          color: $themeColor;
+        }
+        .rating-img{
+          display: flex;
+          flex-wrap: wrap;
+          img{
+            width: 30%;
+            margin-right: 5%;
+            margin-top: 10px;
+            border-radius: 10%;
+            &:last-child{
+              margin-right: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+}

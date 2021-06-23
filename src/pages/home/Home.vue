@@ -35,29 +35,20 @@
       </div>
       <NavComponnet />
       <ShopList :shopsList="shopsList" />
-      <ion-infinite-scroll
-        threshold="100px"
-        @ionInfinite="loadMore($event)"
-        id="infinite-scroll"
-        :disabled="isDisabled"
-      >
-        <ion-infinite-scroll-content
-          loadingSpinner="bubbles"
-          loadingText="加载中"
-        >
-        </ion-infinite-scroll-content>
+      <ion-infinite-scroll threshold="100px" @ionInfinite="loadMore($event)" id="infinite-scroll" :disabled="isDisabled">
+        <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="加载中"> </ion-infinite-scroll-content>
       </ion-infinite-scroll>
     </ion-content>
   </ion-page>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, onMounted, reactive, ref, toRefs, unref } from "vue";
 import ShopList from "@/components/shop-list/shoplist.componnent.vue";
 import NavComponnet from "../../components/home/nav.component.vue";
 import { ShopInfo } from "@/interface/shopInfoInterface";
 import { getPosition, getPosstionByIp } from "@/api/posstion/posstion";
-import { getShopList } from "@/api/shop/shop";
+import { getShopListAction } from "@/api/shop/shop";
 import { scanOutline, locationOutline, cartOutline } from "ionicons/icons";
 
 export default defineComponent({
@@ -67,100 +58,108 @@ export default defineComponent({
     NavComponnet,
   },
   setup() {
-    return {
-      scanOutline,
-      locationOutline,
-      cartOutline,
-    };
-  },
-  data() {
-    const shopsList: ShopInfo[] = [];
-    return {
+    const searchArea = ref<Nullable<ElRef>>(null);
+
+    const homeData = reactive<{
+      address: string;
+      page: number;
+      shopsList: ShopInfo[];
+      latitude: string;
+      longitude: string;
+      scollY: number;
+      isDisabled: boolean;
+    }>({
       address: "定位中",
       page: 1,
-      shopsList: shopsList,
-      searchArea: Element as any,
+      shopsList: [],
       latitude: "",
       longitude: "",
       scollY: 0,
       isDisabled: false,
-    };
-  },
-
-  created(): void {
-    getPosstionByIp().then((res) => {
-      if (res.state) {
-        this.latitude = res.data.latitude;
-        this.longitude = res.data.longitude;
-        this.getPostion();
-      } else {
-        if (window.navigator.geolocation) {
-          window.navigator.geolocation.getCurrentPosition(
-            // eslint-disable-next-line no-undef
-            (res) => {
-              this.latitude = res.coords.latitude.toString();
-              this.longitude = res.coords.longitude.toString();
-              this.getPostion();
-            },
-            () => {
-              this.latitude = "31.23037";
-              this.longitude = "121.473701";
-              this.getPostion(); //默认值上海
-            }
-          );
-        }
-      }
     });
-  },
-  mounted(): void {
-    this.searchArea = this.$refs.searchArea;
-  },
-  methods: {
-    //通过经纬度获取位置信息
-    getPostion(e?: CustomEvent): void {
-      this.getShopList(e);
-      getPosition(this.latitude, this.longitude).then((res) => {
-        if (res.state) {
-          this.address = res.city + res.name;
-        } else {
-          this.address = "定位失败，请手动选择地址";
-        }
-      });
-    },
 
     //获取首页商店列表
-    getShopList(e?: CustomEvent, loadMore?: boolean): void {
-      getShopList({
-        page: this.page,
-        latitude: this.latitude,
-        longitude: this.longitude,
+    const getShopList = (e?: CustomEvent, loadMore?: boolean): void => {
+      getShopListAction({
+        page: homeData.page,
+        latitude: homeData.latitude,
+        longitude: homeData.longitude,
       }).then((res) => {
         if (!res.status) return;
         if (loadMore) {
-          this.shopsList = this.shopsList.concat(res.data);
+          homeData.shopsList = homeData.shopsList.concat(res.data);
         } else {
-          this.shopsList = res.data;
+          homeData.shopsList = res.data;
         }
         if (e) (e.target as any).complete();
       });
-    },
-    doRefresh(e: CustomEvent): void {
-      this.page = 1;
-      this.getShopList(e);
-    },
-    loadMore(e: CustomEvent): void {
-      this.page += 1;
-      this.getShopList(e, true);
-    },
-    onScroll(e: CustomEvent): void {
-      console.log(e);
-      this.scollY = e.detail.scrollTop;
-      if (this.scollY > 41) {
-        this.searchArea.style.position = "fixed";
-      } else if (this.scollY < 41) {
-        this.searchArea.style.position = "absolute";
+    };
+
+    //通过经纬度获取位置信息
+    const getPostion = (e?: CustomEvent): void => {
+      getShopList(e);
+      getPosition(homeData.latitude, homeData.longitude).then((res) => {
+        if (res.state) {
+          homeData.address = res.city + res.name;
+        } else {
+          homeData.address = "定位失败，请手动选择地址";
+        }
+      });
+    };
+
+    const doRefresh = (e: CustomEvent): void => {
+      homeData.page = 1;
+      getShopList(e);
+    };
+    const loadMore = (e: CustomEvent): void => {
+      homeData.page += 1;
+      getShopList(e, true);
+    };
+    const onScroll = (e: CustomEvent): void => {
+      const wrapRef = unref(searchArea);
+      if (!wrapRef) return;
+      homeData.scollY = e.detail.scrollTop;
+      if (homeData.scollY > 41) {
+        wrapRef.style.position = "fixed";
+      } else if (homeData.scollY < 41) {
+        wrapRef.style.position = "absolute";
       }
-    },
+    };
+    onMounted(() => {
+      getPosstionByIp().then((res) => {
+        if (res.state) {
+          homeData.latitude = res.data.latitude;
+          homeData.longitude = res.data.longitude;
+          getPostion();
+        } else {
+          if (window.navigator.geolocation) {
+            window.navigator.geolocation.getCurrentPosition(
+              // eslint-disable-next-line no-undef
+              (res) => {
+                homeData.latitude = res.coords.latitude.toString();
+                homeData.longitude = res.coords.longitude.toString();
+                getPostion();
+              },
+              () => {
+                homeData.latitude = "31.23037";
+                homeData.longitude = "121.473701";
+                getPostion(); //默认值上海
+              }
+            );
+          }
+        }
+      });
+    });
+
+    return {
+      ...toRefs(homeData),
+      scanOutline,
+      locationOutline,
+      cartOutline,
+      doRefresh,
+      loadMore,
+      onScroll,
+    };
   },
 });
 </script>

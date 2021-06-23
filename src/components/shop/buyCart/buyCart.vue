@@ -11,7 +11,10 @@
       </div>
       <div>另外需配送费¥{{ deliveryPrice }}</div>
     </div>
-    <div class="cart-button fr">¥{{ minimunOrder }}元起送</div>
+    <div class="cart-button fr" v-if="buyCartInfo.totalprice > minimunOrder">
+      去结算
+    </div>
+    <div class="cart-button fr" v-else>¥{{ minimunOrder }}元起送</div>
   </div>
   <Modal
     :isOpen="isOpenRef"
@@ -19,12 +22,38 @@
     @didDismiss="showBuyCart(false)"
   >
     <div class="cart-foods">
+      <div class="cart-title">
+        <span>已选商品</span>
+        <span>(包装费¥<span class="color">2.5</span>)</span>
+        <span class="fr" @click="clearBuyCart"
+          ><ion-icon :src="trashOutline"></ion-icon>清空</span
+        >
+      </div>
       <ul>
-        <li>
-          <img src="https://elm.cangdu.org/img/1678178095423339.jpg" />
+        <li v-for="item in foods" :key="item.item_id">
+          <img :src="config.imagePath + item.image_path" />
           <div class="card-foods-inner">
-            <div>农家小炒肉</div>
-            <div>¥35</div>
+            <div>{{ item.name }}</div>
+            <div>
+              ¥{{ item.specfoods[0].price }}
+              <i v-if="item.specfoods[0].original_price" class="delete">
+                ￥{{ item.specfoods[0].original_price }}
+              </i>
+            </div>
+          </div>
+          <div class="add-icon">
+            <span v-if="item.num">
+              <ion-icon
+                :icon="removeCircleOutline"
+                class="del-icon"
+                @click="delBuyCarts(item)"
+              ></ion-icon>
+              <span class="food-num">{{ item.num }}</span>
+            </span>
+            <ion-icon
+              :icon="addOutline"
+              @click="addBuyCarts($event, item)"
+            ></ion-icon>
           </div>
         </li>
       </ul>
@@ -33,10 +62,20 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from "vue";
+import {
+  computed,
+  defineComponent,
+  PropType,
+  reactive,
+  ref,
+  toRefs,
+} from "vue";
+import config from "@/config/config";
 import { useStore } from "@/store";
+import { addOutline, removeCircleOutline, trashOutline } from "ionicons/icons";
 import Modal from "@/components/common/modal/modal.vue";
-import { Food } from "@/interface/foodsInterface";
+import { Food, FoodsMenu } from "@/interface/foodsInterface";
+import { addCarts, delCarts } from "@/hooks/addCarts";
 
 export default defineComponent({
   components: { Modal },
@@ -49,8 +88,9 @@ export default defineComponent({
       type: Number,
       default: 0,
     },
+    foodMemus: Array as PropType<FoodsMenu[]>,
   },
-  setup() {
+  setup(props) {
     const store = useStore();
     const foods = store.state.buyCart.foods;
     //计算购物车价格和数量
@@ -72,15 +112,51 @@ export default defineComponent({
     });
 
     const isOpenRef = ref(false);
-    // //显示购物车
+    //显示购物车
     const showBuyCart = (state: boolean) => {
-      isOpenRef.value = state;
+      if (store.state.buyCart.foods.length > 0) {
+        isOpenRef.value = state;
+      }
     };
+    //清空购物车
+    const clearBuyCart = () => {
+      store.commit("clearFoods");
+    };
+
+    const methodReactive = reactive({
+      //添加
+      addBuyCarts: (event: MouseEvent, item: Food) => {
+        const menu = props.foodMemus?.find(
+          (menu: FoodsMenu) => item.category_id === menu.id
+        );
+        const food = menu?.foods.find(
+          (food: Food) => item.item_id === food.item_id
+        );
+        if (menu && food) addCarts(event, food, menu);
+      },
+      //删除
+      delBuyCarts: (item: Food) => {
+        const menu = props.foodMemus?.find(
+          (menu: FoodsMenu) => item.category_id === menu.id
+        );
+        const food = menu?.foods.find(
+          (food: Food) => item.item_id === food.item_id
+        );
+        if (menu && food) delCarts(food, menu);
+      },
+    });
+
     return {
+      addOutline,
+      removeCircleOutline,
+      trashOutline,
       buyCartInfo,
       showBuyCart,
       isOpenRef,
       foods,
+      config,
+      clearBuyCart,
+      ...toRefs(methodReactive),
     };
   },
 });

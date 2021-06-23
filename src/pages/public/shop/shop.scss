@@ -42,8 +42,16 @@ ion-content{
       ul{
         overflow: hidden;
         li{
+          position: relative;
           width: 18%;
           font-size: 14px;
+          span{
+            position: absolute;
+            color: #b0b0b0;
+            font-size: 12px;
+            top: -2px;
+            margin-left: 3px;
+          }
         }
       }
       .line{
@@ -53,14 +61,30 @@ ion-content{
         height: 3px;
         background-color: $themeColor;
         margin:2px 0 0 5px;
-        transition: all 1s;
+        transition: all 0.5s;
+        &.rating{
+          left: 18%;
+        }
+        &.stroy{
+          left: 36%;
+        }
       }
      }
     }
-    .slide-item{
-      width: 100%;
-      color: #191919;
-      font-size: 14px;
+    .swiper-container{
+      &.scroll-slides{
+        .swiper-slide{
+          overflow-y: scroll;
+        }
+      }      
+      .swiper-slide{
+       display: block;
+        .slide-item{
+          width: 100%;
+          color: #191919;
+          font-size: 14px;
+        }
+      }
     }
   }
 }

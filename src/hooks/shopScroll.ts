@@ -1,4 +1,4 @@
-import { unref } from "vue";
+import { onBeforeUnmount, unref } from "vue";
 
 export interface MenuRef {
   menuEl: ElRef;
@@ -9,11 +9,6 @@ export interface MenuRef {
 export interface ToobarlRef {
   $el: ElRef;
 }
-
-export interface ContentRef {
-  $el: HTMLIonContentElement;
-}
-
 interface ScrollEl {
   navChildNode: HTMLElement; //菜单栏标签元素
   toolbarEl: Undefinedable<HTMLDivElement>;//状态栏元素
@@ -22,13 +17,17 @@ interface ScrollEl {
   navOffsettop: number; //nav栏距离顶部距离
   foodMenuOffsetHeight: number; //菜单距离顶部距离
   foodMenuHeight: number;//菜单栏高度
+  slidesEl: IonSlidesRef;
 }
 let scrollEl: Undefinedable<ScrollEl>;
 
+onBeforeUnmount(() => {
+  scrollEl = undefined;
+});
 
-export function setScrollEl(navEl: Nullable<ElRef>, foodMenuEl: Nullable<MenuRef>, toolbar: Nullable<ToobarlRef>) {
+export function setScrollEl(navEl: Nullable<ElRef>, foodMenuEl: Nullable<MenuRef>, toolbar: Nullable<ToobarlRef>, slidesEl: Nullable<IonSlidesRef>) {
   if (scrollEl === undefined) {
-    if (navEl === null || foodMenuEl === null) return;
+    if (navEl === null || foodMenuEl === null || slidesEl === null) return;
     const toolbarEl = unref(toolbar?.$el);
     if (!toolbarEl) return;
     const navChildNode = navEl.firstElementChild as HTMLElement;
@@ -44,12 +43,19 @@ export function setScrollEl(navEl: Nullable<ElRef>, foodMenuEl: Nullable<MenuRef
       navOffsettop,
       foodMenuOffsetHeight,
       foodMenuHeight,
+      slidesEl
     }
     //设置菜单列表高度
     foodMenuEl.menuEl.style.height = foodMenuHeight + "px";
+    //设置slide高度
+    const slide = slidesEl.$el.querySelectorAll('.swiper-slide') as unknown as HTMLElement[];
+    slide.forEach((el: HTMLElement) => {
+      el.style.height = foodMenuHeight + "px";
+    })
   }
 }
 
+//页面ion-content滚动行为
 export function useScoll(e: CustomEvent) {
   if (!scrollEl) return;
   //change toolbar background color
@@ -70,30 +76,40 @@ export function useScoll(e: CustomEvent) {
       item.style.color = "rgba(0, 0, 0)";
     })
   }
-  if (e.detail.scrollTop > scrollEl.navOffsettop) {
+
+  //change silde scroll and food menu scroll
+  if (e.detail.scrollTop === scrollEl.navOffsettop) {
     // fixed navs-slider
     scrollEl.navChildNode.style.position = 'fixed';
     scrollEl.navChildNode.style.marginTop = "var(--ion-safe-area-top, 0)";
 
-    //scroll food menu
-    if (e.detail.scrollTop >= scrollEl.foodMenuOffsetHeight) {
-      scrollEl.foodMenuEl.menuLeft.style.overflowY = "scroll";
-      scrollEl.foodMenuEl.menuRight.style.overflowY = "scroll";
-    }
+    //给每个silde添加 下拉滚动
+    scrollEl.slidesEl.$el.classList.add('scroll-slides');
   } else {
+    scrollEl.slidesEl.$el.classList.remove('scroll-slides');
     //reset 
     scrollEl.navChildNode.style.position = "static";
     scrollEl.navChildNode.style.marginTop = "0px";
-    scrollEl.foodMenuEl.menuLeft.style.overflowY = "hidden";
-    scrollEl.foodMenuEl.menuRight.style.overflowY = "hidden";
   }
 }
 
-export function userScrollTo(contentEl: Nullable<ContentRef>) {
+//滚动到content中foodsmenu位置
+export function useScrollTo(contentEl: Nullable<ContentRef>) {
   const content = contentEl?.$el;
   content && (content.scrollByPoint(0, scrollEl?.foodMenuOffsetHeight || 0, 300));
 }
 
-export function reset() {
-  scrollEl = undefined;
+//food slide 滚动行为
+
+export function useScrollFoodSlide(e: Event) {
+  if (!scrollEl) return;
+  const target = e.target as HTMLElement;
+  const top = scrollEl?.foodMenuEl.menuEl.offsetTop || 0;
+  if (target.scrollTop === top) {
+    scrollEl.foodMenuEl.menuLeft.style.overflowY = "scroll";
+    scrollEl.foodMenuEl.menuRight.style.overflowY = "scroll";
+  } else {
+    scrollEl.foodMenuEl.menuLeft.style.overflowY = "hidden";
+    scrollEl.foodMenuEl.menuRight.style.overflowY = "hidden";
+  }
 }

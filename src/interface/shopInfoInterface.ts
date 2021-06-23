@@ -4,6 +4,9 @@
  * @LastEditTime: 2021-05-21 14:31:39
  * @FilePath: /elm-app/src/components/shop/shopInfoInterface.ts
  */
+
+import { RootObject } from "./rootInterface";
+
 //商店属性
 export interface ShopInfo {
   activities: Activity[]; //活动
@@ -89,5 +92,43 @@ export interface ShopClassify {
   title_color: string;
 }
 
+//评价列表
+export interface Rating {
+  avatar: string;
+  highlights: [];
+  item_ratings: [
+    {
+      food_id: number;
+      food_name: number;
+      image_hash: string;
+      is_valid: number;
+    }
+  ];
+  rated_at: string;
+  rating_star: number;
+  rating_text: string;
+  tags: [];
+  time_spent_desc: string;
+  username: string;
+}
+
+//评价分数
+export interface RatingScore {
+  compare_rating: number;
+  deliver_time: number;
+  food_score: number;
+  order_rating_amount: number;
+  overall_score: number;
+  service_score: number;
+}
+
+//评价分类
+export interface RatingTag {
+  count: number;
+  name: string;
+  unsatisfied: boolean;
+}
+
+export type RatingResult = Rating[] | RatingScore | RatingTag[];//并发请求
 
 export type ShopListType = ShopInfo[];

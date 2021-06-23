@@ -21,6 +21,12 @@ export class UrlService {
 
   public static getShopMenu = UrlService.baseUrl + "shopMenu/";//获取商店商品清单
 
+  public static getRatings = UrlService.baseUrl + "/rating/";//获取评价列表
+
+  public static getScores = UrlService.baseUrl + "/rating/scroes/"; //查询评价分数
+
+  public static getTags = UrlService.baseUrl + "/rating/tags/";//查询评价分类
+
   /**
    * 登陆模块
    */

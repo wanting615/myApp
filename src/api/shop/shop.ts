@@ -1,6 +1,6 @@
 import { HttpService } from "@/until/http.service";
 import { UrlService } from "../url.base";
-import { ShopClassify, ShopInfo } from "../../interface/shopInfoInterface";
+import { Rating, RatingResult, RatingScore, RatingTag, ShopClassify, ShopInfo } from "../../interface/shopInfoInterface";
 import { FoodsMenu } from "@/interface/foodsInterface";
 import { RootObject } from "@/interface/rootInterface";
 
@@ -10,7 +10,7 @@ export const getShopsClassify = (): Promise<RootObject<ShopClassify[]>> => {
 };
 
 //获取商铺列表
-export const getShopList = (params: {
+export const getShopListAction = (params: {
   latitude: string; //纬度
   longitude: string; //经度
   page: number; //页数
@@ -30,4 +30,24 @@ export const getShopDetail = async (id: string): Promise<RootObject<ShopInfo>> =
 //获取商店商品清单
 export const getShopMenu = async (id: string) => {
   return HttpService.get<RootObject<FoodsMenu[]>>(UrlService.getShopMenu + id);
+}
+
+//获取评价列表
+const getRatings = (shopId: string) => {
+  return HttpService.get<RootObject<Rating[]>>(UrlService.getRatings, { shopId });
+}
+
+//查询评价分数
+const getScores = (shopId: string) => {
+  return HttpService.get<RootObject<RatingScore>>(UrlService.getScores, { shopId });
+}
+
+//查询评价分类
+const getTags = (shopId: string) => {
+  return HttpService.get<RootObject<RatingTag[]>>(UrlService.getTags, { shopId });
+}
+
+//并发请求 获取评价列表 查询评价分数 查询评价分类
+export const getRatingAll = (shopId: string) => {
+  return HttpService.httpAll<RootObject<RatingResult>>([getRatings(shopId), getScores(shopId), getTags(shopId)]);
 }

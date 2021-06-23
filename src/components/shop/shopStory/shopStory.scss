@@ -1,0 +1,60 @@
+@import "../../../theme/theme.scss";
+.story{
+  width: 100%;
+  padding: 10px 15px 55px 15px;
+  background-color: $backgroundColor;
+  font-size: 12px;
+  text-align: left;
+  .card{
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .grey{
+    color: #666;
+  }
+  h6{
+    font-size: 14px;
+  }
+  p{
+    margin: 0.5em 0;
+  }
+
+  .img-card{
+    padding: 0;
+    img{
+      width: 100%;
+      max-height: 210px;
+      object-fit: cover;
+    }
+    .card-info{
+      padding: 10px;
+      line-height: 20px;
+    }
+  }
+
+  .shop-base{
+    .shop-address{
+      position: relative;
+      h6{
+        margin: 10px 0 5px 0;
+      }
+      .shop-phone{
+        position: absolute;
+        width: 50px;
+        right: 0;
+        top: 0px;
+        padding: 4px 0;
+        border-left: 1px solid $borderColor;
+        text-align: center;
+        ion-icon{
+          font-size: 22px;
+          color: $themeColor;
+        }
+      }
+    }
+  }
+  
+}

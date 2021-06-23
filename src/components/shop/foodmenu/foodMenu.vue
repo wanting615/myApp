@@ -2,12 +2,7 @@
   <div class="menu" ref="menuEl">
     <div class="menu-left" ref="menuLeft">
       <ul>
-        <li
-          v-for="(item, index) in shopMenu"
-          :key="index"
-          :class="{ active: index === selecIndex }"
-          @click="selectMenu(index)"
-        >
+        <li v-for="(item, index) in shopMenu" :key="index" :class="{ active: index === selecIndex }" @click="selectMenu(index)">
           {{ item.name }}
           <span class="menu-num" v-if="item.num">{{ item.num }}</span>
         </li>
@@ -32,33 +27,19 @@
                 <div class="food_des">
                   {{ item.description ? item.description : "无" }}
                 </div>
-                <div class="food_rate">
-                  月售{{ item.month_sales }} 好评率{{ item.satisfy_rate }}%
-                </div>
+                <div class="food_rate">月售{{ item.month_sales }} 好评率{{ item.satisfy_rate }}%</div>
                 <div class="food_price">
                   ¥{{ item.specfoods[0].price }}
-                  <i v-if="item.specfoods[0].original_price" class="delete"
-                    >￥{{ item.specfoods[0].original_price }}</i
-                  >
+                  <i v-if="item.specfoods[0].original_price" class="delete">￥{{ item.specfoods[0].original_price }}</i>
                 </div>
               </div>
               <div class="add-icon">
                 <span v-if="item.num">
-                  <ion-icon
-                    :icon="removeCircleOutline"
-                    class="del-icon"
-                    @click="delCarts(item, menu)"
-                  ></ion-icon>
+                  <ion-icon :icon="removeCircleOutline" class="del-icon" @click="delCarts(item, menu)"></ion-icon>
                   <span class="food-num">{{ item.num }}</span>
                 </span>
-                <span class="choose-btn" v-if="item.specifications.length"
-                  >选规格</span
-                >
-                <ion-icon
-                  v-else
-                  :icon="addOutline"
-                  @click="addCarts($event, item, menu)"
-                ></ion-icon>
+                <span class="choose-btn" v-if="item.specifications.length">选规格</span>
+                <ion-icon v-else :icon="addOutline" @click="addCarts($event, item, menu)"></ion-icon>
               </div>
             </li>
           </ul>
@@ -68,14 +49,7 @@
   </div>
 </template>
 <script lang="ts">
-import {
-  computed,
-  defineComponent,
-  onUpdated,
-  PropType,
-  ref,
-  unref,
-} from "vue";
+import { computed, defineComponent, onUpdated, PropType, ref, unref } from "vue";
 import config from "@/config/config";
 import { FoodsMenu } from "@/interface/foodsInterface";
 import { addOutline, removeCircleOutline } from "ionicons/icons";

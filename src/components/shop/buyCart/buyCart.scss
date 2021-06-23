@@ -10,6 +10,7 @@
   z-index: 20;
   padding-bottom: var(--ion-safe-area-bottom,0);
   overflow: hidden;
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 4px 16px 0px;
   .buy-cart-img{
     position: relative;
     img{
@@ -38,6 +39,7 @@
     }
   }
   .cart-button{
+    min-width: 80px;
     margin-top: 5px;
     margin-right: 16px;
     color: #fff;
@@ -50,8 +52,26 @@
 
 .cart-foods{
   padding-bottom: 50px;
+  .cart-title{
+    padding: 15px 10px 0;
+    font-size: 13px;
+    color: #b2b2b2;
+    font-weight: 500;
+    span:first-child{
+      font-size: 14px;
+      color: #333;
+    }
+    .color{
+      color: $redColor !important;
+    }
+    ion-icon{
+      margin-right: 3px;
+      vertical-align: middle;
+    }
+  }
   ul{
     li{
+      position: relative;
       display: flex;
       padding: 15px 10px;
       img{
@@ -69,6 +89,27 @@
         div:last-child{
           color: $redColor;
         } 
+      }
+      .add-icon{
+        position: absolute;
+        bottom: 10px;
+        right: 12px;
+        height: 24px;
+        ion-icon{
+          font-size: 20px;
+          background: $themeColor;
+          color: #fff;
+          border-radius: 50%;
+          vertical-align: middle;
+          &.del-icon{
+            color: $themeColor;
+            background-color: #fff;
+          }
+        }
+        .food-num{
+          margin: 0 10px;
+          vertical-align: middle;
+        }
       }
     }
   }

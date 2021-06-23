@@ -10,22 +10,8 @@
     <ion-content :force-overscroll="true">
       <div class="login-title">账号登陆</div>
       <form action="">
-        <ion-input
-          type="text"
-          name="username"
-          v-model.trim="user.username"
-          placeholder="手机/用户名"
-          clearInput="true"
-          @ionChange="changeInput"
-        ></ion-input>
-        <ion-input
-          type="password"
-          name="password"
-          v-model="user.password"
-          placeholder="密码"
-          clearInput="true"
-          @ionChange="changeInput"
-        ></ion-input>
+        <ion-input type="text" name="username" v-model.trim="user.username" placeholder="手机/用户名" clearInput="true" @ionChange="changeInput"></ion-input>
+        <ion-input type="password" name="password" v-model="user.password" placeholder="密码" clearInput="true" @ionChange="changeInput"></ion-input>
 
         <ion-button :disabled="isDisabled" @click="login">登陆</ion-button>
       </form>
@@ -48,7 +34,6 @@ export default defineComponent({
     IonInput,
   },
   data() {
-    console.log(1);
     return {
       user: ref<User>({
         username: "",
