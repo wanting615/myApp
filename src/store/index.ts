@@ -1,32 +1,21 @@
 import { createStore, createLogger } from 'vuex'
-
-// import {
-//   AuthModule as auth,
-//   Store as AuthStore,
-//   State as AuthState,
-// } from './module/User'
-
-import {
-  BuyCartModule as buyCart,
-  Store as BuyCartStore,
-  State as BuyCartState,
-} from './module/BuyCart'
+import { UserModule as user, Store as UserStore, State as userState } from "./module/User";
+import { BuyCartModule as buyCart, Store as BuyCartStore, State as BuyCartState } from './module/BuyCart';
 
 export type State = {
-  // auth: AuthState;
+  user: userState;
   buyCart: BuyCartState;
 }
 
 export type Store =
-  // AuthStore<Pick<State, 'auth'>> &
-  BuyCartStore<Pick<State, 'buyCart'>>
+  UserStore<Pick<State, 'user'>> & BuyCartStore<Pick<State, 'buyCart'>>
 
 const plugins = process.env.NODE_ENV === 'production' ? [] : [createLogger()]
 
 export const store = createStore({
   plugins: plugins,
   modules: {
-    // auth, 
+    user,
     buyCart
   },
 })

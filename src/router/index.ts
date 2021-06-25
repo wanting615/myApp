@@ -40,7 +40,11 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/shop/:id',
     component: () => import("@/pages/public/shop/shop.vue")
-  }
+  },
+  {
+    path: '/setting',
+    component: () => import("@/pages/ucenter/setting/setting.vue")
+  },
 ]
 
 const router = createRouter({

@@ -61,6 +61,7 @@
 import { defineComponent, onBeforeMount, reactive, ref, toRefs, unref } from "vue";
 import { IonSlides, IonSlide } from "@ionic/vue";
 import { useRoute } from "vue-router";
+import { useStore } from "@/store";
 import config from "@/config/config";
 import ShopInfoComp from "@/components/shop/shopInfo/shopInfo.vue";
 import FoodMenu from "@/components/shop/foodmenu/foodMenu.vue";
@@ -72,7 +73,6 @@ import { searchOutline, heartOutline, ellipsisHorizontalOutline } from "ionicons
 import { ShopInfo } from "@/interface/shopInfoInterface";
 import { Food, FoodsMenu } from "@/interface/foodsInterface";
 import { getShopDetail, getShopMenu } from "@/api/shop/shop";
-import { useStore } from "@/store";
 import { setScrollEl, useScoll, useScrollTo, useScrollFoodSlide, MenuRef, ToobarlRef } from "@/hooks/shopScroll";
 
 export default defineComponent({

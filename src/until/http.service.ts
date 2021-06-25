@@ -5,17 +5,14 @@
  * @FilePath: /elm-app/src/service/http.service.ts
  */
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import JSEncrypt from "jsencrypt";
 import qs from "qs";
-import config from "@/config/config";
 
 axios.defaults.withCredentials = true;//允许带cookie
-
 // 请求拦截器
 axios.interceptors.request.use(
   (config: AxiosRequestConfig) => {
-    if (localStorage.getItem("token")) {
-      config.headers.ACCESS_TOKEN = localStorage.getItem("token");
+    if (localStorage.getItem('loginToken')) {
+      config.headers.ACCESS_TOKEN = localStorage.getItem('loginToken');
     }
     return config;
   },
@@ -33,6 +30,7 @@ axios.interceptors.response.use((response: AxiosResponse) => {
   }
 },
   (error: unknown) => {
+    console.log(error)
     Promise.reject(JSON.stringify(error));
   }
 );
@@ -90,16 +88,6 @@ export class HttpService {
         resovle(args)
       }))
     })
-  }
-
-  public static getEncrypt(data: string) {
-    const encrypt = new JSEncrypt({
-      // eslint-disable-next-line @typescript-eslint/camelcase
-      default_key_size: "512"
-    });
-    // 设置公钥
-    encrypt.setPublicKey(config.pulickKey);
-    return encodeURIComponent(encrypt.encrypt(data));
   }
 
 }

@@ -1,10 +1,13 @@
 import { HttpService } from "@/until/http.service";
 import { UrlService } from "../url.base";
+import { UserInfo } from "@/interface/user";
+import { RootObject } from "@/interface/rootInterface";
 
 //登陆
-export const loginUser = (username: string, password: string): Promise<any> => {
-  const str = "username=" + username + "&password=" + password;
-  const jiamiStr = HttpService.getEncrypt(str);
-  console.log(jiamiStr)
-  return HttpService.post(UrlService.login, { token: jiamiStr })
+export const loginUser = (token: string): Promise<RootObject<UserInfo>> => {
+  return HttpService.post<RootObject<UserInfo>>(UrlService.login, { token })
+}
+
+export const getUserInfo = (token: string): Promise<RootObject<UserInfo>> => {
+  return HttpService.get<RootObject<UserInfo>>(UrlService.getUserInfo, { token })
 }

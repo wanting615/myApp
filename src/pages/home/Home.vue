@@ -127,7 +127,7 @@ export default defineComponent({
     };
     onMounted(() => {
       getPosstionByIp().then((res) => {
-        if (res.state) {
+        if (res && res.state) {
           homeData.latitude = res.data.latitude;
           homeData.longitude = res.data.longitude;
           getPostion();

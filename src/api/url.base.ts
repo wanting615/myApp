@@ -31,5 +31,7 @@ export class UrlService {
    * 登陆模块
    */
 
-  public static login = UrlService.baseUrl + "login"
+  public static login = UrlService.baseUrl + "login";
+
+  public static getUserInfo = UrlService.baseUrl + "/userInfo";
 }

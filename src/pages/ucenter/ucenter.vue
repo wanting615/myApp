@@ -1,39 +1,36 @@
 <template>
   <ion-page>
-    <ion-content :fullscreen="true">
-      <ion-header>
-        <ion-toolbar>
-          <ion-button>
-            <ion-icon src="assets/svg/home.svg" class="home-icon"></ion-icon>
+    <ion-header>
+      <ion-toolbar>
+        <ion-button>
+          <ion-icon src="assets/svg/home.svg" class="home-icon"></ion-icon>
+        </ion-button>
+        <ion-title
+          ><router-link to="/login">{{ userInfo ? userInfo.username : "立即登陆" }}</router-link></ion-title
+        >
+        <ion-buttons slot="end">
+          <ion-button class="right-icon">
+            <router-link to="/setting"><ion-icon :icon="settingsOutline"></ion-icon></router-link>
+            <ion-icon :icon="chatboxEllipsesOutline"></ion-icon>
           </ion-button>
-          <ion-title><router-link to="/login">立即登陆</router-link></ion-title>
-          <ion-buttons slot="end">
-            <ion-button class="right-icon">
-              <ion-icon :icon="settingsOutline"></ion-icon>
-              <ion-icon :icon="chatboxEllipsesOutline"></ion-icon>
-            </ion-button>
-          </ion-buttons>
-        </ion-toolbar>
-      </ion-header>
-
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content :fullscreen="true">
       <div class="inner">
         <div class="item popular-func">
           <div class="item-label">常用功能</div>
           <div class="item-list">
             <div class="item-item" v-for="item in popularFun" :key="item.name">
               <ion-icon :src="item.icon"></ion-icon>
-              {{ item.name }}
+              {{ item.name }} {{ item.num ? item.num : "" }}
             </div>
           </div>
         </div>
         <div class="item popular-func">
           <div class="item-label">互动娱乐</div>
           <div class="item-list">
-            <div
-              class="item-item wallet-item"
-              v-for="item in wallet"
-              :key="item.name"
-            >
+            <div class="item-item wallet-item" v-for="item in wallet" :key="item.name">
               <div class="item-tips">
                 <div>{{ item.name }}</div>
                 <div>{{ item.tip }}</div>
@@ -57,15 +54,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, reactive, toRefs } from "vue";
 import { settingsOutline, chatboxEllipsesOutline } from "ionicons/icons";
+import { useStore } from "@/store";
 
 export default defineComponent({
   name: "Ucenter",
-  data() {
-    return {
+  setup() {
+    const data = reactive({
       popularFun: [
-        { name: "红包卡劵", icon: "assets/colour-svg/red-envelop.svg" },
+        { name: "红包卡劵", icon: "assets/colour-svg/red-envelop.svg", num: 0 },
         { name: "店铺关注", icon: "assets/colour-svg/follow.svg" },
         { name: "购物车", icon: "assets/colour-svg/shop-cart.svg" },
         { name: "评价中心", icon: "assets/colour-svg/evaluate.svg" },
@@ -99,11 +97,12 @@ export default defineComponent({
         { name: "我的订单", icon: "assets/colour-svg/evaluate.svg" },
         { name: "我的优惠", icon: "assets/colour-svg/evaluate.svg" },
       ],
-    };
-  },
-  components: {},
-  setup() {
+    });
+    const userInfo = useStore().state.user.userInfo;
+    data.popularFun[0].num = userInfo?.gift_amount;
     return {
+      userInfo,
+      ...toRefs(data),
       settingsOutline,
       chatboxEllipsesOutline,
     };

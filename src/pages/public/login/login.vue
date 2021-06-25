@@ -20,9 +20,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, reactive, ref } from "vue";
 import { IonInput } from "@ionic/vue";
 import { loginUser } from "@/api/user/user";
+import { useStore } from "@/store";
+import { useRouter } from "vue-router";
+import common from "@/until/common";
 interface User {
   username: string;
   password: string;
@@ -33,32 +36,43 @@ export default defineComponent({
   components: {
     IonInput,
   },
-  data() {
-    return {
-      user: ref<User>({
-        username: "",
-        password: "",
-      }),
-      isDisabled: true,
-    };
-  },
-  methods: {
-    login(): void {
-      loginUser(this.user.username, this.user.password).then((res) => {
-        if (res.state) {
-          this.$router.back();
+  setup() {
+    const router = useRouter();
+    const store = useStore();
+    const isDisabled = ref(true);
+    const user = reactive<User>({
+      username: "",
+      password: "",
+    });
+
+    const login = () => {
+      const loginToken = common.getEncrypt<User>(user);
+      loginUser(loginToken).then((res) => {
+        if (res.status) {
+          localStorage.setItem("loginToken", loginToken); //本地存储
+          store.commit("setUserInfo", res.data); //存储store userInfo
+          store.commit("setLoginToken", loginToken); //存储store token
+          router.back();
         } else {
           alert(res.message);
         }
       });
-    },
-    changeInput(): void {
-      if (this.user.username && this.user.password) {
-        this.isDisabled = false;
+    };
+
+    const changeInput = () => {
+      if (user.username && user.password) {
+        isDisabled.value = false;
       } else {
-        this.isDisabled = true;
+        isDisabled.value = true;
       }
-    },
+    };
+
+    return {
+      isDisabled,
+      user,
+      login,
+      changeInput,
+    };
   },
 });
 </script>
