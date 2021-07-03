@@ -11,3 +11,7 @@ export const loginUser = (token: string): Promise<RootObject<UserInfo>> => {
 export const getUserInfo = (token: string): Promise<RootObject<UserInfo>> => {
   return HttpService.get<RootObject<UserInfo>>(UrlService.getUserInfo, { token })
 }
+
+export const delUser = (token: string): Promise<RootObject<null>> => {
+  return HttpService.get(UrlService.delUser, { token })
+}

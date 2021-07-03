@@ -25,7 +25,7 @@ import { IonInput } from "@ionic/vue";
 import { loginUser } from "@/api/user/user";
 import { useStore } from "@/store";
 import { useRouter } from "vue-router";
-import common from "@/until/common";
+import common from "@/until/common.service";
 interface User {
   username: string;
   password: string;

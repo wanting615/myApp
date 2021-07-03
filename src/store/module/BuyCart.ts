@@ -5,7 +5,7 @@ import {
   MutationTree,
   Module,
 } from 'vuex';
-import commonUntil from "@/until/common";
+import commonUntil from "@/until/common.service";
 import { Food } from "@/interface/foodsInterface"
 import { State as RootState } from '@/store'
 

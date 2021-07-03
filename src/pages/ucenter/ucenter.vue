@@ -42,7 +42,7 @@
         <div class="item popular-func">
           <div class="item-label">更多推荐</div>
           <div class="item-list">
-            <div class="item-item" v-for="item in moreFun" :key="item.name">
+            <div class="item-item" v-for="item in moreFun" :key="item.name" @click="toPage(item)">
               <ion-icon :src="item.icon"></ion-icon>
               {{ item.name }}
             </div>
@@ -55,6 +55,7 @@
 
 <script lang="ts">
 import { defineComponent, reactive, toRefs } from "vue";
+import { useRouter } from "vue-router";
 import { settingsOutline, chatboxEllipsesOutline } from "ionicons/icons";
 import { useStore } from "@/store";
 
@@ -91,17 +92,22 @@ export default defineComponent({
         },
       ],
       moreFun: [
-        { name: "我的地址", icon: "assets/colour-svg/red-envelop.svg" },
+        { name: "我的地址", icon: "assets/colour-svg/red-envelop.svg", routerUrl: "/address" },
         { name: "品牌会员", icon: "assets/colour-svg/follow.svg" },
         { name: "服务中心", icon: "assets/colour-svg/shop-cart.svg" },
         { name: "我的订单", icon: "assets/colour-svg/evaluate.svg" },
         { name: "我的优惠", icon: "assets/colour-svg/evaluate.svg" },
       ],
     });
+    const router = useRouter();
+    const toPage = (item: { name: string; icon: string; routerUrl: string }) => {
+      router.push(item.routerUrl);
+    };
     const userInfo = useStore().state.user.userInfo;
     data.popularFun[0].num = userInfo?.gift_amount;
     return {
       userInfo,
+      toPage,
       ...toRefs(data),
       settingsOutline,
       chatboxEllipsesOutline,

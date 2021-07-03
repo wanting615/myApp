@@ -27,6 +27,11 @@ declare type ComponentRef<T extends HTMLElement = HTMLDivElement> = ComponentElR
 
 declare type ElRef<T extends HTMLElement = HTMLDivElement> = NonNullable<T>;
 
+declare type Recordable<T = any> = Record<string, T>;
+declare type ReadonlyRecordable<T = any> = {
+  readonly [key: string]: T;
+};
+
 declare type Nullable<T> = T | null;
 declare type NonNullable<T> = T extends null | undefined ? never : T;
 

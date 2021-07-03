@@ -26,6 +26,7 @@ import '@ionic/vue/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import { setRouterGuard } from './router/guard';
 
 const app = createApp(App)
   .use(IonicVue, {
@@ -33,7 +34,11 @@ const app = createApp(App)
     hardwareBackButton: true
   })
   .use(router)
-  .use(store)
+  .use(store);
+
+//路由守卫
+setRouterGuard(router)
+
 // .use(vuexState)
 //注册全局组件
 registerGlobComp(app);

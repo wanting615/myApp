@@ -313,6 +313,9 @@ ul,li{
 .header-ios ion-toolbar:last-of-type{
   --border-width: 0;
 }
+ion-toast{
+  text-align: center;
+}
 
 /* 商店详情页添加食品到购物册 动画样式 */
 .add-carts-icon{
@@ -325,4 +328,14 @@ ul,li{
   border-radius: 50%;
   z-index: 100;
   transition: left .6s linear, top .6s cubic-bezier(0.5, -0.5, 1, 1);
+}
+
+/* 底部选项样式 */
+.action-sheet-button.sc-ion-action-sheet-ios{
+  color: #333;
+  font-size: 14px;
+}
+.action-sheet-title .sc-ion-action-sheet-ios,
+.action-sheet-cancel.sc-ion-action-sheet-ios{
+  color: #999;
 }

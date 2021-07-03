@@ -20,3 +20,13 @@ export default defineComponent({
   },
 });
 </script>
+<style lang="scss">
+ion-header {
+  ion-back-button {
+    --icon-font-size: 24px;
+  }
+  ion-title {
+    font-weight: 400;
+  }
+}
+</style>
