@@ -126,27 +126,17 @@ export default defineComponent({
       }
     };
     onMounted(() => {
+      console.log(111);
       getPosstionByIp().then((res) => {
+        //app 获取地位再写
         if (res && res.state) {
           homeData.latitude = res.data.latitude;
           homeData.longitude = res.data.longitude;
           getPostion();
         } else {
-          if (window.navigator.geolocation) {
-            window.navigator.geolocation.getCurrentPosition(
-              // eslint-disable-next-line no-undef
-              (res) => {
-                homeData.latitude = res.coords.latitude.toString();
-                homeData.longitude = res.coords.longitude.toString();
-                getPostion();
-              },
-              () => {
-                homeData.latitude = "31.23037";
-                homeData.longitude = "121.473701";
-                getPostion(); //默认值上海
-              }
-            );
-          }
+          homeData.latitude = "31.23037";
+          homeData.longitude = "121.473701";
+          getPostion(); //默认值上海
         }
       });
     });

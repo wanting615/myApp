@@ -1,10 +1,6 @@
 <template>
   <div class="modal-inner" :class="$attrs.cssClass" v-if="isOpen">
-    <div
-      class="modal-backdrop"
-      @click="didDismiss"
-      :class="{ 'show-backdrop': showModal }"
-    ></div>
+    <div class="modal-backdrop" @click="didDismiss" :class="{ 'show-backdrop': showModal }"></div>
     <div class="modal-content" :class="{ 'show-modal': showModal }">
       <slot></slot>
     </div>
@@ -59,7 +55,7 @@ export default defineComponent({
   top: 0;
   left: 0;
   right: 0;
-  z-index: 11;
+  z-index: 1000;
   .modal-backdrop {
     height: 100%;
     background-color: #000;

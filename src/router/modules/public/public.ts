@@ -11,6 +11,11 @@ const publicPage: Array<AppRouteRecordRaw> = [
     name: "Shop",
     component: () => import("@/pages/public/shop/shop.vue")
   },
+  {
+    path: '/map',
+    name: 'map',
+    component: () => import("@/components/common/map/map.vue")
+  }
 ]
 
 export default publicPage;

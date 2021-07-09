@@ -5,8 +5,6 @@
  * @FilePath: /elm-app/src/components/shop/shopInfoInterface.ts
  */
 
-import { RootObject } from "./rootInterface";
-
 //商店属性
 export interface ShopInfo {
   activities: Activity[]; //活动

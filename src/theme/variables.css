@@ -4,12 +4,12 @@ http://ionicframework.com/docs/theming/ */
 /** Ionic CSS Variables **/
 :root {
   /** primary **/
-  --ion-color-primary: #3880ff;
-  --ion-color-primary-rgb: 56, 128, 255;
+  --ion-color-primary: #333;
+  --ion-color-primary-rgb: 51, 51, 51;
   --ion-color-primary-contrast: #ffffff;
   --ion-color-primary-contrast-rgb: 255, 255, 255;
-  --ion-color-primary-shade: #3171e0;
-  --ion-color-primary-tint: #4c8dff;
+  --ion-color-primary-shade: #333;
+  --ion-color-primary-tint: #333;
 
   /** secondary **/
   --ion-color-secondary: #3dc2ff;
@@ -46,7 +46,7 @@ http://ionicframework.com/docs/theming/ */
   /** danger **/
   --ion-color-danger: #54b5f3;
   --ion-color-danger-rgb: 235, 68, 90;
-  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-contrast: #fff;
   --ion-color-danger-contrast-rgb: 255, 255, 255;
   --ion-color-danger-shade: #54b5f3;
   --ion-color-danger-tint: #54b5f3;
@@ -248,9 +248,6 @@ ion-button{
   --background-activated: none;
   --color-activated: none;
 }
-ion-back-button{
-  color: #333;
-}
 
 i,em{
  
@@ -263,13 +260,21 @@ i,em{
 }
 
 a{
-  color: #000;
+  color: inherit;
   text-decoration: none;
 }
 ul,li{
   list-style: none;
   padding: 0;
   margin: 0;
+}
+input{
+  background: none;
+  outline: none;
+  border: none;
+}
+input:focus{
+  border: none;
 }
 .clear:after{
   content: '';
@@ -338,4 +343,10 @@ ion-toast{
 .action-sheet-title .sc-ion-action-sheet-ios,
 .action-sheet-cancel.sc-ion-action-sheet-ios{
   color: #999;
+}
+
+/* 地址选中 弹窗 */
+.mapModal .modal-content{
+  height: 100%;
+  transition: none !important;
 }

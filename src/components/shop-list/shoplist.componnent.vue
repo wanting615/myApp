@@ -6,12 +6,7 @@
 -->
 <template>
   <div class="shop-list">
-    <div
-      v-for="item in shopsList"
-      :key="item.id"
-      class="shop-list-item"
-      @click="goDetail(item.id)"
-    >
+    <div v-for="item in shopsList" :key="item.id" class="shop-list-item" @click="goDetail(item.id)">
       <span class="is_premium" v-if="item.is_premium">品质</span>
       <img :src="config.imagePath + item.image_path" alt="" />
       <div class="shop-inner">
@@ -98,7 +93,7 @@ export default defineComponent({
       position: absolute;
       top: 10px;
       left: 10px;
-      width: 105px;
+      width: 95px;
       border-radius: 5px;
     }
     .shop-inner {
@@ -106,7 +101,7 @@ export default defineComponent({
       flex-direction: column;
       justify-content: space-between;
       width: 100%;
-      padding-left: 115px;
+      padding-left: 105px;
       font-size: 12px;
       color: #828282;
       h6 {

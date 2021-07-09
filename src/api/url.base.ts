@@ -8,11 +8,15 @@
 export class UrlService {
   // private static baseUrl = "localhost:3000/";
   private static baseUrl = "/api";
-
+  //定位、地址相关接口
   public static getPosstionByIp = UrlService.baseUrl + "posstionByIp";//通过ip获取地址
 
   public static getPosition = UrlService.baseUrl + "posstion"; //获取用户位置信息
 
+
+
+
+  //商店相关接口
   public static getShopsClassify = UrlService.baseUrl + "shopsClassify"; //获取商品分类
 
   public static getShopList = UrlService.baseUrl + "shops/list"; //获取商店列表
@@ -27,13 +31,19 @@ export class UrlService {
 
   public static getTags = UrlService.baseUrl + "/rating/tags/";//查询评价分类
 
-  /**
-   * 登陆模块
-   */
 
+  //用户相关接口
   public static login = UrlService.baseUrl + "login";//登陆
 
   public static getUserInfo = UrlService.baseUrl + "/userInfo";//获取用户信息
 
   public static delUser = UrlService.baseUrl + "/delUser";//注销用户
+
+  public static addUserAddress = UrlService.baseUrl + "/user/addUserAddress";//添加/更新收获地址
+
+  public static getUserAddress = UrlService.baseUrl + "/user/getUserAddress";//获取收货地址
+
+  public static delUserAddress = UrlService.baseUrl + "/user/delUserAddress";//删除收货地址
+
+
 }

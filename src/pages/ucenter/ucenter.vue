@@ -54,7 +54,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, toRefs } from "vue";
+import { computed, defineComponent, reactive, toRefs } from "vue";
 import { useRouter } from "vue-router";
 import { settingsOutline, chatboxEllipsesOutline } from "ionicons/icons";
 import { useStore } from "@/store";
@@ -62,9 +62,13 @@ import { useStore } from "@/store";
 export default defineComponent({
   name: "Ucenter",
   setup() {
+    const store = useStore();
+    const userInfo = computed(() => {
+      return store.state.user.userInfo;
+    });
     const data = reactive({
       popularFun: [
-        { name: "红包卡劵", icon: "assets/colour-svg/red-envelop.svg", num: 0 },
+        { name: "红包卡劵", icon: "assets/colour-svg/red-envelop.svg", num: userInfo?.value?.gift_amount },
         { name: "店铺关注", icon: "assets/colour-svg/follow.svg" },
         { name: "购物车", icon: "assets/colour-svg/shop-cart.svg" },
         { name: "评价中心", icon: "assets/colour-svg/evaluate.svg" },
@@ -103,8 +107,8 @@ export default defineComponent({
     const toPage = (item: { name: string; icon: string; routerUrl: string }) => {
       router.push(item.routerUrl);
     };
-    const userInfo = useStore().state.user.userInfo;
-    data.popularFun[0].num = userInfo?.gift_amount;
+
+    // data.popularFun[0].num = userInfo?.gift_amount || 0;
     return {
       userInfo,
       toPage,
