@@ -9,8 +9,8 @@ export const getPosstionByIp = (): Promise<any> => {
 
 //获取定位-经纬度
 export const getPosition = (
-  latitude: string,
-  longitude: string
+  latitude: number,
+  longitude: number
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<Possiton> => {
   return HttpService.get<Possiton>(UrlService.getPosition, { latitude, longitude });

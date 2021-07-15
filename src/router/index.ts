@@ -34,7 +34,7 @@ const routes: Array<AppRouteRecordRaw> = [
       {
         path: 'find',
         name: "Find",
-        component: () => import('@/pages/ucenter/ucenter.vue')
+        component: () => import('@/pages/find/find.vue')
       },
       {
         path: 'order',

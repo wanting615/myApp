@@ -1,15 +1,15 @@
 <template>
   <ion-page>
     <ion-tabs>
-      <ion-tab-bar>
+      <ion-tab-bar :style="{ display: hideTabs }">
         <ion-tab-button tab="home" href="/tabs/home">
           <ion-icon src="assets/svg/home.svg" />
           <ion-label>首页</ion-label>
         </ion-tab-button>
 
-        <ion-tab-button tab="find" href="/tabs/tab2">
+        <ion-tab-button tab="find" href="/tabs/find">
           <ion-icon src="assets/svg/find.svg" />
-          <ion-label>发现</ion-label>
+          <ion-label>真香</ion-label>
         </ion-tab-button>
 
         <ion-tab-button tab="order" href="/tabs/tab3">
@@ -26,18 +26,22 @@
 </template>
 
 <script lang="ts">
-import {
-  IonTabBar,
-  IonTabButton,
-  IonTabs,
-  IonLabel,
-  IonIcon,
-  IonPage,
-} from "@ionic/vue";
+import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage } from "@ionic/vue";
+import { useStore } from "@/store";
+import { computed } from "@vue/runtime-core";
 
 export default {
   name: "Tabs",
   components: { IonLabel, IonTabs, IonTabBar, IonTabButton, IonIcon, IonPage },
+  setup() {
+    const store = useStore();
+    const hideTabs = computed(() => {
+      return store.state.common.showTabs ? "" : "none";
+    });
+    return {
+      hideTabs,
+    };
+  },
 };
 </script>
 <style lang="scss">

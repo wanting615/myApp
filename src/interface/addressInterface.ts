@@ -4,12 +4,12 @@ export interface Location {//用户当前位置
 }
 
 export interface DeliveryAddressInfo {//用户收货地址信息
-  userId: number;
-  username: string;//姓名
+  id?: number;
+  name: string;//姓名
   sex?: string;//性别
   phone: string;//手机
-  lng: number;//经度
-  lat: number;//纬度
+  lng?: number;//经度
+  lat?: number;//纬度
   city: string;//城市
   adname: string;//区域
   address: string;//地址

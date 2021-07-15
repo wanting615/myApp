@@ -3,7 +3,7 @@ import "@amap/amap-jsapi-types";
 import AMapLoader from '@amap/amap-jsapi-loader';
 import { SeachResultAddress, Pois } from "@/interface/addressInterface";
 
-export function useMap() {
+export function useMap(loadMap = true) {
   const data = reactive<{
     city: string;//城市
     searchList: Pois[];//搜索列表
@@ -80,18 +80,19 @@ export function useMap() {
         version: '2.0'
       }
     }).then((AMap) => {
-      const map = new AMap.Map('mapContainer', mapOptions);
       AMapObj = AMap;
-      map.add(createMarker());
+      if (loadMap) {
+        const map = new AMap.Map('mapContainer', mapOptions);
+        map.add(createMarker());
+        map.on('moveend', () => {
+          // 获取地图中心点
+          const currentCenter = map.getCenter();
+          center = [currentCenter.lng, currentCenter.lat]
+          //根据地图中心点查附近地点
+          centerSearch();
+        });
+      }
       centerSearch();
-
-      map.on('moveend', () => {
-        // 获取地图中心点
-        const currentCenter = map.getCenter();
-        center = [currentCenter.lng, currentCenter.lat]
-        //根据地图中心点查附近地点
-        centerSearch();
-      });
     }).catch((e) => { alert(e); })
 
   })

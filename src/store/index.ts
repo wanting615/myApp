@@ -1,15 +1,17 @@
 import { createStore, createLogger } from 'vuex'
-import { UserModule as user, Store as UserStore, State as userState } from "./module/User";
-import { BuyCartModule as buyCart, Store as BuyCartStore, State as BuyCartState } from './module/BuyCart';
+import { CommonModule as common, Store as CommonStore, State as CommonState } from "./module/common";
+import { UserModule as user, Store as UserStore, State as userState } from "./module/user";
+import { BuyCartModule as buyCart, Store as BuyCartStore, State as BuyCartState } from './module/buyCart';
 import { AddressModule as address, Store as AddressStore, State as AddressState } from './module/address';
 export type State = {
   user: userState;
   buyCart: BuyCartState;
   address: AddressState;
+  common: CommonState;
 }
 
 export type Store =
-  UserStore<Pick<State, 'user'>> & BuyCartStore<Pick<State, 'buyCart'>> & AddressStore<Pick<State, 'address'>>
+  UserStore<Pick<State, 'user'>> & BuyCartStore<Pick<State, 'buyCart'>> & AddressStore<Pick<State, 'address'>> & CommonStore<Pick<State, 'common'>>;
 
 const plugins = process.env.NODE_ENV === 'production' ? [] : [createLogger()]
 
@@ -18,7 +20,8 @@ export const store = createStore({
   modules: {
     user,
     buyCart,
-    address
+    address,
+    common
   },
 })
 

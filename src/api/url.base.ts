@@ -25,7 +25,7 @@ export class UrlService {
 
   public static getShopMenu = UrlService.baseUrl + "shopMenu/";//获取商店商品清单
 
-  public static getRatings = UrlService.baseUrl + "/rating/";//获取评价列表
+  public static getRatings = UrlService.baseUrl + "/rating/list";//获取评价列表
 
   public static getScores = UrlService.baseUrl + "/rating/scroes/"; //查询评价分数
 
@@ -33,11 +33,11 @@ export class UrlService {
 
 
   //用户相关接口
-  public static login = UrlService.baseUrl + "login";//登陆
+  public static login = UrlService.baseUrl + "/user/login";//登陆
 
-  public static getUserInfo = UrlService.baseUrl + "/userInfo";//获取用户信息
+  public static getUserInfo = UrlService.baseUrl + "/user/userInfo";//获取用户信息
 
-  public static delUser = UrlService.baseUrl + "/delUser";//注销用户
+  public static delUser = UrlService.baseUrl + "/user/delUser";//注销用户
 
   public static addUserAddress = UrlService.baseUrl + "/user/addUserAddress";//添加/更新收获地址
 

@@ -11,8 +11,8 @@ export const getShopsClassify = (): Promise<RootObject<ShopClassify[]>> => {
 
 //获取商铺列表
 export const getShopListAction = (params: {
-  latitude: string; //纬度
-  longitude: string; //经度
+  latitude: number; //纬度
+  longitude: number; //经度
   page: number; //页数
   limit?: number; //条数
   categoryId?: number; //商店分裂

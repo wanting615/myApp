@@ -40,7 +40,7 @@ export default defineComponent({
     };
 
     const delAccount = () => {
-      delUser(store.state.user.loginToken).then((res) => {
+      delUser().then((res) => {
         if (res.status) {
           store.commit("delUserInfo");
           store.commit("delLoginToken");

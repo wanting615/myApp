@@ -6,6 +6,9 @@
           <ion-back-button default-href="/tabs/home"></ion-back-button>
         </ion-buttons>
         <ion-title>新增地址</ion-title>
+        <ion-buttons slot="end" class="trash" @click="delAddress">
+          <ion-icon :icon="trashOutline"></ion-icon>
+        </ion-buttons>
       </ion-toolbar>
     </ion-header>
 
@@ -13,7 +16,7 @@
       <ion-list>
         <ion-item lines="none">
           <ion-label>联系人</ion-label>
-          <ion-input type="text" placeholder="姓名" v-model="userAddress.username" clearInput></ion-input>
+          <ion-input type="text" placeholder="姓名" v-model="userAddress.name" clearInput></ion-input>
         </ion-item>
         <ion-item lines="none">
           <ion-label></ion-label>
@@ -49,14 +52,16 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onUnmounted, reactive } from "vue";
-import { useRouter } from "vue-router";
+import { computed, defineComponent, onMounted, onUnmounted, reactive } from "vue";
 import { IonItem, IonList, IonLabel, IonInput } from "@ionic/vue";
-import validatorService from "@/until/validator.servie";
+import { trashOutline } from "ionicons/icons";
+import { useRouter, useRoute } from "vue-router";
 import { useStore } from "@/store";
+import validatorService from "@/until/validator.servie";
 import { AddAddressInfo, DeliveryAddressInfo } from "@/interface/addressInterface";
 import { addUserAddress } from "@/api/user/user";
 import alertService from "@/until/alert.service";
+import { userDelAddress } from "@/hooks/address";
 
 export default defineComponent({
   components: {
@@ -66,17 +71,18 @@ export default defineComponent({
     IonInput,
   },
   setup() {
+    let addressInfo: Nullable<AddAddressInfo> = null; //地址信息
     const router = useRouter();
     const store = useStore();
+    const route = useRoute();
+
     const userAddress = reactive<Omit<DeliveryAddressInfo, keyof AddAddressInfo>>({
-      userId: 0,
-      username: "",
+      name: "",
       sex: "",
       phone: "",
       addressDetail: "",
       tag: "",
     });
-    let addressInfo: Nullable<AddAddressInfo> = null; //地址信息
     //选择地址
     const addressName = computed(() => {
       addressInfo = store.state.address.addAddressInfo;
@@ -94,14 +100,10 @@ export default defineComponent({
     };
     //提交
     const commitAddress = () => {
-      if (!validatorService.checkNotEmpty(userAddress.username, "请输入姓名")) return;
+      if (!validatorService.checkNotEmpty(userAddress.name, "请输入姓名")) return;
       if (!validatorService.checkUserPhone(userAddress.phone)) return;
       if (!validatorService.checkNotEmpty<Nullable<AddAddressInfo>>(addressInfo, "请选择地址")) return;
       if (!validatorService.checkNotEmpty<string>(userAddress.addressDetail, "请输入门牌号")) return;
-      const userInfo = store.state.user.userInfo;
-      if (userInfo) {
-        userAddress.userId = userInfo.user_id;
-      }
       const userAddressInfo = Object.assign(userAddress, addressInfo);
       addUserAddress(userAddressInfo).then((res) => {
         alertService.msgToast(res.message);
@@ -115,23 +117,48 @@ export default defineComponent({
       router.push("/map");
     };
 
+    //删除地址
+    const delAddress = async () => {
+      if (!userAddress.id) return;
+      const status = await userDelAddress(userAddress.id);
+      if (status) router.back();
+    };
+    onMounted(() => {
+      const params = route.params as unknown as DeliveryAddressInfo;
+      if (params.id) {
+        userAddress.id = params.id;
+        userAddress.name = params.name;
+        userAddress.sex = params.sex;
+        userAddress.phone = params.phone;
+        userAddress.addressDetail = params.addressDetail;
+        userAddress.tag = params.tag;
+      }
+    });
+
     onUnmounted(() => {
       store.commit("setAddAddressInfo", null);
     });
 
     return {
+      trashOutline,
       userAddress,
       addressName,
       selectSex,
       selectTag,
       commitAddress,
       goMap,
+      delAddress,
     };
   },
 });
 </script>
 <style lang="scss" scoped>
 @import "../../../theme/theme.scss";
+ion-toolbar {
+  .trash {
+    padding: 0 10px;
+  }
+}
 ion-content {
   --background: #f5f5f5;
   ion-list {

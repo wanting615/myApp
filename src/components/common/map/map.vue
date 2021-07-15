@@ -29,7 +29,7 @@
           <div class="item-address">{{ item.cityname }}{{ item.adname }}{{ item.address }}</div>
         </div>
       </div>
-      <Modal :isOpen="isOpenRef" class="mapModal">
+      <Modal :isOpen="isOpenRef" class="mapModal" height="100%">
         <MapModal @keySearch="keySearch" :modalList="modalList" @closeModal="closeModal"></MapModal>
       </Modal>
     </ion-content>

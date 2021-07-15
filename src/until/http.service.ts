@@ -54,7 +54,7 @@ export class HttpService {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
       },
-      timeout: 5000,
+      timeout: 50000,
       withCredentials: true,
       params,
     });

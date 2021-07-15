@@ -9,12 +9,12 @@ export const loginUser = (token: string): Promise<RootObject<UserInfo>> => {
   return HttpService.post<RootObject<UserInfo>>(UrlService.login, { token })
 }
 
-export const getUserInfo = (token: string): Promise<RootObject<UserInfo>> => {
-  return HttpService.get<RootObject<UserInfo>>(UrlService.getUserInfo, { token })
+export const getUserInfo = (): Promise<RootObject<UserInfo>> => {
+  return HttpService.get<RootObject<UserInfo>>(UrlService.getUserInfo)
 }
 
-export const delUser = (token: string): Promise<RootObject<null>> => {
-  return HttpService.get(UrlService.delUser, { token })
+export const delUser = (): Promise<RootObject<null>> => {
+  return HttpService.get(UrlService.delUser)
 }
 
 //用户收货地址 增删改查
@@ -22,10 +22,10 @@ export const addUserAddress = (addressInfo: DeliveryAddressInfo): Promise<RootOb
   return HttpService.post(UrlService.addUserAddress, addressInfo)
 }
 
-export const getUserAddress = (userId: string): Promise<RootObject<DeliveryAddressInfo>> => {
-  return HttpService.get(UrlService.getUserAddress, { userId });
+export const getUserAddress = (): Promise<RootObject<DeliveryAddressInfo[]>> => {
+  return HttpService.get(UrlService.getUserAddress);
 }
 
-export const delUserAddress = (userId: string, id: number): Promise<RootObject<DeliveryAddressInfo>> => {
-  return HttpService.get(UrlService.delUserAddress, { userId, id });
+export const delUserAddress = (id: number): Promise<RootObject<DeliveryAddressInfo>> => {
+  return HttpService.get(UrlService.delUserAddress, { id });
 }

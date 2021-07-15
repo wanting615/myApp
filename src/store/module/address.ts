@@ -33,9 +33,6 @@ const mutations: MutationTree<State> & Mutations = {
   setAddAddressInfo(state: State, addAddressInfo: AddAddressInfo) {
     state.addAddressInfo = addAddressInfo;
   },
-  // delAddAddressInfo(state: State) {
-  //   state.addAddressInfo = null;
-  // }
 }
 
 export type Store<S = State> = Omit<

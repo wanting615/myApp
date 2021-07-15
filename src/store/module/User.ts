@@ -10,7 +10,7 @@ import {
   GetterTree,
 } from 'vuex'
 import { State as RootState } from '@/store'
-import { UserInfo } from './../../interface/user';
+import { UserInfo } from '../../interface/user';
 import { getUserInfo } from '@/api/user/user';
 
 
@@ -57,7 +57,6 @@ type AugmentedActionContext = {
 export interface Actions {
   updateUserInfo(
     { commit }: AugmentedActionContext,
-    token: string,
   ): void;
 }
 
@@ -66,10 +65,9 @@ export const actions: ActionTree<State, RootState> & Actions = {
   //更新用户信息
   updateUserInfo(
     { commit },
-    token: string,
   ) {
     try {
-      getUserInfo(token).then(res => {
+      getUserInfo().then(res => {
         if (res.status) {
           commit('setUserInfo', res.data)
         }

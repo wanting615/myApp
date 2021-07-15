@@ -350,3 +350,7 @@ ion-toast{
   height: 100%;
   transition: none !important;
 }
+
+.alert-button.sc-ion-alert-ios{
+  color: #54b5f3;
+}

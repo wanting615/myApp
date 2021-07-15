@@ -1,7 +1,7 @@
 <template>
   <div class="modal-inner" :class="$attrs.cssClass" v-if="isOpen">
     <div class="modal-backdrop" @click="didDismiss" :class="{ 'show-backdrop': showModal }"></div>
-    <div class="modal-content" :class="{ 'show-modal': showModal }">
+    <div class="modal-content" :class="[{ 'show-modal': showModal }, cssClass]" :style="{ height: height }">
       <slot></slot>
     </div>
   </div>
@@ -16,6 +16,13 @@ export default defineComponent({
     isOpen: {
       type: Boolean,
       default: false,
+    },
+    height: {
+      type: String,
+      default: "auto",
+    },
+    cssClass: {
+      type: String,
     },
   },
   setup(props, context) {

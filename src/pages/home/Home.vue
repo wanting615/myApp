@@ -7,7 +7,7 @@
 
       <ion-header>
         <ion-toolbar color="danger">
-          <ion-button>
+          <ion-button @click="showModal">
             <ion-icon :icon="locationOutline"></ion-icon>
             {{ address }}
           </ion-button>
@@ -39,72 +39,89 @@
         <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="加载中"> </ion-infinite-scroll-content>
       </ion-infinite-scroll>
     </ion-content>
+    <Modal :is-open="isOpenRef" height="100%">
+      <HomeModal @didDismiss="closeModal()" />
+    </Modal>
   </ion-page>
 </template>
 
 <script lang="ts">
 import { defineComponent, onMounted, reactive, ref, toRefs, unref } from "vue";
 import ShopList from "@/components/shop-list/shoplist.componnent.vue";
-import NavComponnet from "../../components/home/nav.component.vue";
+import NavComponnet from "@/components/home/nav.component.vue";
+import Modal from "@/components/common/modal/modal.vue";
+import HomeModal from "@/components/home/homeModal.vue";
 import { ShopInfo } from "@/interface/shopInfoInterface";
 import { getPosition, getPosstionByIp } from "@/api/posstion/posstion";
 import { getShopListAction } from "@/api/shop/shop";
 import { scanOutline, locationOutline, cartOutline } from "ionicons/icons";
+import { useStore } from "@/store";
 
 export default defineComponent({
   name: "Home",
   components: {
     ShopList,
     NavComponnet,
+    Modal,
+    HomeModal,
   },
   setup() {
     const searchArea = ref<Nullable<ElRef>>(null);
+    const stroe = useStore();
+    const isOpenRef = ref(false); //控制搜索弹窗
+    const showModal = () => {
+      isOpenRef.value = true;
+      stroe.commit("changeShowTabs", false);
+    };
+    //关闭弹窗
+    const closeModal = () => {
+      isOpenRef.value = false;
+      stroe.commit("changeShowTabs", true);
+    };
 
     const homeData = reactive<{
       address: string;
       page: number;
       shopsList: ShopInfo[];
-      latitude: string;
-      longitude: string;
+      lat: number;
+      lng: number;
       scollY: number;
       isDisabled: boolean;
     }>({
       address: "定位中",
       page: 1,
       shopsList: [],
-      latitude: "",
-      longitude: "",
+      lat: 0,
+      lng: 0,
       scollY: 0,
       isDisabled: false,
     });
 
     //获取首页商店列表
-    const getShopList = (e?: CustomEvent, loadMore?: boolean): void => {
-      getShopListAction({
+    const getShopList = async (e?: CustomEvent, loadMore?: boolean): Promise<void> => {
+      const result = await getShopListAction({
         page: homeData.page,
-        latitude: homeData.latitude,
-        longitude: homeData.longitude,
-      }).then((res) => {
-        if (!res.status) return;
-        if (loadMore) {
-          homeData.shopsList = homeData.shopsList.concat(res.data);
-        } else {
-          homeData.shopsList = res.data;
-        }
-        if (e) (e.target as any).complete();
+        latitude: homeData.lat,
+        longitude: homeData.lng,
       });
+      if (!result.status) return;
+      if (loadMore) {
+        homeData.shopsList = homeData.shopsList.concat(result.data);
+      } else {
+        homeData.shopsList = result.data;
+      }
+      if (e) (e.target as any).complete();
     };
 
     //通过经纬度获取位置信息
-    const getPostion = (e?: CustomEvent): void => {
+    const getPostion = async (e?: CustomEvent): Promise<void> => {
       getShopList(e);
-      getPosition(homeData.latitude, homeData.longitude).then((res) => {
-        if (res.state) {
-          homeData.address = res.city + res.name;
-        } else {
-          homeData.address = "定位失败，请手动选择地址";
-        }
-      });
+      const result = await getPosition(homeData.lat, homeData.lng);
+      if (result.state) {
+        homeData.address = result.city + result.name;
+      } else {
+        homeData.address = "定位失败，请手动选择地址";
+      }
     };
 
     const doRefresh = (e: CustomEvent): void => {
@@ -125,23 +142,25 @@ export default defineComponent({
         wrapRef.style.position = "absolute";
       }
     };
-    onMounted(() => {
-      console.log(111);
-      getPosstionByIp().then((res) => {
-        //app 获取地位再写
-        if (res && res.state) {
-          homeData.latitude = res.data.latitude;
-          homeData.longitude = res.data.longitude;
-          getPostion();
-        } else {
-          homeData.latitude = "31.23037";
-          homeData.longitude = "121.473701";
-          getPostion(); //默认值上海
-        }
-      });
+    onMounted(async () => {
+      const result = await getPosstionByIp();
+      //app 获取地位再写
+      if (result && result.state) {
+        homeData.lat = result.data.lat;
+        homeData.lng = result.data.lng;
+        getPostion();
+      } else {
+        homeData.lat = 31.23037;
+        homeData.lng = 121.473701;
+        getPostion(); //默认值上海
+      }
     });
 
+    const chooseAddressModal = () => {
+      //
+    };
     return {
+      isOpenRef,
       ...toRefs(homeData),
       scanOutline,
       locationOutline,
@@ -149,6 +168,9 @@ export default defineComponent({
       doRefresh,
       loadMore,
       onScroll,
+      chooseAddressModal,
+      showModal,
+      closeModal,
     };
   },
 });
