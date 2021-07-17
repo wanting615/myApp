@@ -309,6 +309,9 @@ input:focus{
 .bolder{
   font-weight: bolder;
 }
+.vertical{
+  vertical-align: middle;
+}
 
 .ellipsis{
   overflow: hidden;

@@ -55,6 +55,10 @@ export function setScrollEl(navEl: Nullable<ElRef>, foodMenuEl: Nullable<MenuRef
   }
 }
 
+export function unSetScrollEl() {
+  scrollEl = undefined;
+}
+
 //页面ion-content滚动行为
 export function useScoll(e: CustomEvent) {
   if (!scrollEl) return;
@@ -78,7 +82,7 @@ export function useScoll(e: CustomEvent) {
   }
 
   //change silde scroll and food menu scroll
-  if (e.detail.scrollTop === scrollEl.navOffsettop) {
+  if (e.detail.scrollTop >= scrollEl.navOffsettop) {
     // fixed navs-slider
     scrollEl.navChildNode.style.position = 'fixed';
     scrollEl.navChildNode.style.marginTop = "var(--ion-safe-area-top, 0)";

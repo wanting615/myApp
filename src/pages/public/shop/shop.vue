@@ -36,10 +36,10 @@
             <div class="line" :class="{ rating: selectSlide === '1', stroy: selectSlide === '2' }"></div>
           </div>
         </div>
-        <ion-slides centeredSlides="false" zoom="false" :options="slideOpts" @ionSlideDidChange="ionSlideDidChange($event)" ref="slidesEl">
+        <ion-slides centeredSlides="false" zoom="false" :options="slideOpts" @ionSlideDidChange="ionSlideDidChange($event)" ref="slidesEl" v-if="shopMenu && shopMenu.length > 0">
           <!-- 食品栏 -->
           <ion-slide class="slides-page" @scroll.passive="scrollFoodSlide($event)">
-            <div class="slide-item" v-if="shopMenu">
+            <div class="slide-item">
               <HotFood :hotFoods="hotFoods" :menu="shopMenu[0]" />
               <FoodMenu :shopMenu="shopMenu" ref="foodMenuEl" @content-scrool="scrollTo" />
             </div>
@@ -58,7 +58,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onBeforeMount, reactive, ref, toRefs, unref } from "vue";
+import { defineComponent, onUnmounted, reactive, ref, toRefs, unref } from "vue";
 import { IonSlides, IonSlide } from "@ionic/vue";
 import { useRoute } from "vue-router";
 import { useStore } from "@/store";
@@ -73,7 +73,7 @@ import { searchOutline, heartOutline, ellipsisHorizontalOutline } from "ionicons
 import { ShopInfo } from "@/interface/shopInfoInterface";
 import { Food, FoodsMenu } from "@/interface/foodsInterface";
 import { getShopDetail, getShopMenu } from "@/api/shop/shop";
-import { setScrollEl, useScoll, useScrollTo, useScrollFoodSlide, MenuRef, ToobarlRef } from "@/hooks/shopScroll";
+import { setScrollEl, useScoll, useScrollTo, useScrollFoodSlide, MenuRef, ToobarlRef, unSetScrollEl } from "@/hooks/shopScroll";
 
 export default defineComponent({
   isVuex: true,
@@ -140,7 +140,7 @@ export default defineComponent({
           });
         });
       });
-      shopData.hotFoods = shopData.shopMenu[0].foods.filter((item: Food, index: number) => index < 3);
+      shopData.hotFoods = shopData.shopMenu[0]?.foods.filter((item: Food, index: number) => index < 3);
       //存储页面元素的获取
       setTimeout(() => {
         setScrollEl(unref(navEl), unref(foodMenuEl), unref(toolbarEl), unref(slidesEl));
@@ -165,6 +165,7 @@ export default defineComponent({
 
     //内容滚动事件
     const onScroll = (event: CustomEvent) => {
+      setScrollEl(unref(navEl), unref(foodMenuEl), unref(toolbarEl), unref(slidesEl));
       useScoll(event);
     };
     //菜单栏滚动事件
@@ -175,9 +176,11 @@ export default defineComponent({
     const scrollFoodSlide = (e: Event) => {
       useScrollFoodSlide(e);
     };
-    onBeforeMount(() => {
-      getData();
+
+    onUnmounted(() => {
+      unSetScrollEl();
     });
+    getData();
     return {
       config,
       ...toRefs(shopData),

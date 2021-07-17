@@ -20,7 +20,7 @@
         </ion-toolbar>
       </ion-header>
 
-      <div class="search-inner">
+      <div class="search-inner" ref="searchInner">
         <div class="search-area" ref="searchArea">
           <ion-icon :icon="scanOutline"></ion-icon>
           <input type="text" placeholder="德兴管 42减3" />
@@ -67,6 +67,7 @@ export default defineComponent({
   },
   setup() {
     const searchArea = ref<Nullable<ElRef>>(null);
+    const searchInner = ref<Nullable<ElRef>>(null);
     const stroe = useStore();
     const isOpenRef = ref(false); //控制搜索弹窗
     const showModal = () => {
@@ -85,7 +86,6 @@ export default defineComponent({
       shopsList: ShopInfo[];
       lat: number;
       lng: number;
-      scollY: number;
       isDisabled: boolean;
     }>({
       address: "定位中",
@@ -93,7 +93,6 @@ export default defineComponent({
       shopsList: [],
       lat: 0,
       lng: 0,
-      scollY: 0,
       isDisabled: false,
     });
 
@@ -103,6 +102,7 @@ export default defineComponent({
         page: homeData.page,
         latitude: homeData.lat,
         longitude: homeData.lng,
+        orderBy: "7",
       });
       if (!result.status) return;
       if (loadMore) {
@@ -133,12 +133,13 @@ export default defineComponent({
       getShopList(e, true);
     };
     const onScroll = (e: CustomEvent): void => {
+      console.log(11);
       const wrapRef = unref(searchArea);
-      if (!wrapRef) return;
-      homeData.scollY = e.detail.scrollTop;
-      if (homeData.scollY > 41) {
+      const innerRef = unref(searchInner);
+      if (!wrapRef || !innerRef) return;
+      if (e.detail.scrollTop > innerRef.offsetTop) {
         wrapRef.style.position = "fixed";
-      } else if (homeData.scollY < 41) {
+      } else if (e.detail.scrollTop < innerRef.offsetTop) {
         wrapRef.style.position = "absolute";
       }
     };
@@ -171,6 +172,8 @@ export default defineComponent({
       chooseAddressModal,
       showModal,
       closeModal,
+      searchArea,
+      searchInner,
     };
   },
 });

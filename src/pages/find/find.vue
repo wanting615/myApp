@@ -4,7 +4,7 @@
       <ion-toolbar>
         <div class="navs-slider">
           <div :class="{ active: segmentValue == 'recommend' }" @click="changeSlide(0)"><span>推荐</span></div>
-          <div :class="{ active: segmentValue == 'near' }" @click="changeSlide(1)"><span>附近</span></div>
+          <div :class="{ active: segmentValue == 'follow' }" @click="changeSlide(1)"><span>关注</span></div>
         </div>
       </ion-toolbar>
     </ion-header>
@@ -13,7 +13,7 @@
         <ion-refresher-content></ion-refresher-content>
       </ion-refresher>
       <ion-slides centeredSlides="false" zoom="false" @ionSlideWillChange="onSlideChanged()" :options="slideOpts" ref="slidesRef">
-        <ion-slide class="slides-page">1 </ion-slide>
+        <ion-slide class="slides-page"><Recommend></Recommend></ion-slide>
         <ion-slide class="slides-page">2 </ion-slide>
       </ion-slides>
       <ion-infinite-scroll threshold="100px" @ionInfinite="loadMore($event)" :disabled="isDisabled">
@@ -26,10 +26,12 @@
 <script lang="ts">
 import { defineComponent, ref, unref } from "vue";
 import { IonSlides, IonSlide } from "@ionic/vue";
+import Recommend from "@/components/find/recommend.vue";
 export default defineComponent({
   components: {
     IonSlides,
     IonSlide,
+    Recommend,
   },
   setup() {
     const slideOpts = {
@@ -43,11 +45,11 @@ export default defineComponent({
     const isDisabled = ref(false);
     const onSlideChanged = async () => {
       const index = await unref(slidesRef)?.$el.getActiveIndex();
-      index === 0 ? (segmentValue.value = "recommend") : (segmentValue.value = "near");
+      index === 0 ? (segmentValue.value = "recommend") : (segmentValue.value = "follow");
     };
 
     const changeSlide = (index: number) => {
-      index === 0 ? (segmentValue.value = "recommend") : (segmentValue.value = "near");
+      index === 0 ? (segmentValue.value = "recommend") : (segmentValue.value = "follow");
       unref(slidesRef)?.$el.slideTo(index);
     };
 
