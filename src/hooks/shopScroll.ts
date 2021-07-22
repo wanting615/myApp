@@ -1,4 +1,4 @@
-import { onBeforeUnmount, unref } from "vue";
+import { unref } from "vue";
 
 export interface MenuRef {
   menuEl: ElRef;
@@ -20,10 +20,15 @@ interface ScrollEl {
   slidesEl: IonSlidesRef;
 }
 let scrollEl: Undefinedable<ScrollEl>;
+let useScrollSlideFlag = true;
+let useScollToolbarFlag = true;
 
-onBeforeUnmount(() => {
+
+export function useClearEl() {
   scrollEl = undefined;
-});
+  useScrollSlideFlag = true;
+  useScollToolbarFlag = true;
+}
 
 export function setScrollEl(navEl: Nullable<ElRef>, foodMenuEl: Nullable<MenuRef>, toolbar: Nullable<ToobarlRef>, slidesEl: Nullable<IonSlidesRef>) {
   if (scrollEl === undefined) {
@@ -43,7 +48,7 @@ export function setScrollEl(navEl: Nullable<ElRef>, foodMenuEl: Nullable<MenuRef
       navOffsettop,
       foodMenuOffsetHeight,
       foodMenuHeight,
-      slidesEl
+      slidesEl,
     }
     //设置菜单列表高度
     foodMenuEl.menuEl.style.height = foodMenuHeight + "px";
@@ -55,46 +60,16 @@ export function setScrollEl(navEl: Nullable<ElRef>, foodMenuEl: Nullable<MenuRef
   }
 }
 
-export function unSetScrollEl() {
-  scrollEl = undefined;
-}
-
 //页面ion-content滚动行为
 export function useScoll(e: CustomEvent) {
   if (!scrollEl) return;
   //change toolbar background color
-  if (e.detail.scrollTop <= 50) {
-    if (scrollEl.toolbarEl) scrollEl.toolbarEl.style.background = `rgba(255, 255, 255,${e.detail.scrollTop * 0.02})`;
-    if (scrollEl.toolbarChildEl) {
-      scrollEl.toolbarChildEl.forEach((item: any) => {
-        if (e.detail.scrollTop < 25) {
-          item.style.color = `rgba(251, 251, 251,${1 - e.detail.scrollTop * 0.02})`;
-        } else {
-          item.style.color = `rgba(0, 0, 0,${(e.detail.scrollTop - 25) * 0.04})`;
-        }
-      })
-    }
-  } else {
-    if (scrollEl.toolbarEl) scrollEl.toolbarEl.style.background = "rgba(251, 251, 251";
-    scrollEl.toolbarChildEl?.forEach((item: any) => {
-      item.style.color = "rgba(0, 0, 0)";
-    })
-  }
+  // eslint-disable-next-line @typescript-eslint/no-use-before-define
+  animateToolbar(e);
 
   //change silde scroll and food menu scroll
-  if (e.detail.scrollTop >= scrollEl.navOffsettop) {
-    // fixed navs-slider
-    scrollEl.navChildNode.style.position = 'fixed';
-    scrollEl.navChildNode.style.marginTop = "var(--ion-safe-area-top, 0)";
-
-    //给每个silde添加 下拉滚动
-    scrollEl.slidesEl.$el.classList.add('scroll-slides');
-  } else {
-    scrollEl.slidesEl.$el.classList.remove('scroll-slides');
-    //reset 
-    scrollEl.navChildNode.style.position = "static";
-    scrollEl.navChildNode.style.marginTop = "0px";
-  }
+  // eslint-disable-next-line @typescript-eslint/no-use-before-define
+  changeMenuSlides(e);
 }
 
 //滚动到content中foodsmenu位置
@@ -115,5 +90,50 @@ export function useScrollFoodSlide(e: Event) {
   } else {
     scrollEl.foodMenuEl.menuLeft.style.overflowY = "hidden";
     scrollEl.foodMenuEl.menuRight.style.overflowY = "hidden";
+  }
+}
+
+function changeMenuSlides(e: CustomEvent) {
+  if (!scrollEl) return;
+  if (e.detail.scrollTop >= scrollEl.navOffsettop) {
+    // fixed navs-slider
+    scrollEl.navChildNode.style.position = 'fixed';
+    scrollEl.navChildNode.style.marginTop = "var(--ion-safe-area-top, 0)";
+
+    //给每个silde添加 下拉滚动
+    scrollEl.slidesEl.$el.classList.add('scroll-slides');
+    useScrollSlideFlag = true;
+  } else {
+    if (!useScrollSlideFlag) return;
+    scrollEl.slidesEl.$el.classList.remove('scroll-slides');
+    //reset 
+    scrollEl.navChildNode.style.position = "static";
+    scrollEl.navChildNode.style.marginTop = "0px";
+    useScrollSlideFlag = false;
+  }
+}
+
+function animateToolbar(e: CustomEvent) {
+  if (!scrollEl) return;
+  if (e.detail.scrollTop <= 50) {
+    if (scrollEl.toolbarEl) scrollEl.toolbarEl.style.background = `rgba(255, 255, 255,${e.detail.scrollTop * 0.02})`;
+    if (scrollEl.toolbarChildEl) {
+      scrollEl.toolbarChildEl.forEach((item: any) => {
+        if (e.detail.scrollTop < 25) {
+          item.style.color = `rgba(251, 251, 251,${1 - e.detail.scrollTop * 0.02})`;
+        } else {
+          item.style.color = `rgba(0, 0, 0,${(e.detail.scrollTop - 25) * 0.04})`;
+        }
+      })
+    }
+    useScollToolbarFlag = true;
+  } else {
+    if (!useScollToolbarFlag) return;
+
+    if (scrollEl.toolbarEl) scrollEl.toolbarEl.style.background = "rgba(251, 251, 251";
+    scrollEl.toolbarChildEl?.forEach((item: any) => {
+      item.style.color = "rgba(0, 0, 0)";
+    })
+    useScollToolbarFlag = false;
   }
 }

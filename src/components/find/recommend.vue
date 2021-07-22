@@ -7,7 +7,9 @@
         <span>华莱士</span>
         <div class="fr"><ion-icon src="assets/svg/follow.svg"></ion-icon><span class="vertical">关注</span></div>
       </div>
-      <div class="vedio"></div>
+
+      <VideoCom :config="videoConfig"></VideoCom>
+
       <div class="shop-info">
         <div class="shop-img"><img src="https://elm.cangdu.org/img/16a6476344433898.jpg" /></div>
         <div class="shop-item">
@@ -60,12 +62,27 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, reactive } from "vue";
 import { chatbubbleEllipsesOutline, arrowRedoOutline, ellipsisVerticalOutline, chevronForwardOutline } from "ionicons/icons";
+import VideoCom from "@/components/common/video/videoCom.vue";
+import { VideoConfigOptions } from "../common/video/videoCom";
 
 export default defineComponent({
+  components: {
+    VideoCom,
+  },
   setup() {
+    const videoConfig = reactive<VideoConfigOptions>({
+      url: "1.mp4",
+      controls: {
+        volume: true,
+        progressBar: true,
+        progressTime: true,
+        fullscreen: true,
+      },
+    });
     return {
+      videoConfig,
       chatbubbleEllipsesOutline,
       arrowRedoOutline,
       ellipsisVerticalOutline,

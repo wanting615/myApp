@@ -34,7 +34,8 @@
         </div>
       </div>
       <NavComponnet />
-      <ShopList :shopsList="shopsList" />
+      <ShopList :shopsList="shopsList" v-if="!isLoading" />
+      <HomeSkeleton v-if="isLoading"></HomeSkeleton>
       <ion-infinite-scroll threshold="100px" @ionInfinite="loadMore($event)" id="infinite-scroll" :disabled="isDisabled">
         <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="加载中"> </ion-infinite-scroll-content>
       </ion-infinite-scroll>
@@ -48,6 +49,7 @@
 <script lang="ts">
 import { defineComponent, onMounted, reactive, ref, toRefs, unref } from "vue";
 import ShopList from "@/components/shop-list/shoplist.componnent.vue";
+import HomeSkeleton from "@/components/home/homeSkeleton.vue";
 import NavComponnet from "@/components/home/nav.component.vue";
 import Modal from "@/components/common/modal/modal.vue";
 import HomeModal from "@/components/home/homeModal.vue";
@@ -60,6 +62,7 @@ import { useStore } from "@/store";
 export default defineComponent({
   name: "Home",
   components: {
+    HomeSkeleton,
     ShopList,
     NavComponnet,
     Modal,
@@ -87,6 +90,7 @@ export default defineComponent({
       lat: number;
       lng: number;
       isDisabled: boolean;
+      isLoading: boolean;
     }>({
       address: "定位中",
       page: 1,
@@ -94,6 +98,7 @@ export default defineComponent({
       lat: 0,
       lng: 0,
       isDisabled: false,
+      isLoading: true,
     });
 
     //获取首页商店列表
@@ -109,6 +114,7 @@ export default defineComponent({
         homeData.shopsList = homeData.shopsList.concat(result.data);
       } else {
         homeData.shopsList = result.data;
+        homeData.isLoading = false;
       }
       if (e) (e.target as any).complete();
     };
@@ -132,15 +138,19 @@ export default defineComponent({
       homeData.page += 1;
       getShopList(e, true);
     };
+    let scrollFlag = true;
     const onScroll = (e: CustomEvent): void => {
-      console.log(11);
       const wrapRef = unref(searchArea);
       const innerRef = unref(searchInner);
       if (!wrapRef || !innerRef) return;
       if (e.detail.scrollTop > innerRef.offsetTop) {
+        if (scrollFlag) return;
+        scrollFlag = true;
         wrapRef.style.position = "fixed";
       } else if (e.detail.scrollTop < innerRef.offsetTop) {
+        if (!scrollFlag) return;
         wrapRef.style.position = "absolute";
+        scrollFlag = false;
       }
     };
     onMounted(async () => {
