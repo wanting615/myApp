@@ -45,5 +45,11 @@ export class UrlService {
 
   public static delUserAddress = UrlService.baseUrl + "/user/delUserAddress";//删除收货地址
 
+  //发现页
+  //获取推荐列表
+  public static getFindList = UrlService.baseUrl + "/getFind";//获取发现推荐列表
 
+  public static replyFind = UrlService.baseUrl + "/replyFind";//回复发现推荐
+
+  public static praiseFind = UrlService.baseUrl + "/findPraise";//点赞发现推荐
 }

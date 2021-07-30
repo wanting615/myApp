@@ -1,5 +1,4 @@
 export interface VideoConfigOptions {
-  url: string;
   cssClass?: string;
   autoPaly?: boolean;
   loop?: boolean;

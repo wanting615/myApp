@@ -1,24 +1,24 @@
 <template>
   <ion-page>
-    <ion-header>
-      <ion-toolbar>
-        <div class="navs-slider">
-          <div :class="{ active: segmentValue == 'recommend' }" @click="changeSlide(0)"><span>推荐</span></div>
-          <div :class="{ active: segmentValue == 'follow' }" @click="changeSlide(1)"><span>关注</span></div>
-        </div>
-      </ion-toolbar>
-    </ion-header>
     <ion-content>
       <ion-refresher slot="fixed" @ionRefresh="doRefresh($event)">
         <ion-refresher-content></ion-refresher-content>
       </ion-refresher>
+      <ion-header>
+        <ion-toolbar>
+          <div class="navs-slider">
+            <div :class="{ active: segmentValue == 'recommend' }" @click="changeSlide(0)"><span>推荐</span></div>
+            <div :class="{ active: segmentValue == 'follow' }" @click="changeSlide(1)"><span>关注</span></div>
+          </div>
+        </ion-toolbar>
+      </ion-header>
       <ion-slides centeredSlides="false" zoom="false" @ionSlideWillChange="onSlideChanged()" :options="slideOpts" ref="slidesRef">
         <ion-slide class="slides-page"><Recommend></Recommend></ion-slide>
         <ion-slide class="slides-page">2 </ion-slide>
       </ion-slides>
-      <ion-infinite-scroll threshold="100px" @ionInfinite="loadMore($event)" :disabled="isDisabled">
+      <!-- <ion-infinite-scroll threshold="100px" @ionInfinite="loadMore($event)" :disabled="isDisabled">
         <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="加载中"> </ion-infinite-scroll-content>
-      </ion-infinite-scroll>
+      </ion-infinite-scroll> -->
     </ion-content>
   </ion-page>
 </template>
@@ -53,8 +53,10 @@ export default defineComponent({
       unref(slidesRef)?.$el.slideTo(index);
     };
 
-    const doRefresh = () => {
-      //
+    const doRefresh = (e: any) => {
+      setTimeout(() => {
+        e.target.complete();
+      }, 500);
     };
     const loadMore = () => {
       //

@@ -53,13 +53,15 @@
         </ion-slides>
       </div>
     </ion-content>
-    <BuyCart :deliveryPrice="shopInfo?.float_delivery_fee" :minimunOrder="shopInfo?.float_minimum_order_amount" :foodMemus="shopMenu" v-if="selectSlide === '0'"></BuyCart>
+    <ion-footer class="buy-cart-footer">
+      <BuyCart :deliveryPrice="shopInfo?.float_delivery_fee" :minimunOrder="shopInfo?.float_minimum_order_amount" :foodMemus="shopMenu" v-if="selectSlide === '0'"></BuyCart>
+    </ion-footer>
   </ion-page>
 </template>
 
 <script lang="ts">
 import { defineComponent, onBeforeUnmount, reactive, ref, toRefs, unref } from "vue";
-import { IonSlides, IonSlide } from "@ionic/vue";
+import { IonSlides, IonSlide, IonFooter } from "@ionic/vue";
 import { useRoute } from "vue-router";
 import { useStore } from "@/store";
 import config from "@/config/config";
@@ -81,6 +83,7 @@ export default defineComponent({
   components: {
     IonSlides,
     IonSlide,
+    IonFooter,
     ShopInfoComp,
     FoodMenu,
     HotFood,

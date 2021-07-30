@@ -18,10 +18,13 @@
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
+import { IonLabel, IonList, IonItem, IonThumbnail, IonSkeletonText } from "@ionic/vue";
 
-export default defineComponent({});
+export default defineComponent({
+  components: { IonLabel, IonList, IonItem, IonThumbnail, IonSkeletonText },
+});
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 ion-list {
   padding: 10px;
   background: #f5f5f5 !important;

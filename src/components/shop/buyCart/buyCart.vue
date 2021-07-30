@@ -11,23 +11,15 @@
       </div>
       <div>另外需配送费¥{{ deliveryPrice }}</div>
     </div>
-    <div class="cart-button fr" v-if="buyCartInfo.totalprice > minimunOrder">
-      去结算
-    </div>
+    <div class="cart-button fr" v-if="buyCartInfo.totalprice > minimunOrder" @click="settlement">去结算</div>
     <div class="cart-button fr" v-else>¥{{ minimunOrder }}元起送</div>
   </div>
-  <Modal
-    :isOpen="isOpenRef"
-    css-class="buy-cart-modal"
-    @didDismiss="showBuyCart(false)"
-  >
+  <Modal :isOpen="isOpenRef" css-class="buy-cart-modal" @didDismiss="showBuyCart(false)">
     <div class="cart-foods">
       <div class="cart-title">
         <span>已选商品</span>
         <span>(包装费¥<span class="color">2.5</span>)</span>
-        <span class="fr" @click="clearBuyCart"
-          ><ion-icon :src="trashOutline"></ion-icon>清空</span
-        >
+        <span class="fr" @click="clearBuyCart"><ion-icon :src="trashOutline"></ion-icon>清空</span>
       </div>
       <ul>
         <li v-for="item in foods" :key="item.item_id">
@@ -36,24 +28,15 @@
             <div>{{ item.name }}</div>
             <div>
               ¥{{ item.specfoods[0].price }}
-              <i v-if="item.specfoods[0].original_price" class="delete">
-                ￥{{ item.specfoods[0].original_price }}
-              </i>
+              <i v-if="item.specfoods[0].original_price" class="delete"> ￥{{ item.specfoods[0].original_price }} </i>
             </div>
           </div>
           <div class="add-icon">
             <span v-if="item.num">
-              <ion-icon
-                :icon="removeCircleOutline"
-                class="del-icon"
-                @click="delBuyCarts(item)"
-              ></ion-icon>
+              <ion-icon :icon="removeCircleOutline" class="del-icon" @click="delBuyCarts(item)"></ion-icon>
               <span class="food-num">{{ item.num }}</span>
             </span>
-            <ion-icon
-              :icon="addOutline"
-              @click="addBuyCarts($event, item)"
-            ></ion-icon>
+            <ion-icon :icon="addOutline" @click="addBuyCarts($event, item)"></ion-icon>
           </div>
         </li>
       </ul>
@@ -62,16 +45,10 @@
 </template>
 
 <script lang="ts">
-import {
-  computed,
-  defineComponent,
-  PropType,
-  reactive,
-  ref,
-  toRefs,
-} from "vue";
+import { computed, defineComponent, PropType, reactive, ref, toRefs } from "vue";
 import config from "@/config/config";
 import { useStore } from "@/store";
+import { useRouter } from "vue-router";
 import { addOutline, removeCircleOutline, trashOutline } from "ionicons/icons";
 import Modal from "@/components/common/modal/modal.vue";
 import { Food, FoodsMenu } from "@/interface/foodsInterface";
@@ -101,8 +78,7 @@ export default defineComponent({
       foods.forEach((item: Food) => {
         num = num + (item.num ? item.num : 1);
         price += item.specfoods[0].price * (item.num ? item.num : 1);
-        originalprice +=
-          item.specfoods[0].original_price * (item.num ? item.num : 1);
+        originalprice += item.specfoods[0].original_price * (item.num ? item.num : 1);
       });
       return {
         foodNum: num,
@@ -126,26 +102,23 @@ export default defineComponent({
     const methodReactive = reactive({
       //添加
       addBuyCarts: (event: MouseEvent, item: Food) => {
-        const menu = props.foodMemus?.find(
-          (menu: FoodsMenu) => item.category_id === menu.id
-        );
-        const food = menu?.foods.find(
-          (food: Food) => item.item_id === food.item_id
-        );
+        const menu = props.foodMemus?.find((menu: FoodsMenu) => item.category_id === menu.id);
+        const food = menu?.foods.find((food: Food) => item.item_id === food.item_id);
         if (menu && food) addCarts(event, food, menu);
       },
       //删除
       delBuyCarts: (item: Food) => {
-        const menu = props.foodMemus?.find(
-          (menu: FoodsMenu) => item.category_id === menu.id
-        );
-        const food = menu?.foods.find(
-          (food: Food) => item.item_id === food.item_id
-        );
+        const menu = props.foodMemus?.find((menu: FoodsMenu) => item.category_id === menu.id);
+        const food = menu?.foods.find((food: Food) => item.item_id === food.item_id);
         if (menu && food) delCarts(food, menu);
       },
     });
 
+    //结算
+    const router = useRouter();
+    const settlement = () => {
+      router.push("/comfirmOrder");
+    };
     return {
       addOutline,
       removeCircleOutline,
@@ -156,6 +129,7 @@ export default defineComponent({
       foods,
       config,
       clearBuyCart,
+      settlement,
       ...toRefs(methodReactive),
     };
   },

@@ -357,3 +357,11 @@ ion-toast{
 .alert-button.sc-ion-alert-ios{
   color: #54b5f3;
 }
+/* 发现页回复弹窗 */
+.recommend-reply{
+  --height: 70%;
+  align-items: flex-end
+}
+.recommend-reply .modal-wrapper{
+  border-radius: 10px 10px 0 0;
+}

@@ -15,6 +15,11 @@ const publicPage: Array<AppRouteRecordRaw> = [
     path: '/map',
     name: 'map',
     component: () => import("@/components/common/map/map.vue")
+  },
+  {
+    path: '/comfirmOrder',
+    name: 'comfirmOrder',
+    component: () => import("@/pages/public/comfirmOrder/comfirmOrder.vue")
   }
 ]
 

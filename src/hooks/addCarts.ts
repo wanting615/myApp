@@ -15,7 +15,7 @@ export function addCarts(e: MouseEvent, item: Food, menu: FoodsMenu): void {
 
   setTimeout((): void => {
     const distance = 30;
-    const target: Nullable<HTMLElement> = document.querySelector('.buy-cart-container');
+    const target: Nullable<HTMLElement> = document.querySelector('.buy-cart-footer');
     console.log(target)
     div.style.top = (target?.offsetTop || document.body.offsetHeight) + distance + "px";
     div.style.left = distance + "px";

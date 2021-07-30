@@ -1,7 +1,7 @@
 <template>
   <div class="video-container">
     <div class="backdrop"></div>
-    <video :src="config.url" type="video/mp4" ref="videoEl" @click="palyVideo"></video>
+    <video :src="url" type="video/mp4" ref="videoEl" @click="palyVideo"></video>
     <div class="video-btn" @click="palyVideo" v-if="!videoState.isPlay">
       <ion-icon src="assets/svg/play.svg"></ion-icon>
     </div>
@@ -31,12 +31,14 @@ import { VideoConfigOptions } from "./videoCom";
 
 export default defineComponent({
   props: {
+    url: {
+      type: String,
+      default: "",
+    },
     config: {
       type: Object as PropType<VideoConfigOptions>,
       default: () => {
-        return {
-          url: "",
-        };
+        return {};
       },
     },
   },
@@ -52,7 +54,7 @@ export default defineComponent({
     const palyVideo = () => {
       const video = unref(videoEl);
       videoState.isPlay = !videoState.isPlay;
-      video && (videoState.isPlay ? video.play() : video.play());
+      video && (videoState.isPlay ? video.play() : video.pause());
     };
 
     //静音
