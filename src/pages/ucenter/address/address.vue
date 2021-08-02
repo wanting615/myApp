@@ -17,7 +17,7 @@
             <div class="inner">
               <div class="address_detail">
                 <span v-if="item.tag" class="tag">{{ item.tag }}</span>
-                <span>{{ item.address_name }} {{ item.addressDetail }}</span>
+                <span>{{ item.addressName }} {{ item.addressDetail }}</span>
               </div>
               <div class="user-info">
                 <span>{{ item.name }}</span>

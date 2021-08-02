@@ -22,8 +22,18 @@ export const addUserAddress = (addressInfo: DeliveryAddressInfo): Promise<RootOb
   return HttpService.post(UrlService.addUserAddress, addressInfo)
 }
 
+//获取收货地址
 export const getUserAddress = (): Promise<RootObject<DeliveryAddressInfo[]>> => {
   return HttpService.get(UrlService.getUserAddress);
+}
+
+/**
+ * 获取收货地址和到收货地址所需时间
+ * @param from "31.222,131.2222"
+ * @returns 
+ */
+export const getUserAddressByTime = (from: string): Promise<RootObject<DeliveryAddressInfo[]>> => {
+  return HttpService.get(UrlService.getUserAddressByTime, { from });
 }
 
 export const delUserAddress = (id: number): Promise<RootObject<DeliveryAddressInfo>> => {

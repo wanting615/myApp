@@ -1,3 +1,4 @@
+import { RootObject } from './../../interface/rootInterface';
 import { Possiton } from "@/interface/posstionInterface";
 import { HttpService } from "@/until/http.service";
 import { UrlService } from "../url.base";
@@ -15,3 +16,7 @@ export const getPosition = (
 ): Promise<Possiton> => {
   return HttpService.get<Possiton>(UrlService.getPosition, { latitude, longitude });
 };
+
+export const getDistanceTime = (from: string, to: string): Promise<RootObject<number>> => {
+  return HttpService.get(UrlService.getDistanceTime, { from, to })
+}

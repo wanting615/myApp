@@ -13,6 +13,8 @@ export class UrlService {
 
   public static getPosition = UrlService.baseUrl + "posstion"; //获取用户位置信息
 
+  public static getDistanceTime = UrlService.baseUrl + "getDistanceTime";//测量两点需要的时间
+
 
 
 
@@ -42,6 +44,8 @@ export class UrlService {
   public static addUserAddress = UrlService.baseUrl + "/user/addUserAddress";//添加/更新收获地址
 
   public static getUserAddress = UrlService.baseUrl + "/user/getUserAddress";//获取收货地址
+
+  public static getUserAddressByTime = UrlService.baseUrl + "/user/getUserAddressByTime";//获取收货地址和到收货地址所需时间
 
   public static delUserAddress = UrlService.baseUrl + "/user/delUserAddress";//删除收货地址
 

@@ -23,7 +23,7 @@ export const getShopListAction = (params: {
   return HttpService.get<RootObject<ShopInfo[]>>(UrlService.getShopList, params);
 };
 //获取商铺详情
-export const getShopDetail = async (id: string): Promise<RootObject<ShopInfo>> => {
+export const getShopDetail = async (id: string | number): Promise<RootObject<ShopInfo>> => {
   return HttpService.get<RootObject<ShopInfo>>(UrlService.getShopDetail + id);
 }
 

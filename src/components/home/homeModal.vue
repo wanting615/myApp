@@ -32,11 +32,11 @@
             收货地址 <span class="fr"><router-link to="/address">管理</router-link></span>
           </div>
           <ion-list>
-            <ion-item lines="none" v-for="item in userAddresses" :key="item.id">
+            <ion-item lines="none" v-for="item in userAddresses" :key="item.id" @click="didDismiss(item, true)">
               <div class="inner">
                 <div class="address_detail">
                   <span v-if="item.tag" class="tag">{{ item.tag }}</span>
-                  <span>{{ item.address_name }} {{ item.addressDetail }}</span>
+                  <span>{{ item.addressName }} {{ item.addressDetail }}</span>
                 </div>
                 <div class="user-info">
                   <span>{{ item.name }}</span>
@@ -49,7 +49,7 @@
         <div class="search-list list">
           <div class="title">附近地址</div>
           <ion-list>
-            <ion-item lines="none" v-for="item in searchList" :key="item.id">
+            <ion-item lines="none" v-for="item in searchList" :key="item.id" @click="didDismiss(item)">
               <div class="inner">
                 <div class="address_detail">
                   <span>{{ item.name }}</span>
@@ -67,10 +67,11 @@
 import { defineComponent, onMounted, reactive, toRefs, watch } from "vue";
 import { IonInput, IonList, IonItem } from "@ionic/vue";
 import { closeOutline, chevronDownOutline, searchOutline, locationOutline } from "ionicons/icons";
-import { DeliveryAddressInfo } from "@/interface/addressInterface";
+import { DeliveryAddressInfo, Pois } from "@/interface/addressInterface";
 import { getUserAddress } from "@/api/user/user";
 import { useRoute, useRouter } from "vue-router";
 import { useMap } from "@/hooks/useMap";
+import { useStore } from "@/store";
 
 export default defineComponent({
   components: {
@@ -79,6 +80,7 @@ export default defineComponent({
     IonItem,
   },
   setup(props, context) {
+    const store = useStore();
     const route = useRoute();
     const router = useRouter();
     const userAddressData = reactive<{
@@ -88,8 +90,13 @@ export default defineComponent({
     });
 
     const { data } = useMap(false); //关键字搜索函数
-    const didDismiss = () => {
-      context.emit("didDismiss");
+    const didDismiss = (item: Pois & DeliveryAddressInfo, isDelivery: boolean) => {
+      isDelivery ? store.commit("setDeliveryAddressInfo", item) : store.commit("setDeliveryAddressInfo", null);
+      context.emit("closeModal", {
+        lng: item.lng || item.location.lng,
+        lat: item.lat || item.location.lat,
+        addressName: item.addressName || item.name,
+      });
     };
 
     const showSeachModal = () => {

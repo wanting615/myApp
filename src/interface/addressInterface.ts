@@ -16,6 +16,7 @@ export interface DeliveryAddressInfo {//用户收货地址信息
   addressDetail: string;//小区、楼号
   addressName: string;//地址名称
   tag?: string;//标签
+  orderLeadTime?: string; //到收货地址所需时间
 }
 
 export interface AddAddressInfo {//添加地址时存储变量

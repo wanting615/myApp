@@ -10,7 +10,7 @@ export interface ShopInfo {
   activities: Activity[]; //活动
   address: string; //地址信息
   category: string; //品种、类别
-  delivery_mode: Delivery[]; //支持配送方式
+  delivery_mode: Delivery; //支持配送方式
   description: string; //商店宣传语
   distance: string; //距离
   float_delivery_fee: number; //配送费

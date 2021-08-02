@@ -39,7 +39,6 @@ export default defineComponent({
     watch(
       () => props.isOpen,
       (now: boolean, pre: boolean) => {
-        console.log(now);
         if (now === pre) return;
         setTimeout(() => {
           now ? didOpen() : didDismiss();

@@ -1,5 +1,5 @@
-export function useFormatTime(fmt: string, date: string | Date) {
-  if (!date) return;
+export function useFormatTime(fmt: string, date: string | Date): string {
+  if (!date) return '';
   if (typeof date === "string") date = new Date(date);
   const opt = {
     "Y+": date.getFullYear().toString(),        // 年

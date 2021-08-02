@@ -26,6 +26,26 @@ i{
   border-radius: 50%;
   transform: scale(0.8);
 }
+ul{
+  color: #333;
+  padding: 10px;
+  background-color: #fff;
+  border-radius: 8px;
+  li {
+    display: flex;
+    align-items: center;
+    padding: 5px 0;
+    font-size: 14px;
+    .flex{
+      flex: 1;
+    }
+    ion-icon{
+      padding-left: 5px;
+      color: $greyColor;
+    }
+  }
+}
+ 
 .user-info{
   padding: 0 12px;
   background: linear-gradient(to bottom, rgba(84, 181, 243,1) 0%, rgba(84, 181, 243,1) 50%, rgba(245, 245, 245,1) 100%);
@@ -43,13 +63,7 @@ i{
   .user-distribution{
     margin-top: 10px;
     padding: 15px 10px;
-    background-color: #fff;
-    border-radius: 8px;
     li{
-      display: flex;
-      align-items: center;
-      padding: 5px 0;
-      font-size: 14px;
       &.username{
         color: $greyColor;
         padding-bottom: 10px;
@@ -60,12 +74,7 @@ i{
         }
       }
       .flex{
-        flex: 1;
         font-weight: 500;
-      }
-      ion-icon{
-        padding-left: 5px;
-        color: $greyColor;
       }
     }
   }
@@ -73,98 +82,89 @@ i{
 
 .foods{
   padding: 10px;
-  color: #333;
-  ul{
-    padding: 10px;
-    font-size: 14px;
-    background-color: #fff;
-    border-radius: 10px;
-    li{
-      display: flex;
-      align-items: center;
-      padding: 5px 0;
-      &.food{
-        align-items: inherit;
-        .flex{
-          padding: 0 10px;
-        }
-      }
-      &.reduction{
-        font-size: 12px;
-        color: $redColor;
-        span:last-child{
-          color: #999;
-          text-decoration: line-through;
-        }
-      }
-      &.warn-tag{
-        color: $greyColor;
-        font-size: 12px;
-      }
-      &.total-money{
-        padding-top: 15px;
-        margin-top: 10px;
-        border-top: 0.5px solid #eee;
-        .total{
-          margin-left: 10px;
-          span{
-            font-size: 18px;
-            font-weight: bolder;
-          }
-        }
-      }
-      img{
-        width: 50px;
-        border-radius: 5px;
-      }
+  li{
+    &.food{
+      align-items: inherit;
       .flex{
-        flex: 1;
+        padding: 0 10px;
       }
-      .icon-font{
-        width: 16px;
-        height: 16px;
-        margin-right: 5px;
-        font-size: 10px;
-        line-height: 16px;
-        color: #fff;
-        text-align: center;
-        background-color: $redColor;
-        border-radius: 3px;
+    }
+    &.reduction{
+      font-size: 12px;
+      color: $redColor;
+      span:last-child{
+        color: #999;
+        text-decoration: line-through;
       }
-      .warn{
-        color: #e8dbd5;
-        background-color: #f1a73b;
-        border-radius: 10px;
-        transform: scale(0.8);
+    }
+    &.warn-tag{
+      color: $greyColor;
+      font-size: 12px;
+    }
+    &.total-money{
+      padding-top: 15px;
+      margin-top: 10px;
+      border-top: 0.5px solid #eee;
+      .total{
+        margin-left: 10px;
+        span{
+          font-size: 18px;
+          font-weight: bolder;
+        }
       }
-      .red-bag{
-        padding: 2px 10px;
-        color: #fff;
-        font-size: 12px;
-        background-color: $redColor;
-        border-radius: 10px;
-      }
+    }
+    img{
+      width: 50px;
+      border-radius: 5px;
+    }
+    .icon-font{
+      width: 16px;
+      height: 16px;
+      margin-right: 5px;
+      font-size: 10px;
+      line-height: 16px;
+      color: #fff;
+      text-align: center;
+      background-color: $redColor;
+      border-radius: 3px;
+    }
+    .warn{
+      color: #e8dbd5;
+      background-color: #f1a73b;
+      border-radius: 10px;
+      transform: scale(0.8);
+    }
+    .red-bag{
+      padding: 2px 10px;
+      color: #fff;
+      font-size: 12px;
+      background-color: $redColor;
+      border-radius: 10px;
     }
   }
 }
 
-.settlement{
-  margin: 0px 10px;
-  padding: 20px 10px;
-  font-size: 14px;
-  background: linear-gradient(to bottom, rgba(253, 245, 244,1) 0%, rgba(245, 245, 245,1) 50%);
-  .shop-card{
+.orther-info{
+  padding: 10px;
+  .gray-color{
     font-size: 12px;
-    color: #999;
-    .bold{
-      font-size: 14px;
-      color: #333;
-    }
   }
+}
+
+.settlement{
+  font-size: 14px;
+  background: #fff;
+  // .shop-card{
+  //   font-size: 12px;
+  //   color: #999;
+  //   .bold{
+  //     font-size: 14px;
+  //     color: #333;
+  //   }
+  // }
   .total-mount{
     display: flex;
-    padding-top: 15px;
-    padding-bottom: var(--ion-safe-area-bottom, 0);
+    padding: 10px;
     align-items: center;
     .mount{
       flex: 1;

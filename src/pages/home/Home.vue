@@ -41,7 +41,7 @@
       </ion-infinite-scroll>
     </ion-content>
     <Modal :is-open="isOpenRef" height="100%">
-      <HomeModal @didDismiss="closeModal()" />
+      <HomeModal @closeModal="closeModal" />
     </Modal>
   </ion-page>
 </template>
@@ -77,11 +77,6 @@ export default defineComponent({
       isOpenRef.value = true;
       stroe.commit("changeShowTabs", false);
     };
-    //关闭弹窗
-    const closeModal = () => {
-      isOpenRef.value = false;
-      stroe.commit("changeShowTabs", true);
-    };
 
     const homeData = reactive<{
       address: string;
@@ -102,12 +97,12 @@ export default defineComponent({
     });
 
     //获取首页商店列表
-    const getShopList = async (e?: CustomEvent, loadMore?: boolean): Promise<void> => {
+    const getShopList = async (e?: CustomEvent, loadMore?: boolean, order?: string): Promise<void> => {
       const result = await getShopListAction({
         page: homeData.page,
         latitude: homeData.lat,
         longitude: homeData.lng,
-        orderBy: "7",
+        orderBy: order || "7",
       });
       if (!result.status) return;
       if (loadMore) {
@@ -138,6 +133,10 @@ export default defineComponent({
       homeData.page += 1;
       getShopList(e, true);
     };
+
+    /**
+     * 滚动事件
+     */
     let scrollFlag = true;
     const onScroll = (e: CustomEvent): void => {
       const wrapRef = unref(searchArea);
@@ -153,6 +152,23 @@ export default defineComponent({
         scrollFlag = false;
       }
     };
+
+    //关闭弹窗
+    const closeModal = (item: { lng: number; lat: number; addressName: string }) => {
+      if (item) {
+        homeData.address = item.addressName;
+        homeData.lat = item.lat;
+        homeData.lng = item.lng;
+        getShopList(undefined, false, "2");
+        stroe.commit("setLoaction", {
+          lat: item.lat,
+          lng: item.lng,
+        });
+      }
+      isOpenRef.value = false;
+      stroe.commit("changeShowTabs", true);
+    };
+
     onMounted(async () => {
       const result = await getPosstionByIp();
       //app 获取地位再写
@@ -160,16 +176,9 @@ export default defineComponent({
         homeData.lat = result.data.lat;
         homeData.lng = result.data.lng;
         getPostion();
-      } else {
-        homeData.lat = 31.23037;
-        homeData.lng = 121.473701;
-        getPostion(); //默认值上海
       }
     });
 
-    const chooseAddressModal = () => {
-      //
-    };
     return {
       isOpenRef,
       ...toRefs(homeData),
@@ -179,7 +188,6 @@ export default defineComponent({
       doRefresh,
       loadMore,
       onScroll,
-      chooseAddressModal,
       showModal,
       closeModal,
       searchArea,

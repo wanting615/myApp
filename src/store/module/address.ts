@@ -10,8 +10,8 @@ export type State = {
 
 const state: State = {
   location: {
-    lng: 31.215616,
-    lat: 121.458145
+    lng: 121.458145,
+    lat: 31.215616
   },
   deliveryAddressInfo: null,
   addAddressInfo: null,
@@ -19,7 +19,7 @@ const state: State = {
 
 export type Mutations<S = State> = {
   setLoaction(state: S, loaction: Location): void;
-  setDeliveryAddressInfo(state: S, deliveryAddressInfo: DeliveryAddressInfo): void;
+  setDeliveryAddressInfo(state: S, deliveryAddressInfo: Nullable<DeliveryAddressInfo>): void;
   setAddAddressInfo(state: S, addAddressInfo: AddAddressInfo | null): void;
 }
 
@@ -27,7 +27,7 @@ const mutations: MutationTree<State> & Mutations = {
   setLoaction(state: State, location: Location) {
     state.location = location;
   },
-  setDeliveryAddressInfo(state: State, deliveryAddressInfo: DeliveryAddressInfo) {
+  setDeliveryAddressInfo(state: State, deliveryAddressInfo: Nullable<DeliveryAddressInfo>) {
     state.deliveryAddressInfo = deliveryAddressInfo;
   },
   setAddAddressInfo(state: State, addAddressInfo: AddAddressInfo) {
