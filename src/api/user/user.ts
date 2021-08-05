@@ -3,6 +3,7 @@ import { UrlService } from "../url.base";
 import { UserInfo } from "@/interface/user";
 import { RootObject } from "@/interface/rootInterface";
 import { DeliveryAddressInfo } from "@/interface/addressInterface";
+import { Hongbao } from "@/interface/hongbaos";
 
 //登陆
 export const loginUser = (token: string): Promise<RootObject<UserInfo>> => {
@@ -38,4 +39,15 @@ export const getUserAddressByTime = (from: string): Promise<RootObject<DeliveryA
 
 export const delUserAddress = (id: number): Promise<RootObject<DeliveryAddressInfo>> => {
   return HttpService.get(UrlService.delUserAddress, { id });
+}
+
+
+//获取红包list
+export const getHongbaos = (status: number): Promise<RootObject<Hongbao[]>> => {
+  return HttpService.get(UrlService.getHongbaos, { status })
+}
+
+//兑换红包
+export const sendHongbaoKey = (): Promise<RootObject<null>> => {
+  return HttpService.get(UrlService.sendHongbaoKey)
 }

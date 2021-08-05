@@ -49,6 +49,10 @@ export class UrlService {
 
   public static delUserAddress = UrlService.baseUrl + "/user/delUserAddress";//删除收货地址
 
+  public static getHongbaos = UrlService.baseUrl + '/getHongbaos';//获取用户红包
+
+  public static sendHongbaoKey = UrlService.baseUrl + "/sendHongbaoKey";//兑换红包
+
   //发现页
   //获取推荐列表
   public static getFindList = UrlService.baseUrl + "/getFind";//获取发现推荐列表

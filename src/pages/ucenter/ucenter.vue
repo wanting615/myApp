@@ -3,15 +3,15 @@
     <ion-header>
       <ion-toolbar>
         <ion-button>
-          <ion-icon src="assets/svg/home.svg" class="home-icon"></ion-icon>
+          <ion-icon src="assets/svg/home.svg" class="home-icon" />
         </ion-button>
-        <ion-title
-          ><router-link to="/login">{{ userInfo ? userInfo.username : "立即登陆" }}</router-link></ion-title
-        >
+        <ion-title>
+          <router-link to="/login">{{ userInfo ? userInfo.username : "立即登陆" }}</router-link>
+        </ion-title>
         <ion-buttons slot="end">
-          <ion-button class="right-icon">
-            <router-link to="/setting"><ion-icon :icon="settingsOutline"></ion-icon></router-link>
-            <ion-icon :icon="chatboxEllipsesOutline"></ion-icon>
+          <ion-button class="right-icon" router-link="/setting">
+            <ion-icon :icon="settingsOutline" />
+            <ion-icon :icon="chatboxEllipsesOutline" />
           </ion-button>
         </ion-buttons>
       </ion-toolbar>
@@ -22,7 +22,9 @@
           <div class="item-label">常用功能</div>
           <div class="item-list">
             <div class="item-item" v-for="item in popularFun" :key="item.name">
-              <ion-icon :src="item.icon"></ion-icon>
+              <router-link :to="item.url">
+                <ion-icon :src="item.icon"></ion-icon>
+              </router-link>
               {{ item.name }} {{ item.num ? item.num : "" }}
             </div>
           </div>
@@ -68,10 +70,10 @@ export default defineComponent({
     });
     const data = reactive({
       popularFun: [
-        { name: "红包卡劵", icon: "assets/colour-svg/red-envelop.svg", num: userInfo?.value?.gift_amount },
-        { name: "店铺关注", icon: "assets/colour-svg/follow.svg" },
-        { name: "购物车", icon: "assets/colour-svg/shop-cart.svg" },
-        { name: "评价中心", icon: "assets/colour-svg/evaluate.svg" },
+        { name: "红包卡劵", icon: "assets/colour-svg/red-envelop.svg", num: userInfo?.value?.gift_amount, url: "/hongbao" },
+        { name: "店铺关注", icon: "assets/colour-svg/follow.svg", url: "" },
+        { name: "购物车", icon: "assets/colour-svg/shop-cart.svg", url: "" },
+        { name: "评价中心", icon: "assets/colour-svg/evaluate.svg", url: "" },
       ],
       wallet: [
         {

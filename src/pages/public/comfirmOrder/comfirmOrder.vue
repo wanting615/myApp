@@ -53,7 +53,7 @@
             <span class="icon-font">减</span><span class="flex">店铺{{ activities.description }}</span
             ><span class="bold redColor">-¥{{ activities.reduceMoney }}</span>
           </li>
-          <li><span class="icon-font">¥</span><span class="flex">红包抵用卷</span><span class="red-bag">未选红包 ></span></li>
+          <li @click="goHongbao"><span class="icon-font">¥</span><span class="flex">红包抵用卷</span><span class="red-bag">未选红包 ></span></li>
           <li class="warn-tag"><span class="icon-font warn">!</span> 已为您选择满减,比折扣节省2</li>
           <li class="total-money">
             <span class="flex">优惠说明<i class="tip">?</i></span>
@@ -69,11 +69,13 @@
 
       <div class="orther-info">
         <ul>
-          <li>
-            <span class="flex bold">备注</span>
-            <span class="gray-color">点击可以选无接触配送</span>
-            <ion-icon :icon="chevronForwardOutline"></ion-icon>
-          </li>
+          <router-link to="/remarks">
+            <li>
+              <span class="flex bold">备注</span>
+              <span class="gray-color">点击可以选无接触配送</span>
+              <ion-icon :icon="chevronForwardOutline"></ion-icon>
+            </li>
+          </router-link>
           <li>
             <span class="flex bold">餐具份数</span>
             <span class="gray-color">必选</span>
@@ -111,6 +113,7 @@ import { getUserAddressByTime } from "@/api/user/user";
 import { useFormatTime } from "@/hooks/format";
 import { Food } from "@/interface/foodsInterface";
 import { getShopDetail } from "@/api/shop/shop";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   components: {
@@ -166,7 +169,6 @@ export default defineComponent({
       getUserAddressByTime(from).then((res) => {
         if (res.status) {
           res.data.forEach((item) => {
-            console.log(item.orderLeadTime);
             if (item.orderLeadTime && parseInt(item.orderLeadTime) < 7200) {
               data.userAddress = item;
               const date = new Date();
@@ -215,11 +217,22 @@ export default defineComponent({
       return data.foodsMoney + packingFee + data.deliveryInfo.price - data.activities.reduceMoney;
     });
 
+    //选红包
+    const router = useRouter();
+    const goHongbao = () => {
+      router.push({
+        path: "/chooseHongbao",
+        query: {
+          price: data.foodsMoney,
+        },
+      });
+    };
     return {
       volumeMediumOutline,
       chevronForwardOutline,
       ...toRefs(data),
       getFoodPrice,
+      goHongbao,
       getYouhui,
       realMoney,
     };
