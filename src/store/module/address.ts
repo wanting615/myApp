@@ -10,8 +10,8 @@ export type State = {
 
 const state: State = {
   location: {
-    lng: 121.458145,
-    lat: 31.215616
+    lng: 121.458145,//经度
+    lat: 31.215616//纬度
   },
   deliveryAddressInfo: null,
   addAddressInfo: null,

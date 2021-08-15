@@ -66,7 +66,6 @@ export default defineComponent({
     }>({
       hongbaos: [],
     });
-
     onIonViewWillEnter(() => {
       getHongbaos(0).then((res) => {
         if (res.status) data.hongbaos = res.data;

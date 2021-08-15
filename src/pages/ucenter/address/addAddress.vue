@@ -114,7 +114,14 @@ export default defineComponent({
     };
     //跳转新增收货地址
     const goMap = () => {
-      router.push("/map");
+      const location = route.query.lat ? route.query : store.state.address.location;
+      router.push({
+        path: "/map",
+        query: {
+          lat: location.lat,
+          lng: location.lng,
+        },
+      });
     };
 
     //删除地址

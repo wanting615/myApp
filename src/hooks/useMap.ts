@@ -3,7 +3,7 @@ import "@amap/amap-jsapi-types";
 import AMapLoader from '@amap/amap-jsapi-loader';
 import { SeachResultAddress, Pois } from "@/interface/addressInterface";
 
-export function useMap(loadMap = true) {
+export function useMap(loadMap = true, lat: number, lng: number) {
   const data = reactive<{
     city: string;//城市
     searchList: Pois[];//搜索列表
@@ -16,7 +16,7 @@ export function useMap(loadMap = true) {
 
   let AMapObj: any;
 
-  let center: [number, number] = [121.458145, 31.215616];
+  let center: [number, number] = [lng, lat];//经度 纬度
   const mapOptions: AMap.MapOptions = {
     center: center,
     zoom: 17,
@@ -26,15 +26,15 @@ export function useMap(loadMap = true) {
   function centerSearch() {
     //构造地点查询类
     const placeSearch = new AMapObj.PlaceSearch({
-      type: '商务住宅|地名地址信息', // 类别
+      type: '商务住宅|地名地址信息|公司企业', // 类别
       pageSize: 30, // 单页显示结果条数
       pageIndex: 1, // 页码
-      city: data.city, // 城市
+      // city: data.city, // 城市
       autoFitView: false, // 是否自动调整地图视野使绘制的 Marker点都处于视口的可见范围
       extensions: 'all'
     });
     //根据地图中心点查附近地点
-    placeSearch.searchNearBy('', center, 200, (status: string, result: SeachResultAddress) => {
+    placeSearch.searchNearBy('', center, 300, (status: string, result: SeachResultAddress) => {
       if (status == 'complete') {
         console.log(result)
         data.searchList = result.poiList.pois;

@@ -38,10 +38,10 @@
         </div>
         <ion-slides centeredSlides="false" zoom="false" :options="slideOpts" @ionSlideDidChange="ionSlideDidChange($event)" ref="slidesEl" v-if="shopMenu && shopMenu.length > 0">
           <!-- 食品栏 -->
-          <ion-slide class="slides-page" @scroll.passive="scrollFoodSlide($event)">
+          <ion-slide class="slides-page" @scroll="scrollFoodSlide($event)">
             <div class="slide-item">
               <HotFood :hotFoods="hotFoods" :menu="shopMenu[0]" />
-              <FoodMenu :shopMenu="shopMenu" ref="foodMenuEl" @content-scrool="scrollTo" />
+              <FoodMenu :shopMenu="shopMenu" ref="foodMenuEl" @contentScroll="scrollTo" />
             </div>
           </ion-slide>
           <!-- 评价栏 -->
@@ -128,6 +128,7 @@ export default defineComponent({
       },
       selectSlide: "0", //当前选中的slide
     });
+
     //获取商店信息和食品栏
     const getData = async () => {
       shopData.shopInfo = (await getShopDetail(shopId)).data;

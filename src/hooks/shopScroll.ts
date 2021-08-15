@@ -95,6 +95,7 @@ export function useScrollFoodSlide(e: Event) {
 
 function changeMenuSlides(e: CustomEvent) {
   if (!scrollEl) return;
+  console.log(e.detail.scrollTop, scrollEl.navOffsettop)
   if (e.detail.scrollTop >= scrollEl.navOffsettop) {
     // fixed navs-slider
     scrollEl.navChildNode.style.position = 'fixed';

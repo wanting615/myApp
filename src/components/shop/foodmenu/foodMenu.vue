@@ -93,7 +93,7 @@ export default defineComponent({
 
     //点击选菜单栏
     const selectMenu = (index: number) => {
-      context.emit("contentScrool");
+      context.emit("contentScroll");
       selecIndex.value = index;
       if (foodList) {
         const foodItem = foodList[index] as HTMLElement;

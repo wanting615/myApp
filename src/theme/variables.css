@@ -365,3 +365,15 @@ ion-toast{
 .recommend-reply .modal-wrapper{
   border-radius: 10px 10px 0 0;
 }
+
+/* picker */
+.picker .picker-opt{
+  font-size: 16px;
+  color: #333;
+}
+.picker .picker-wrapper{
+  border-radius: 10px 10px 0 0;
+}
+.picker .picker-toolbar.sc-ion-picker-ios{
+  border-bottom: none;
+}

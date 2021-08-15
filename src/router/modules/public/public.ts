@@ -17,14 +17,29 @@ const publicPage: Array<AppRouteRecordRaw> = [
     component: () => import("@/components/common/map/map.vue")
   },
   {
+    path: '/orderList',
+    name: 'orderList',
+    component: () => import("@/pages/public/order/orderList/orderList.vue")
+  },
+  {
+    path: '/orderDetail/:orderId',
+    name: 'orderDetail',
+    component: () => import("@/pages/public/order/orderDetail/orderDetail.vue")
+  },
+  {
     path: '/comfirmOrder',
     name: 'comfirmOrder',
-    component: () => import("@/pages/public/comfirmOrder/comfirmOrder.vue")
+    component: () => import("@/pages/public/order/comfirmOrder/comfirmOrder.vue")
   },
   {
     path: '/remarks',
     name: 'remarks',
-    component: () => import("@/pages/public/comfirmOrder/remarks.vue")
+    component: () => import("@/pages/public/order/comfirmOrder/remarks.vue")
+  },
+  {
+    path: '/invoice',
+    name: 'invoice',
+    component: () => import("@/pages/public/order/comfirmOrder/invoice.vue")
   }
 ]
 

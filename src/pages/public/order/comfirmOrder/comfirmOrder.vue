@@ -12,7 +12,7 @@
       <div class="user-info">
         <div class="tips"><ion-icon :icon="volumeMediumOutline" class="vertical"></ion-icon> <span class="vertical">温馨提示: 请适量点餐、避免浪费</span></div>
         <ul class="user-distribution">
-          <li class="address">
+          <li class="address" @click="goAddress">
             <span class="flex">{{ userAddress ? userAddress.addressName + userAddress.addressDetail : "请选择收货地址" }}</span>
             <ion-icon :icon="chevronForwardOutline"></ion-icon>
           </li>
@@ -53,7 +53,14 @@
             <span class="icon-font">减</span><span class="flex">店铺{{ activities.description }}</span
             ><span class="bold redColor">-¥{{ activities.reduceMoney }}</span>
           </li>
-          <li @click="goHongbao"><span class="icon-font">¥</span><span class="flex">红包抵用卷</span><span class="red-bag">未选红包 ></span></li>
+
+          <li @click="goHongbao">
+            <span class="icon-font">¥</span><span class="flex">红包抵用卷</span>
+            <span class="red-bag" v-if="!redpacket">未选红包 </span>
+            <span class="bold redColor" v-else> -¥{{ redpacket }}</span>
+            <ion-icon :icon="chevronForwardOutline"></ion-icon>
+          </li>
+
           <li class="warn-tag"><span class="icon-font warn">!</span> 已为您选择满减,比折扣节省2</li>
           <li class="total-money">
             <span class="flex">优惠说明<i class="tip">?</i></span>
@@ -72,18 +79,20 @@
           <router-link to="/remarks">
             <li>
               <span class="flex bold">备注</span>
-              <span class="gray-color">点击可以选无接触配送</span>
+              <span class="gray-color">{{ remarks ? remarks : "点击可以选无接触配送" }}</span>
               <ion-icon :icon="chevronForwardOutline"></ion-icon>
             </li>
           </router-link>
-          <li>
+          <li @click="selecTableware">
             <span class="flex bold">餐具份数</span>
-            <span class="gray-color">必选</span>
+            <span class="gray-color">{{ tableWare ? tableWare : "必选" }}</span>
             <ion-icon :icon="chevronForwardOutline"></ion-icon>
           </li>
           <li>
             <span class="flex bold">发票</span>
-            <span class="gray-color">该店暂不支持线上发票,请电话联系商户</span>
+            <span class="gray-color" v-if="!isInvoice">该店暂不支持线上发票,请电话联系商户</span>
+            <span class="gray-color" v-else @click="goInvoice">{{ invoice ? invoice : "请选择" }}</span>
+            <ion-icon :icon="chevronForwardOutline"></ion-icon>
           </li>
         </ul>
       </div>
@@ -94,11 +103,10 @@
         <div class="mount">
           <span class="bold">合计: </span><span class="money"><i>¥</i>{{ realMoney }}</span>
           <div class="gray-color">
-            <span class="redColor">已优惠¥{{ getYouhui }}</span
-            >,还差<span class="redColor">¥6</span>红包未选
+            <span class="redColor">已优惠¥{{ getYouhui }}</span>
           </div>
         </div>
-        <div class="comfrim-btn">提交订单</div>
+        <div class="comfrim-btn" @click="submitOrder">提交订单</div>
       </div>
     </ion-footer>
   </ion-page>
@@ -107,19 +115,24 @@
 import { computed, defineComponent, onMounted, reactive, toRefs } from "vue";
 import { onIonViewDidEnter, IonFooter } from "@ionic/vue";
 import { volumeMediumOutline, chevronForwardOutline } from "ionicons/icons";
-import { useStore } from "@/store";
 import { DeliveryAddressInfo } from "@/interface/addressInterface";
 import { getUserAddressByTime } from "@/api/user/user";
 import { useFormatTime } from "@/hooks/format";
 import { Food } from "@/interface/foodsInterface";
 import { getShopDetail } from "@/api/shop/shop";
+import { useStore } from "@/store";
 import { useRouter } from "vue-router";
+import { openPicker } from "@/hooks/picker";
+import { createOrder } from "@/api/order/order";
+import alertService from "@/until/alert.service";
 
 export default defineComponent({
   components: {
     IonFooter,
   },
   setup() {
+    const router = useRouter();
+
     const data = reactive<{
       shopLoaction: [number, number]; //商店位置 经纬度
       userAddress: Nullable<DeliveryAddressInfo>; //用户配送地址
@@ -136,7 +149,8 @@ export default defineComponent({
         description: string; //满减描述
         reduceMoney: number; //满减金额
       };
-      redPacket: null; //红包
+      tableWare: string; //餐具
+      isInvoice: boolean; //是否能开具发票
     }>({
       shopLoaction: [0, 0],
       userAddress: null,
@@ -152,13 +166,18 @@ export default defineComponent({
         description: "",
         reduceMoney: 0,
       },
-      redPacket: null,
+      tableWare: "",
+      isInvoice: false,
     });
-
+    const foodIds: { id: number; num: number }[] = []; //存储foodId和数量 待创建订单后使用
     const store = useStore();
     data.foods = store.state.buyCart.foods;
     //计算食品价格和打包价格
     data.foods.forEach((food) => {
+      foodIds.push({
+        id: food.item_id,
+        num: food.num,
+      });
       data.foodsMoney += food.specfoods[0].price * food.num;
       data.packingFee += food.specfoods[0].packing_fee * food.num;
     });
@@ -166,18 +185,27 @@ export default defineComponent({
     //查询是否有符合配送范围的配送地址
     const getUserDeviryAddress = (lat: number, lng: number) => {
       const from = lat + "," + lng;
-      getUserAddressByTime(from).then((res) => {
-        if (res.status) {
-          res.data.forEach((item) => {
-            if (item.orderLeadTime && parseInt(item.orderLeadTime) < 7200) {
-              data.userAddress = item;
+      const defalutAddress = store.state.address.deliveryAddressInfo;
+      if (defalutAddress && defalutAddress.orderLeadTime) {
+        //如果有默认地址 且默认地址配送时间小7200S
+        data.userAddress = defalutAddress;
+        const date = new Date();
+        date.setSeconds(parseInt(defalutAddress.orderLeadTime));
+        data.orderTime = useFormatTime("HH.MM", date);
+      } else {
+        //没有则查找用户的地址列表中有没有在配送距离内的
+        getUserAddressByTime(from).then((res) => {
+          if (res.status) {
+            const address = res.data.find((item) => item.orderLeadTime && parseInt(item.orderLeadTime) < 7200);
+            if (address && address.orderLeadTime) {
+              data.userAddress = address;
               const date = new Date();
-              date.setSeconds(parseInt(item.orderLeadTime));
+              date.setSeconds(parseInt(address.orderLeadTime));
               data.orderTime = useFormatTime("HH.MM", date);
             }
-          });
-        }
-      });
+          }
+        });
+      }
     };
 
     onIonViewDidEnter(() => {
@@ -193,10 +221,13 @@ export default defineComponent({
         }
         data.deliveryInfo.price = res.data.float_delivery_fee;
         data.deliveryInfo.type = res.data.delivery_mode.text;
+        if (res.data.supports.findIndex((item) => item.id === 4) !== -1) data.isInvoice = true; //支持开发票
 
         data.shopLoaction = [res.data.location[1], res.data.location[0]];
         getUserDeviryAddress(data.shopLoaction[0], data.shopLoaction[1]);
       });
+      //初始化 order stroe
+      store.commit("clearOrderData");
     });
 
     //获取食品列表金额
@@ -204,21 +235,52 @@ export default defineComponent({
       return item.specfoods[0].price * item.num;
     };
 
+    //计算红包
+    const redpacket = computed(() => {
+      return store.state.order.hongbao?.amount || 0;
+    });
+
     //获取优惠金额
     const getYouhui = computed(() => {
-      const packingFee = data.packingFee > 3 ? 3 : 0;
-      return data.activities.reduceMoney + packingFee;
+      const deliveryFee = data.deliveryInfo.price > 3 ? 3 : 0;
+      return data.activities.reduceMoney + deliveryFee + redpacket.value;
     });
 
     //获取优惠后总金额金额
     const realMoney = computed(() => {
       //食物总金额 + 打包金额 + 配送金额 -免配送金额(设置为3) -优惠金额 - 红包(暂未计算？？？？？？？)
-      const packingFee = data.packingFee > 3 ? data.packingFee - 3 : 0; //默认优惠配送费3元
-      return data.foodsMoney + packingFee + data.deliveryInfo.price - data.activities.reduceMoney;
+      const deliveryFee = data.deliveryInfo.price > 3 ? data.deliveryInfo.price - 3 : 0; //默认免配送金额3元
+      return data.foodsMoney + data.packingFee + deliveryFee - data.activities.reduceMoney - redpacket.value; //3为固定免配送费
     });
 
+    //备注
+    const remarks = computed(() => {
+      return store.state.order.remarks;
+    });
+
+    //选择餐具
+    const selecTableware = async () => {
+      const columnOptions = ["无需餐具", "需要餐具,商家依据餐量提供", "1份", "2份", "3份", "4份", "5份", "6份", "7份", "8份", "9份", "10份", "10份以上"];
+      const pickerData = await openPicker(1, columnOptions.length, [columnOptions], { title: "选择餐具份数" });
+      console.log(pickerData.data?.["col-0"]);
+      if (pickerData.data && pickerData.data?.["col-0"]) {
+        data.tableWare = pickerData.data["col-0"].text;
+      }
+    };
+
+    //选择收货地址
+    const goAddress = () => {
+      router.push({
+        path: "/address",
+        query: {
+          from: "comfirmOrder",
+          lat: data.shopLoaction[0],
+          lng: data.shopLoaction[1],
+        },
+      });
+    };
+
     //选红包
-    const router = useRouter();
     const goHongbao = () => {
       router.push({
         path: "/chooseHongbao",
@@ -227,6 +289,50 @@ export default defineComponent({
         },
       });
     };
+
+    //开局发票
+    const goInvoice = () => {
+      if (data.isInvoice) {
+        router.push("/invoice");
+      }
+    };
+    //发票信息
+    const invoice = computed(() => {
+      return store.state.order.inovice?.header;
+    });
+
+    //提交订单
+    const submitOrder = () => {
+      if (!data.userAddress || !data.userAddress.id) {
+        alertService.errorToast("请选择地址");
+        return;
+      }
+      if (!data.tableWare) {
+        alertService.errorToast("请选择餐具数量");
+        return;
+      }
+      createOrder({
+        shopId: data.foods[0].restaurant_id,
+        addressId: data.userAddress.id,
+        foodIds: foodIds,
+        tableware: data.tableWare, //餐具
+        invoice: store.state.order.inovice, //发票
+        remarks: store.state.order.remarks, //备注
+      }).then((res) => {
+        if (res.status) {
+          //清除缓存
+          store.commit("clearOrderData");
+          store.commit("clearFoods");
+
+          router.push({
+            path: `/orderDetail/${res.data.orderId}`,
+          });
+        } else {
+          alertService.errorToast(res.message);
+        }
+      });
+    };
+
     return {
       volumeMediumOutline,
       chevronForwardOutline,
@@ -235,6 +341,13 @@ export default defineComponent({
       goHongbao,
       getYouhui,
       realMoney,
+      redpacket,
+      remarks,
+      selecTableware,
+      goAddress,
+      invoice,
+      goInvoice,
+      submitOrder,
     };
   },
 });

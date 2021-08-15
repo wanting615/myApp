@@ -2,7 +2,7 @@
   <ion-page>
     <ion-header>
       <ion-toolbar>
-        <ion-buttons @click="didDismiss">
+        <ion-buttons @click="didDismiss(false)">
           <ion-icon :icon="closeOutline"></ion-icon>
         </ion-buttons>
         <ion-title>选择收货地址</ion-title>
@@ -89,14 +89,18 @@ export default defineComponent({
       userAddresses: [],
     });
 
-    const { data } = useMap(false); //关键字搜索函数
+    const { data } = useMap(false, store.state.address.location.lat, store.state.address.location.lng); //关键字搜索函数
     const didDismiss = (item: Pois & DeliveryAddressInfo, isDelivery: boolean) => {
       isDelivery ? store.commit("setDeliveryAddressInfo", item) : store.commit("setDeliveryAddressInfo", null);
-      context.emit("closeModal", {
-        lng: item.lng || item.location.lng,
-        lat: item.lat || item.location.lat,
-        addressName: item.addressName || item.name,
-      });
+      if (item) {
+        context.emit("closeModal", {
+          lng: item.lng || item.location.lng,
+          lat: item.lat || item.location.lat,
+          addressName: item.addressName || item.name,
+        });
+      } else {
+        context.emit("closeModal");
+      }
     };
 
     const showSeachModal = () => {

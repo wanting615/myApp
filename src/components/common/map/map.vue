@@ -19,11 +19,11 @@
           <ion-input type="text" placeholder="请输入您的收货地址" @click="showSeachModal" readonly></ion-input>
         </div>
       </div>
-      <img src="./../../../assets/icon/marker.png" alt="" class="marker" />
+      <img src="assets/icon/marker.png" alt="" class="marker" />
       <div id="mapContainer"></div>
       <div class="search-list">
         <div class="list-item" v-for="(item, index) in searchList" :key="item.id" @click="chooseAddress(item)">
-          <img v-if="index === 0" src="./../../../assets/icon/marker.png" />
+          <img v-if="index === 0" src="assets/icon/marker.png" />
           <div v-if="index !== 0" class="circle"></div>
           <div class="item-name">{{ item.name }}</div>
           <div class="item-address">{{ item.cityname }}{{ item.adname }}{{ item.address }}</div>
@@ -38,7 +38,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, toRefs } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { IonInput } from "@ionic/vue";
 import { useMap } from "@/hooks/useMap";
 import { chevronDownOutline, searchOutline } from "ionicons/icons";
@@ -54,7 +54,8 @@ export default defineComponent({
     MapModal,
   },
   setup() {
-    const { keySearch, data } = useMap(); //关键字搜索函数
+    const location = useRoute().query;
+    const { keySearch, data } = useMap(true, Number(location.lat as string), Number(location.lng as string)); //关键字搜索函数
     const isOpenRef = ref(false); //控制搜索弹窗
     const showSeachModal = () => {
       //展示关键字搜索弹窗

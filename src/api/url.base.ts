@@ -16,8 +16,6 @@ export class UrlService {
   public static getDistanceTime = UrlService.baseUrl + "getDistanceTime";//测量两点需要的时间
 
 
-
-
   //商店相关接口
   public static getShopsClassify = UrlService.baseUrl + "shopsClassify"; //获取商品分类
 
@@ -60,4 +58,9 @@ export class UrlService {
   public static replyFind = UrlService.baseUrl + "/replyFind";//回复发现推荐
 
   public static praiseFind = UrlService.baseUrl + "/findPraise";//点赞发现推荐
+
+  //订单页
+  public static createOrder = UrlService.baseUrl + "/createOrder";//创建订单
+
+  public static getOrderDetail = UrlService.baseUrl + "/getOrderDetail";//查询订单详情
 }
