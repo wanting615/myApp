@@ -13,7 +13,7 @@ export interface OrderInfo {
   originalTotalAmount: number;//总原价
   packingFee: number;//打包费
   payAmount: number;//实付金额
-  discountAmount: number;//优惠金额
+  discountAmount: number;//满减优惠金额
   subsidyAmount: number;//补贴金额
   is_new: boolean;//是否新用户下单
   isNewAmount: number;//新用户立减金额

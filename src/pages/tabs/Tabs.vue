@@ -1,6 +1,7 @@
 <template>
   <ion-page>
     <ion-tabs>
+      <ion-router-outlet></ion-router-outlet>
       <ion-tab-bar :style="{ display: hideTabs }">
         <ion-tab-button tab="home" href="/tabs/home">
           <ion-icon src="assets/svg/home.svg" />
@@ -12,7 +13,7 @@
           <ion-label>真香</ion-label>
         </ion-tab-button>
 
-        <ion-tab-button tab="order" href="/tabs/tab3">
+        <ion-tab-button tab="orderList" href="/tabs/orderList">
           <ion-icon src="assets/svg/order.svg" />
           <ion-label>订单</ion-label>
         </ion-tab-button>
@@ -26,13 +27,13 @@
 </template>
 
 <script lang="ts">
-import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage } from "@ionic/vue";
+import { IonRouterOutlet, IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage } from "@ionic/vue";
 import { useStore } from "@/store";
 import { computed } from "@vue/runtime-core";
 
 export default {
   name: "Tabs",
-  components: { IonLabel, IonTabs, IonTabBar, IonTabButton, IonIcon, IonPage },
+  components: { IonRouterOutlet, IonLabel, IonTabs, IonTabBar, IonTabButton, IonIcon, IonPage },
   setup() {
     const store = useStore();
     const hideTabs = computed(() => {
@@ -46,6 +47,7 @@ export default {
 </script>
 <style lang="scss">
 ion-tab-button {
+  --color-selected: #54b5f3;
   ion-icon {
     font-size: 20px;
   }

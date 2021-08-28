@@ -3,7 +3,7 @@
     <ion-header>
       <ion-toolbar color="danger">
         <ion-buttons>
-          <ion-back-button default-href="/tabs/home"></ion-back-button>
+          <ion-back-button></ion-back-button>
         </ion-buttons>
         <ion-title>{{ from === "comfirmOrder" ? "选择收货地址" : "收获地址" }}</ion-title>
         <ion-buttons slot="end" @click="goAddAddress">新增地址</ion-buttons>

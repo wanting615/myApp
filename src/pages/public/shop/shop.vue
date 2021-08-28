@@ -144,7 +144,10 @@ export default defineComponent({
           });
         });
       });
-      shopData.hotFoods = shopData.shopMenu[0]?.foods.filter((item: Food, index: number) => index < 3);
+      if (shopData && shopData.shopMenu) {
+        shopData.hotFoods = shopData.shopMenu[0]?.foods.filter((item: Food, index: number) => index < 3);
+      }
+
       //存储页面元素的获取
       setTimeout(() => {
         setScrollEl(unref(navEl), unref(foodMenuEl), unref(toolbarEl), unref(slidesEl));

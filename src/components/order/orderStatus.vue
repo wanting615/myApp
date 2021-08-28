@@ -1,10 +1,11 @@
 <template>
   <div class="order-status">
     <div class="status-title">
-      <span>待支付,剩余14:35分</span>
+      <span v-if="status === 0">待支付,剩余{{ timer }}分</span>
+      <span v-if="status !== 0">{{ status === 1 ? "正在配送中" : status === 2 ? "订单已送达" : "订单已取消" }}</span>
       <ion-icon :icon="chevronForwardOutline"></ion-icon>
     </div>
-    <div class="order-tips">
+    <div class="order-tips" v-if="status === 0">
       <ion-icon :icon="volumeMediumOutline"></ion-icon>
       <span class="vertical">15分钟内未支付,订单将自动取消</span>
     </div>
@@ -15,27 +16,54 @@
         <ion-icon :icon="chevronForwardOutline"></ion-icon>
       </div>
       <div class="center">
-        <div>
+        <div v-if="status === 0">
           <h5>请尽快支付</h5>
           <span>蓝骑士专送</span>
         </div>
+        <div v-else>
+          <h5>{{ status === 1 ? "正在配送中" : status === 2 ? "感谢信任,期待再次光临" : "超过15分钟未支付,自动取消单" }}</h5>
+        </div>
       </div>
-      <ul class="bottom">
-        <li v-for="(item, index) in arrData.pay" :key="index" :class="{ theme: item.isTheme }">
+      <ul class="bottom" v-if="status === 0 && status !== 4">
+        <li v-for="(item, index) in arrData.pay" :key="index" :class="{ theme: item.isTheme }" @click="changeOrder(item)">
           <ion-icon :icon="item.icon"></ion-icon>
           <div>{{ item.text }}</div>
         </li>
+      </ul>
+      <ul class="bottom" v-if="status === 1 || status === 2">
+        <li v-for="(item, index) in arrData.completed" :key="index" :class="{ theme: item.isTheme }">
+          <ion-icon :icon="item.icon"></ion-icon>
+          <div>{{ item.text }}</div>
+        </li>
+      </ul>
+      <ul class="bottom" v-if="status === 4" style="justify-content: flex-start">
+        <li style="flex: inherit"><ion-icon :icon="callOutline" style="vertical-align: middle"></ion-icon><span>电话商家</span></li>
       </ul>
     </div>
   </div>
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
-import { folderOutline, chatboxEllipsesOutline, trashBinOutline, pricetagOutline, documentOutline } from "ionicons/icons";
+import { folderOutline, chatboxEllipsesOutline, trashBinOutline, pricetagOutline, documentOutline, chevronForwardOutline, volumeMediumOutline, shieldCheckmarkOutline, callOutline } from "ionicons/icons";
+import { cancleOrder, payOrder } from "@/api/order/order";
+import alertService from "@/until/alert.service";
 
 export default defineComponent({
-  components: {},
-  setup() {
+  props: {
+    status: {
+      type: Number,
+      defalut: 0,
+    },
+    timer: {
+      type: String,
+      defalut: 0,
+    },
+    orderId: {
+      type: String,
+      defalut: 0,
+    },
+  },
+  setup(props, context) {
     const arrData = {
       pay: [
         { icon: folderOutline, text: "去支付", isTheme: true },
@@ -49,8 +77,32 @@ export default defineComponent({
       ],
     };
 
+    const changeOrder = (item: any) => {
+      //支付订单
+      if (item.text === "去支付") {
+        payOrder(props.orderId as string).then((res) => {
+          if (res.status) {
+            context.emit("changeOrder", res.data.status);
+          }
+          alertService.msgToast(res.message);
+        });
+      } else if (item.text === "取消订单") {
+        cancleOrder(props.orderId as string).then((res) => {
+          if (res.status) {
+            context.emit("changeOrder", res.data.status);
+          }
+          alertService.msgToast(res.message);
+        });
+      }
+    };
+
     return {
       arrData,
+      chevronForwardOutline,
+      volumeMediumOutline,
+      shieldCheckmarkOutline,
+      callOutline,
+      changeOrder,
     };
   },
 });
@@ -62,7 +114,7 @@ export default defineComponent({
   padding: 0 10px;
   background: linear-gradient(to bottom, rgba(84, 181, 243, 1) 0%, rgba(84, 181, 243, 1) 50%, rgba(245, 245, 245, 1) 100%);
   .status-title {
-    padding-top: 16px;
+    padding-top: 10px;
     font-size: 18px;
     color: #fff;
     font-weight: bold;

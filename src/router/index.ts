@@ -23,27 +23,27 @@ const routes: Array<AppRouteRecordRaw> = [
     children: [
       {
         path: '',
-        name: "Default",
+        name: "default",
         redirect: '/tabs/home'
       },
       {
         path: 'home',
-        name: "Home",
+        name: "home",
         component: () => import('@/pages/home/Home.vue')
       },
       {
         path: 'find',
-        name: "Find",
+        name: "find",
         component: () => import('@/pages/find/find.vue')
       },
       {
-        path: 'order',
-        name: "Order",
-        component: () => import('@/pages/ucenter/ucenter.vue')
+        path: 'orderList',
+        name: "orderList",
+        component: () => import('@/pages/order/orderList/orderList.vue')
       },
       {
         path: 'ucenter',
-        name: 'Ucenter',
+        name: 'ucenter',
         component: () => import('@/pages/ucenter/ucenter.vue')
       }
     ]

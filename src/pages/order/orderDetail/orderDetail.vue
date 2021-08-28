@@ -3,35 +3,42 @@
     <ion-header>
       <ion-toolbar color="danger">
         <ion-buttons>
-          <ion-back-button default-href="/tabs/home"></ion-back-button>
-          <!-- <ion-button router-link="/tabs/home">
-            <ion-icon :icon="chevronBackOutline" @click="goBack"></ion-icon>
-          </ion-button> -->
+          <ion-button @click="goBack">
+            <ion-icon :icon="chevronBackOutline"></ion-icon>
+          </ion-button>
         </ion-buttons>
         <ion-title></ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content>
-      <OrderStatusComponent />
+      <OrderSkeletonComponent v-if="!orderInfo" />
+      <div v-if="orderInfo">
+        <OrderStatusComponent :timer="timer" :status="orderInfo.status" :orderId="orderInfo.orderId" @changeOrder="changeOrder" />
+        <OrderFoodsComponent :orderInfo="orderInfo" />
+      </div>
     </ion-content>
   </ion-page>
 </template>
 <script lang="ts">
 import { defineComponent, onBeforeUnmount, onMounted, reactive, ref, toRefs } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { chevronBackOutline, chevronForwardOutline, volumeMediumOutline, shieldCheckmarkOutline } from "ionicons/icons";
+import { chevronBackOutline } from "ionicons/icons";
 import OrderStatusComponent from "@/components/order/orderStatus.vue";
+import OrderSkeletonComponent from "@/components/order/orderSkeleton.vue";
+import OrderFoodsComponent from "@/components/order/orderFoods.vue";
 import { OrderInfo } from "@/interface/order";
 import { getOrderDetail } from "@/api/order/order";
-import alertService from "@/until/alert.service";
 import { useTimerFormat } from "@/hooks/format";
 
 export default defineComponent({
   components: {
+    OrderSkeletonComponent,
     OrderStatusComponent,
+    OrderFoodsComponent,
   },
   setup() {
     const router = useRouter();
+    const route = useRoute();
     const orderId = useRoute().params.orderId as string;
     const data = reactive<{ orderInfo: Nullable<OrderInfo> }>({
       orderInfo: null,
@@ -41,14 +48,19 @@ export default defineComponent({
     const timer = ref("");
 
     const goBack = () => {
-      //
+      if (route.query.from === "comfrimOrder") {
+        router.go(-3);
+      } else {
+        router.back();
+      }
     };
 
     let interval: number;
     onMounted(() => {
       //获取订单详情
       getOrderDetail(parseInt(orderId)).then((res) => {
-        res.status ? (data.orderInfo = res.data) : alertService.errorToast(res.message);
+        if (!res.status) return;
+        data.orderInfo = res.data;
         if (data.orderInfo && data.orderInfo.status === 0) {
           //订单支付倒计时 15分钟倒计时
           let times = Math.floor((new Date(data.orderInfo.orderTime).getTime() + 900000 - new Date().getTime()) / 1000);
@@ -70,14 +82,17 @@ export default defineComponent({
       clearInterval(interval);
     });
 
+    //修改订单状态
+    const changeOrder = (status: number) => {
+      data.orderInfo && (data.orderInfo.status = status);
+    };
+
     return {
       chevronBackOutline,
-      chevronForwardOutline,
-      volumeMediumOutline,
-      shieldCheckmarkOutline,
       ...toRefs(data),
       timer,
       goBack,
+      changeOrder,
     };
   },
 });

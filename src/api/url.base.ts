@@ -63,4 +63,12 @@ export class UrlService {
   public static createOrder = UrlService.baseUrl + "/createOrder";//创建订单
 
   public static getOrderDetail = UrlService.baseUrl + "/getOrderDetail";//查询订单详情
+
+  public static getOrderList = UrlService.baseUrl + "/orders";//查询订单列表
+
+  public static payOrder = UrlService.baseUrl + "/payOrder";//支付订单
+
+  public static comfirmReceipt = UrlService.baseUrl + "/comfirmReceipt";//确认收货
+
+  public static cancleOrder = UrlService.baseUrl + "/cancleOrder";//取消订单
 }

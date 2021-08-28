@@ -12,3 +12,23 @@ export function createOrder(orderInfo: CreateOrderInfo): Promise<RootObject<Orde
 export function getOrderDetail(orderId: number): Promise<RootObject<OrderInfo>> {
   return HttpService.get(UrlService.getOrderDetail, { orderId });
 }
+
+//获取订单列表
+export function getOrderList(page: number): Promise<RootObject<OrderInfo[]>> {
+  return HttpService.get(UrlService.getOrderList, { page });
+}
+
+//支付订单
+export function payOrder(orderId: string): Promise<RootObject<OrderInfo>> {
+  return HttpService.get(UrlService.payOrder, { orderId });
+}
+
+//确认收货
+export function comfirmReceipt(orderId: string): Promise<RootObject<OrderInfo>> {
+  return HttpService.get(UrlService.comfirmReceipt, { orderId })
+}
+
+//取消订单
+export function cancleOrder(orderId: string): Promise<RootObject<OrderInfo>> {
+  return HttpService.get(UrlService.cancleOrder, { orderId })
+}

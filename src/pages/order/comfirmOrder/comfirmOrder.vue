@@ -326,6 +326,9 @@ export default defineComponent({
 
           router.push({
             path: `/orderDetail/${res.data.orderId}`,
+            query: {
+              from: "comfrimOrder",
+            },
           });
         } else {
           alertService.errorToast(res.message);
