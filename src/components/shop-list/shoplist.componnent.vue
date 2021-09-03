@@ -1,14 +1,14 @@
 <!--
  * @Date: 2021-05-20 15:47:44
  * @LastEditors: wanting
- * @LastEditTime: 2021-05-21 16:17:30
- * @FilePath: /elm-app/src/components/shop/shoplist.componnent.vue
+ * @LastEditTime: 2021-08-31 16:37:10
+ * @FilePath: /myApp/src/components/shop-list/shoplist.componnent.vue
 -->
 <template>
   <div class="shop-list">
     <div v-for="item in shopsList" :key="item.id" class="shop-list-item" @click="goDetail(item.id)">
       <span class="is_premium" v-if="item.is_premium">品质</span>
-      <img :src="config.imagePath + item.image_path" alt="" />
+      <img :src="config.imagePath + item.image_path" alt />
       <div class="shop-inner">
         <h6>
           <i class="ellipsis">{{ item.name }}</i>
@@ -18,8 +18,7 @@
               color: '#' + item.delivery_mode.color,
               borderColor: '#' + item.delivery_mode.color,
             }"
-            >{{ item.delivery_mode.text }}</span
-          >
+          >{{ item.delivery_mode.text }}</span>
         </h6>
         <div class="shop-info">
           <span class="rating">{{ item.rating }}分</span>
@@ -32,9 +31,7 @@
           <span class="ellipsis">{{ item.promotion_info }}</span>
         </div>
         <div class="shop-activities ellipsis">
-          <span v-for="ac in item.activities" :key="ac.id">
-            {{ ac.description }}
-          </span>
+          <span v-for="ac in item.activities" :key="ac.id">{{ ac.description }}</span>
         </div>
       </div>
     </div>
@@ -45,6 +42,7 @@
 import { defineComponent, PropType } from "vue";
 import config from "@/config/config";
 import { ShopInfo } from "@/interface/shopInfoInterface";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "ShopList",
@@ -52,17 +50,18 @@ export default defineComponent({
     shopsList: Array as PropType<ShopInfo[]>,
   },
   setup() {
-    return {
-      config,
-    };
-  },
-  methods: {
-    goDetail(id: number): void {
-      this.$router.push({
+    const router = useRouter();
+    const goDetail = (id: number) => {
+      router.push({
         path: `/shop/${id}`,
       });
-    },
+    }
+    return {
+      config,
+      goDetail
+    };
   },
+
 });
 </script>
 <style lang="scss" scoped>

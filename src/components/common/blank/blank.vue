@@ -5,15 +5,11 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-
-export default defineComponent({
-  props: {
-    message: {
-      type: String,
-      defalut: "暂无记录哦!",
-    },
+<script lang="ts" setup>
+defineProps({
+  message: {
+    type: String,
+    defalut: "暂无记录哦!",
   },
 });
 </script>

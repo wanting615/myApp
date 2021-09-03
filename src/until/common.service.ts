@@ -30,7 +30,6 @@ class CommonUtil implements CommonUntilInterface {
     }
     str = str.substr(0, str.length - 1);
     const encrypt = new JSEncrypt({
-      // eslint-disable-next-line @typescript-eslint/camelcase
       default_key_size: "512"
     });
     // 设置公钥

@@ -26,24 +26,15 @@
   </ion-page>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
+import { computed } from "vue";
 import { IonRouterOutlet, IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage } from "@ionic/vue";
 import { useStore } from "@/store";
-import { computed } from "@vue/runtime-core";
 
-export default {
-  name: "Tabs",
-  components: { IonRouterOutlet, IonLabel, IonTabs, IonTabBar, IonTabButton, IonIcon, IonPage },
-  setup() {
-    const store = useStore();
-    const hideTabs = computed(() => {
-      return store.state.common.showTabs ? "" : "none";
-    });
-    return {
-      hideTabs,
-    };
-  },
-};
+const store = useStore();
+const hideTabs = computed(() => {
+  return store.state.common.showTabs ? "" : "none";
+});
 </script>
 <style lang="scss">
 ion-tab-button {

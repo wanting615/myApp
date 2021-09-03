@@ -27,7 +27,13 @@
         </ion-item>
         <ion-item lines="none">
           <ion-label>电话</ion-label>
-          <ion-input type="tel" placeholder="手机号码" v-model="userAddress.phone" clearInput maxlength="11"></ion-input>
+          <ion-input
+            type="tel"
+            placeholder="手机号码"
+            v-model="userAddress.phone"
+            clearInput
+            maxlength="11"
+          ></ion-input>
         </ion-item>
         <ion-item lines="none">
           <ion-label>地址</ion-label>
@@ -35,7 +41,12 @@
         </ion-item>
         <ion-item lines="none">
           <ion-label>门牌号</ion-label>
-          <ion-input type="text" placeholder="例: 5号楼203室" v-model="userAddress.addressDetail" clearInput></ion-input>
+          <ion-input
+            type="text"
+            placeholder="例: 5号楼203室"
+            v-model="userAddress.addressDetail"
+            clearInput
+          ></ion-input>
         </ion-item>
         <ion-item lines="none">
           <ion-label>标签</ion-label>
@@ -51,8 +62,9 @@
   </ion-page>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, onMounted, onUnmounted, reactive } from "vue";
+
+<script lang="ts" setup>
+import { computed, onMounted, onUnmounted } from "vue";
 import { IonItem, IonList, IonLabel, IonInput } from "@ionic/vue";
 import { trashOutline } from "ionicons/icons";
 import { useRouter, useRoute } from "vue-router";
@@ -63,100 +75,79 @@ import { addUserAddress } from "@/api/user/user";
 import alertService from "@/until/alert.service";
 import { userDelAddress } from "@/hooks/address";
 
-export default defineComponent({
-  components: {
-    IonItem,
-    IonList,
-    IonLabel,
-    IonInput,
-  },
-  setup() {
-    let addressInfo: Nullable<AddAddressInfo> = null; //地址信息
-    const router = useRouter();
-    const store = useStore();
-    const route = useRoute();
+let addressInfo: Nullable<AddAddressInfo> = null; //地址信息
+const router = useRouter();
+const store = useStore();
+const route = useRoute();
 
-    const userAddress = reactive<Omit<DeliveryAddressInfo, keyof AddAddressInfo>>({
-      name: "",
-      sex: "",
-      phone: "",
-      addressDetail: "",
-      tag: "",
-    });
-    //选择地址
-    const addressName = computed(() => {
-      addressInfo = store.state.address.addAddressInfo;
-      return store.state.address.addAddressInfo?.addressName;
-    });
-    //选择性别
-    const selectSex = (event: Event) => {
-      const target = event.target as HTMLElement;
-      userAddress.sex = target.dataset["sex"];
-    };
-    //选择标签
-    const selectTag = (event: Event) => {
-      const target = event.target as HTMLElement;
-      userAddress.tag = target.dataset["tag"];
-    };
-    //提交
-    const commitAddress = () => {
-      if (!validatorService.checkNotEmpty(userAddress.name, "请输入姓名")) return;
-      if (!validatorService.checkUserPhone(userAddress.phone)) return;
-      if (!validatorService.checkNotEmpty<Nullable<AddAddressInfo>>(addressInfo, "请选择地址")) return;
-      if (!validatorService.checkNotEmpty<string>(userAddress.addressDetail, "请输入门牌号")) return;
-      const userAddressInfo = Object.assign(userAddress, addressInfo);
-      addUserAddress(userAddressInfo).then((res) => {
-        alertService.msgToast(res.message);
-        if (res.status) {
-          router.back();
-        }
-      });
-    };
-    //跳转新增收货地址
-    const goMap = () => {
-      const location = route.query.lat ? route.query : store.state.address.location;
-      router.push({
-        path: "/map",
-        query: {
-          lat: location.lat,
-          lng: location.lng,
-        },
-      });
-    };
+const userAddress: Omit<DeliveryAddressInfo, keyof AddAddressInfo> = {
+  name: "",
+  sex: "",
+  phone: "",
+  addressDetail: "",
+  tag: "",
+};
+//选择地址
+const addressName = computed(() => {
+  addressInfo = store.state.address.addAddressInfo;
+  return store.state.address.addAddressInfo?.addressName;
+});
+//选择性别
+const selectSex = (event: Event) => {
+  const target = event.target as HTMLElement;
+  userAddress.sex = target.dataset["sex"];
+};
+//选择标签
+const selectTag = (event: Event) => {
+  const target = event.target as HTMLElement;
+  userAddress.tag = target.dataset["tag"];
+};
+//提交
+const commitAddress = () => {
+  if (!validatorService.checkNotEmpty(userAddress.name, "请输入姓名")) return;
+  if (!validatorService.checkUserPhone(userAddress.phone)) return;
+  if (!validatorService.checkNotEmpty<Nullable<AddAddressInfo>>(addressInfo, "请选择地址")) return;
+  if (!validatorService.checkNotEmpty<string>(userAddress.addressDetail, "请输入门牌号")) return;
+  const userAddressInfo = Object.assign(userAddress, addressInfo);
+  addUserAddress(userAddressInfo).then((res) => {
+    alertService.msgToast(res.message);
+    if (res.status) {
+      router.back();
+    }
+  });
+};
+//跳转新增收货地址
+const goMap = () => {
+  const location = route.query.lat ? route.query : store.state.address.location;
+  router.push({
+    path: "/map",
+    query: {
+      lat: location.lat,
+      lng: location.lng,
+    },
+  });
+};
 
-    //删除地址
-    const delAddress = async () => {
-      if (!userAddress.id) return;
-      const status = await userDelAddress(userAddress.id);
-      if (status) router.back();
-    };
-    onMounted(() => {
-      const params = route.params as unknown as DeliveryAddressInfo;
-      if (params.id) {
-        userAddress.id = params.id;
-        userAddress.name = params.name;
-        userAddress.sex = params.sex;
-        userAddress.phone = params.phone;
-        userAddress.addressDetail = params.addressDetail;
-        userAddress.tag = params.tag;
-      }
-    });
+//删除地址
+const delAddress = async () => {
+  if (!userAddress.id) return;
+  const status = await userDelAddress(userAddress.id);
+  if (status) router.back();
+};
+onMounted(() => {
+  const params = route.params as unknown as DeliveryAddressInfo;
+  if (params.id) {
+    userAddress.id = params.id;
+    userAddress.name = params.name;
+    userAddress.sex = params.sex;
+    userAddress.phone = params.phone;
+    userAddress.addressDetail = params.addressDetail;
+    userAddress.tag = params.tag;
+  }
+});
 
-    onUnmounted(() => {
-      store.commit("setAddAddressInfo", null);
-    });
-
-    return {
-      trashOutline,
-      userAddress,
-      addressName,
-      selectSex,
-      selectTag,
-      commitAddress,
-      goMap,
-      delAddress,
-    };
-  },
+onUnmounted(() => {
+  store.commit("setAddAddressInfo", null);
 });
 </script>
 <style lang="scss" scoped>

@@ -377,3 +377,15 @@ ion-toast{
 .picker .picker-toolbar.sc-ion-picker-ios{
   border-bottom: none;
 }
+
+/* shopClassify page popover*/
+.classify-popover ion-backdrop{
+  background: none !important; 
+}
+.classify-popover .popover-content{
+  width: 100%;
+  height: 100%;
+  left: 0 !important;
+  background: rgba(0, 0, 0, 0.5) !important;
+  border-radius: 0;
+}

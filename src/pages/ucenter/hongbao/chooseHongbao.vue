@@ -14,7 +14,10 @@
         <div>暂无红包哦,可以点击右上角兑换红包</div>
       </BlankComponent>
       <div v-if="hongbaos.length > 0">
-        <div class="ul-title">饿了么红包 <span>可选1张</span></div>
+        <div class="ul-title">
+          饿了么红包
+          <span>可选1张</span>
+        </div>
         <ion-list>
           <ion-radio-group :value="checkId">
             <ion-item v-for="item in canUseHongbaos" :key="item.id" lines="none">
@@ -22,7 +25,8 @@
                 <div class="hongbao-info">
                   <div class="amount">
                     <div class="red">
-                      <i class="vertical">¥</i><span>{{ item.amount }}</span>
+                      <i class="vertical">¥</i>
+                      <span>{{ item.amount }}</span>
                     </div>
                     <span class="gray">满{{ item.sum_condition }}可用</span>
                   </div>
@@ -36,13 +40,22 @@
             </ion-item>
           </ion-radio-group>
         </ion-list>
-        <div class="not-use" @click="showCanUse" v-if="isHideCanUse">{{ canNotUseHongbaos.length }}张不可用 <ion-icon :icon="chevronDownOutline"></ion-icon></div>
-        <ion-item :class="{ hide: isHideCanUse, disabled: true }" v-for="item in canNotUseHongbaos" :key="item.id" lines="none">
+        <div class="not-use" @click="showCanUse" v-if="isHideCanUse">
+          {{ canNotUseHongbaos.length }}张不可用
+          <ion-icon :icon="chevronDownOutline"></ion-icon>
+        </div>
+        <ion-item
+          :class="{ hide: isHideCanUse, disabled: true }"
+          v-for="item in canNotUseHongbaos"
+          :key="item.id"
+          lines="none"
+        >
           <ion-label>
             <div class="hongbao-info">
               <div class="amount">
                 <div class="red">
-                  <i class="vertical gray">¥</i><span class="gray">{{ item.amount }}</span>
+                  <i class="vertical gray">¥</i>
+                  <span class="gray">{{ item.amount }}</span>
                 </div>
                 <span class="gray">满{{ item.sum_condition }}可用</span>
               </div>
@@ -58,22 +71,26 @@
           <div class="tips">
             <ion-icon :icon="alertCircleOutline"></ion-icon>
             <i>不可以用原因:</i>
-            <span> 满{{ item.sum_condition }}才可用</span>
+            <span>满{{ item.sum_condition }}才可用</span>
           </div>
         </ion-item>
       </div>
     </ion-content>
     <ion-footer>
       <div>
-        <span>已选1张，可减<span class="red">¥</span><span class="red big">5</span></span>
+        <span>
+          已选1张，可减
+          <span class="red">¥</span>
+          <span class="red big">5</span>
+        </span>
         <button @click="useHongbao">确定</button>
       </div>
     </ion-footer>
   </ion-page>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, reactive, toRefs } from "vue";
+<script lang="ts" setup>
+import { computed, onMounted } from "vue";
 import { onIonViewWillEnter, IonList, IonItem, IonLabel, IonRadio, IonRadioGroup, IonFooter } from "@ionic/vue";
 import { chevronDownOutline, alertCircleOutline } from "ionicons/icons";
 import BlankComponent from "@/components/common/blank/blank.vue";
@@ -82,77 +99,60 @@ import { Hongbao } from "@/interface/hongbaos";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "@/store";
 
-export default defineComponent({
-  components: {
-    BlankComponent,
-    IonList,
-    IonItem,
-    IonLabel,
-    IonRadio,
-    IonRadioGroup,
-    IonFooter,
-  },
-  setup() {
-    const router = useRouter();
-    const route = useRoute();
-    const data = reactive<{
-      hongbaos: Hongbao[]; //红包列表
-      isHideCanUse: boolean; //隐藏不可以的
-      checkId: number; //当前选中的红包
-    }>({
-      hongbaos: [],
-      isHideCanUse: true,
-      checkId: 0,
-    });
+const router = useRouter();
+const route = useRoute();
+let hongbaos: Hongbao[] = [];//红包列表
+let isHideCanUse = true;//隐藏不可以的
+let checkId = 0;//当前选中的红包
 
-    onIonViewWillEnter(() => {
-      getHongbaos(0).then((res) => {
-        if (res.status) data.hongbaos = res.data;
-        if (data.hongbaos.length > 0) {
-          data.checkId = data.hongbaos[0].id;
-          console.log(data.checkId);
-        }
-      });
-    });
-    /**
-     * 可用红包
-     */
-    const canUseHongbaos = computed(() => {
-      return data.hongbaos.filter((item) => {
-        return item.sum_condition <= parseInt(route.query.price as string);
-      });
-    });
-    /**
-     * 不可用红包
-     */
-    const canNotUseHongbaos = computed(() => {
-      return data.hongbaos.filter((item) => {
-        return item.sum_condition > parseInt(route.query.price as string);
-      });
-    });
 
-    //使用红包
-    const store = useStore();
-    const useHongbao = () => {
-      const hongbao = data.hongbaos.find((item) => item.id === data.checkId);
-      if (hongbao) store.commit("setHongbao", hongbao);
-      router.back();
-    };
-    //显示不可用
-    const showCanUse = () => {
-      data.isHideCanUse = false;
-    };
-    return {
-      ...toRefs(data),
-      chevronDownOutline,
-      alertCircleOutline,
-      useHongbao,
-      showCanUse,
-      canUseHongbaos,
-      canNotUseHongbaos,
-    };
-  },
+onMounted(() => {
+  getHongbaos(0).then((res) => {
+    if (res.status) hongbaos = res.data;
+    if (hongbaos.length > 0) {
+      checkId = hongbaos[0].id;
+      console.log(checkId);
+    }
+  });
+})
+
+onIonViewWillEnter(() => {
+  getHongbaos(0).then((res) => {
+    if (res.status) hongbaos = res.data;
+    if (hongbaos.length > 0) {
+      checkId = hongbaos[0].id;
+      console.log(checkId);
+    }
+  });
 });
+/**
+ * 可用红包
+ */
+const canUseHongbaos = computed(() => {
+  return hongbaos.filter((item) => {
+    return item.sum_condition <= parseInt(route.query.price as string);
+  });
+});
+/**
+ * 不可用红包
+ */
+const canNotUseHongbaos = computed(() => {
+  return hongbaos.filter((item) => {
+    return item.sum_condition > parseInt(route.query.price as string);
+  });
+});
+
+//使用红包
+const store = useStore();
+const useHongbao = () => {
+  const hongbao = hongbaos.find((item) => item.id === checkId);
+  if (hongbao) store.commit("setHongbao", hongbao);
+  router.back();
+};
+//显示不可用
+const showCanUse = () => {
+  isHideCanUse = false;
+};
 </script>
 <style lang="scss" scoped>
 @import "@/theme/theme.scss";

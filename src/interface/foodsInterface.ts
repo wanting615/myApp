@@ -13,6 +13,7 @@ export interface FoodsMenu {
 
 export interface Food {
   num: number; //添加到购物车 食品数量
+  imagePath: string;//食物图片
   activity: { //食品活动
     image_text_color: string;
     icon_color: string;

@@ -1,3 +1,9 @@
+<!--
+ * @Date: 2021-08-03 15:24:06
+ * @LastEditors: wanting
+ * @LastEditTime: 2021-08-30 18:02:10
+ * @FilePath: /myApp/src/pages/order/comfirmOrder/remarks.vue
+-->
 <template>
   <ion-page>
     <ion-header>
@@ -11,7 +17,13 @@
     </ion-header>
     <ion-content>
       <div class="text-area">
-        <ion-textarea enterkeyhint="完成" maxlength="50" placeholder="无接触配送,辛苦将商品挂门把手上、放前台桌子上或者指定地点" autoGrow="true" v-model="tipsValue"></ion-textarea>
+        <ion-textarea
+          enterkeyhint="完成"
+          maxlength="50"
+          placeholder="无接触配送,辛苦将商品挂门把手上、放前台桌子上或者指定地点"
+          autoGrow="true"
+          v-model="tipsValue"
+        ></ion-textarea>
         <span>{{ tipsValue.length }}/50</span>
       </div>
       <div class="tips-list">
@@ -23,38 +35,26 @@
     </ion-content>
   </ion-page>
 </template>
-<script lang="ts">
+<script lang="ts" setup>
 import { defineComponent, reactive, toRefs } from "vue";
 import { IonTextarea } from "@ionic/vue";
 import { useStore } from "@/store";
 import { useRouter } from "vue-router";
 
-export default defineComponent({
-  components: {
-    IonTextarea,
-  },
-  setup() {
-    const data = reactive<{ tipsValue: string; tips: string[] }>({
-      tipsValue: "",
-      tips: ["对骑士", "对商家", "不要辣", "不要辣不要辣", "请电话联系我", "放门口", "放前台", "挂门把手上", "要热的", "要冰的", "常温", "不要糖", "辣一点", "超级超级辣"],
-    });
-
-    const selectTips = (item: string) => {
-      data.tipsValue = item;
-    };
-    const store = useStore();
-    const router = useRouter();
-    const saveRemark = () => {
-      store.commit("setRemarks", data.tipsValue);
-      router.back();
-    };
-    return {
-      ...toRefs(data),
-      selectTips,
-      saveRemark,
-    };
-  },
+const data = reactive<{ tipsValue: string; tips: string[] }>({
+  tipsValue: "",
+  tips: ["对骑士", "对商家", "不要辣", "不要辣不要辣", "请电话联系我", "放门口", "放前台", "挂门把手上", "要热的", "要冰的", "常温", "不要糖", "辣一点", "超级超级辣"],
 });
+
+const selectTips = (item: string) => {
+  data.tipsValue = item;
+};
+const store = useStore();
+const router = useRouter();
+const saveRemark = () => {
+  store.commit("setRemarks", data.tipsValue);
+  router.back();
+};
 </script>
 <style lang="scss" scoped>
 ion-content {

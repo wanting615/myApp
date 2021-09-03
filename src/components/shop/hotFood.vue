@@ -1,15 +1,22 @@
+<!--
+ * @Date: 2021-06-05 17:18:20
+ * @LastEditors: wanting
+ * @LastEditTime: 2021-08-31 17:19:35
+ * @FilePath: /myApp/src/components/shop/hotFood.vue
+-->
 <template>
   <div class="hoot-title">商家推荐</div>
   <div class="hoot-foods">
-    <div v-for="item in hotFoods" :key="item.id" class="hoot-item">
-      <img :src="config.imagePath + item.image_path" alt="" />
+    <div v-for="item in hotFoods" :key="item.item_id" class="hoot-item">
+      <img :src="config.imagePath + item.image_path" alt />
       <div class="food-name ellipsis">{{ item.name }}</div>
       <div class="food-price">
-        <span
-          >￥{{ item.specfoods[0].price }}
-          <i v-if="item.specfoods[0].original_price" class="delete"
-            >￥{{ item.specfoods[0].original_price }}</i
-          >
+        <span>
+          ￥{{ item.specfoods[0].price }}
+          <i
+            v-if="item.specfoods[0].original_price"
+            class="delete"
+          >￥{{ item.specfoods[0].original_price }}</i>
         </span>
         <span class="add-icon fr" @click="addCarts($event, item, menu)">+</span>
         <span class="add-num" v-if="item.num">{{ item.num }}</span>
@@ -18,25 +25,17 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from "vue";
+<script lang="ts" setup>
+import { PropType } from "vue";
 import config from "@/config/config";
 import { Food, FoodsMenu } from "@/interface/foodsInterface";
 import { addCarts } from "@/hooks/addCarts";
 
-export default defineComponent({
-  props: {
-    hotFoods: Array as PropType<Food[]>,
-    menu: {
-      type: Object as PropType<FoodsMenu>,
-      default: null,
-    },
-  },
-  setup() {
-    return {
-      config,
-      addCarts,
-    };
+defineProps({
+  hotFoods: Array as PropType<Food[]>,
+  menu: {
+    type: Object as PropType<FoodsMenu>,
+    default: null,
   },
 });
 </script>

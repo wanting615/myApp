@@ -15,29 +15,20 @@
   </ion-page>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from "vue";
+<script lang="ts" setup>
 import { IonInput } from "@ionic/vue";
 import { sendHongbaoKey } from "@/api/user/user";
 import alertService from "@/until/alert.service";
 import { useRouter } from "vue-router";
 
-export default defineComponent({
-  components: {
-    IonInput,
-  },
-  setup() {
-    const val = ref("");
-    const router = useRouter();
-    const exchangeHongbao = () => {
-      sendHongbaoKey().then((res) => {
-        alertService.msgToast(res.message);
-        if (res.status) router.back();
-      });
-    };
-    return { val, exchangeHongbao };
-  },
-});
+const val = "";
+const router = useRouter();
+const exchangeHongbao = () => {
+  sendHongbaoKey().then((res) => {
+    alertService.msgToast(res.message);
+    if (res.status) router.back();
+  });
+};
 </script>
 <style lang="scss" scoped>
 ion-content {

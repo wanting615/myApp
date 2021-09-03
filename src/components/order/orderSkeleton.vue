@@ -29,15 +29,8 @@
     </div>
   </div>
 </template>
-<script lang="ts">
-import { defineComponent } from "vue";
+<script lang="ts" setup>
 import { IonSkeletonText } from "@ionic/vue";
-
-export default defineComponent({
-  components: {
-    IonSkeletonText,
-  },
-});
 </script>
 <style lang="scss" scoped>
 .top {

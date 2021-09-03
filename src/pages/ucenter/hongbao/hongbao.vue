@@ -23,14 +23,18 @@
             </div>
             <div class="amount">
               <div class="red">
-                <i class="vertical">¥</i><span>{{ item.amount }}</span>
+                <i class="vertical">¥</i>
+                <span>{{ item.amount }}</span>
               </div>
               <span class="gray">满{{ item.sum_condition }}可用</span>
             </div>
           </div>
           <div class="use-way">
             <div class="use-header">
-              <div class="fl" @click="showDetail(item)">限外卖订单使用<ion-icon :icon="chevronDownOutline"></ion-icon></div>
+              <div class="fl" @click="showDetail(item)">
+                限外卖订单使用
+                <ion-icon :icon="chevronDownOutline"></ion-icon>
+              </div>
               <div class="fr use-btn" @click="useHongbao">去使用</div>
             </div>
             <div class="user-content" v-show="item.showKey">
@@ -46,8 +50,7 @@
   </ion-page>
 </template>
 
-<script lang="ts">
-import { defineComponent, reactive, toRefs } from "vue";
+<script lang="ts" setup>
 import { onIonViewWillEnter } from "@ionic/vue";
 import { chevronDownOutline } from "ionicons/icons";
 import BlankComponent from "@/components/common/blank/blank.vue";
@@ -55,37 +58,25 @@ import { getHongbaos } from "@/api/user/user";
 import { Hongbao } from "@/interface/hongbaos";
 import { useRouter } from "vue-router";
 
-export default defineComponent({
-  components: {
-    BlankComponent,
-  },
-  setup() {
-    const router = useRouter();
-    const data = reactive<{
-      hongbaos: Hongbao[];
-    }>({
-      hongbaos: [],
-    });
-    onIonViewWillEnter(() => {
-      getHongbaos(0).then((res) => {
-        if (res.status) data.hongbaos = res.data;
-      });
-    });
+const router = useRouter();
+let hongbaos: Hongbao[] = [];
 
-    const showDetail = (item: Hongbao) => {
-      item.showKey = !item.showKey;
-    };
-    const useHongbao = () => {
-      router.back();
-    };
-    return {
-      ...toRefs(data),
-      showDetail,
-      useHongbao,
-      chevronDownOutline,
-    };
-  },
+getHongbaos(0).then((res) => {
+  if (res.status) hongbaos = res.data;
 });
+
+onIonViewWillEnter(() => {
+  getHongbaos(0).then((res) => {
+    if (res.status) hongbaos = res.data;
+  });
+});
+
+const showDetail = (item: Hongbao) => {
+  item.showKey = !item.showKey;
+};
+const useHongbao = () => {
+  router.back();
+};
 </script>
 <style lang="scss" scoped>
 @import "@/theme/theme.scss";

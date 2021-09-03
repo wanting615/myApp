@@ -8,17 +8,17 @@
   <nav class="nav">
     <IonSlides>
       <IonSlide>
-        <template v-for="(item, i) in shopClassify">
-          <div class="slide-item" v-if="i < 10" :key="item.id">
-            <img :src="item.image_url" alt="" />
+        <template v-for="(item, i) in dataMap.shopClassify">
+          <div class="slide-item" v-if="i < 10" :key="item.id" @click="goShopClassify(item)">
+            <img :src="item.image_url" alt />
             <div class="title">{{ item.title }}</div>
           </div>
         </template>
       </IonSlide>
       <IonSlide>
-        <template v-for="(item, i) in shopClassify">
-          <div class="slide-item" v-if="i > 9" :key="item.id">
-            <img :src="item.image_url" alt="" />
+        <template v-for="(item, i) in dataMap.shopClassify">
+          <div class="slide-item" v-if="i > 9" :key="item.id" @click="goShopClassify(item)">
+            <img :src="item.image_url" alt />
             <div class="title">{{ item.title }}</div>
           </div>
         </template>
@@ -27,43 +27,31 @@
   </nav>
 </template>
 
-<script lang="ts">
-import { defineComponent, onMounted, reactive, toRefs } from "vue";
+<script lang="ts" setup>
+import { onMounted, reactive } from "vue";
 import { IonSlides, IonSlide } from "@ionic/vue";
 import { getShopsClassify } from "@/api/shop/shop";
 import { ShopClassify } from "@/interface/shopInfoInterface";
-import config from "@/config/config";
-export default defineComponent({
-  name: "NavComponnet",
-  components: {
-    IonSlides,
-    IonSlide,
-  },
+import { useRouter } from "vue-router";
 
-  setup() {
-    const dataMap = reactive<{
-      shopClassify: ShopClassify[];
-      getData(): void;
-    }>({
-      shopClassify: Array<ShopClassify>(),
-      getData() {
-        getShopsClassify().then((res) => {
-          if (res.status) {
-            this.shopClassify = res.data;
-          }
-        });
-      },
-    });
-    onMounted(() => {
-      dataMap.getData();
-    });
-    return {
-      IonSlides,
-      IonSlide,
-      config,
-      ...toRefs(dataMap),
-    };
-  },
+const dataMap = reactive<{
+  shopClassify: ShopClassify[];
+}>({
+  shopClassify: [],
+});
+
+const router = useRouter();
+const goShopClassify = (item: ShopClassify) => {
+  router.push({
+    path: `/ShopClassify/${item.id}`
+  })
+}
+onMounted(() => {
+  getShopsClassify().then((res) => {
+    if (res.status) {
+      dataMap.shopClassify = res.data;
+    }
+  });
 });
 </script>
 <style lang="scss" scoped>

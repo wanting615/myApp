@@ -10,7 +10,7 @@
     </ion-header>
     <ion-content>
       <div class="invoce-icon">
-        <img src="assets/icon/page.jpg" alt="" />
+        <img src="assets/icon/page.jpg" alt />
         <div class="icon-info">
           <h6>纸质发票</h6>
           <div>发票与订单一起送达，请注意查收</div>
@@ -26,11 +26,21 @@
           </ion-item>
           <ion-item>
             <ion-label>抬头</ion-label>
-            <ion-input type="text" placeholder="请填写单位的抬头名称" v-model="invoice.header" @ionChange="changeInput"></ion-input>
+            <ion-input
+              type="text"
+              placeholder="请填写单位的抬头名称"
+              v-model="invoice.header"
+              @ionChange="changeInput"
+            ></ion-input>
           </ion-item>
           <ion-item lines="none">
             <ion-label>税号</ion-label>
-            <ion-input type="number" placeholder="请填写“税号”或“社会信用代码”" v-model="invoice.taxesNum" @ionChange="changeInput"></ion-input>
+            <ion-input
+              type="number"
+              placeholder="请填写“税号”或“社会信用代码”"
+              v-model="invoice.taxesNum"
+              @ionChange="changeInput"
+            ></ion-input>
           </ion-item>
         </ion-list>
       </div>
@@ -38,47 +48,31 @@
     </ion-content>
   </ion-page>
 </template>
-<script lang="ts">
-import { defineComponent, reactive, ref, unref } from "vue";
+<script lang="ts" setup>
+import { reactive, ref, unref } from "@vue/reactivity";
 import { IonList, IonItem, IonLabel, IonInput } from "@ionic/vue";
 import { useStore } from "@/store";
 import { Invoice } from "@/interface/order";
 import { useRouter } from "vue-router";
 
-export default defineComponent({
-  components: {
-    IonList,
-    IonItem,
-    IonLabel,
-    IonInput,
-  },
-  setup() {
-    const store = useStore();
-    const router = useRouter();
+const store = useStore();
+const router = useRouter();
 
-    const invoice = reactive<Invoice>({
-      invoiceType: 1,
-      header: "",
-      taxesNum: undefined,
-    });
-
-    const isActive = ref(false);
-    const changeInput = () => {
-      if (invoice.header && invoice.taxesNum) isActive.value = true;
-    };
-
-    const saveInvoice = () => {
-      store.commit("setInvoice", unref(invoice));
-      router.back();
-    };
-    return {
-      invoice,
-      isActive,
-      changeInput,
-      saveInvoice,
-    };
-  },
+const invoice = reactive<Invoice>({
+  invoiceType: 1,
+  header: "",
+  taxesNum: undefined,
 });
+
+const isActive = ref(false);
+const changeInput = () => {
+  if (invoice.header && invoice.taxesNum) isActive.value = true;
+};
+
+const saveInvoice = () => {
+  store.commit("setInvoice", unref(invoice));
+  router.back();
+};
 </script>
 <style lang="scss" scoped>
 @import "@/theme/theme.scss";

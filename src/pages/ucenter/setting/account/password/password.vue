@@ -10,54 +10,57 @@
     </ion-header>
 
     <ion-content>
-      <form action="">
-        <ion-input type="password" name="oldPassword" v-model="user.oldPassword" placeholder="请输入当前登陆密码" clearInput="true" @ionChange.passive="changeInput"></ion-input>
-        <ion-input type="password" name="newPassword" v-model="user.newPassword" placeholder="确认新密码" clearInput="true" @ionChange.passive="changeInput"></ion-input>
+      <form action>
+        <ion-input
+          type="password"
+          name="oldPassword"
+          v-model="user.oldPassword"
+          placeholder="请输入当前登陆密码"
+          clearInput="true"
+          @ionChange.passive="changeInput"
+        ></ion-input>
+        <ion-input
+          type="password"
+          name="newPassword"
+          v-model="user.newPassword"
+          placeholder="确认新密码"
+          clearInput="true"
+          @ionChange.passive="changeInput"
+        ></ion-input>
         <ion-button :disabled="isDisabled" @click="changePwd">修改密码</ion-button>
       </form>
     </ion-content>
   </ion-page>
 </template>
 
-<script lang="ts">
-import { defineComponent, reactive, ref } from "vue";
+<script lang="ts" setup>
 import { IonInput } from "@ionic/vue";
 import { useStore } from "@/store";
 import { useRouter, Router } from "vue-router";
 import alertService from "@/until/alert.service";
+import { defineComponent } from "vue";
 
-export default defineComponent({
-  components: { IonInput },
-  setup() {
-    const user = reactive({
-      oldPassword: "",
-      newPassword: "",
-    });
-    const router: Router = useRouter();
-    const isDisabled = ref(true);
-    const store = useStore();
+const user = {
+  oldPassword: "",
+  newPassword: "",
+};
+const router: Router = useRouter();
+let isDisabled = true;
+const store = useStore();
 
-    const changePwd = () => {
-      alertService.msgToast("修改成功");
-      router.push("/password");
-      store.commit("setLoginToken", "");
-    };
+const changePwd = () => {
+  alertService.msgToast("修改成功");
+  router.push("/password");
+  store.commit("setLoginToken", "");
+};
 
-    const changeInput = () => {
-      if (user.oldPassword && user.newPassword) {
-        isDisabled.value = false;
-      } else {
-        isDisabled.value = true;
-      }
-    };
-    return {
-      user,
-      isDisabled,
-      changePwd,
-      changeInput,
-    };
-  },
-});
+const changeInput = () => {
+  if (user.oldPassword && user.newPassword) {
+    isDisabled = false;
+  } else {
+    isDisabled = true;
+  }
+};
 </script>
 <style lang="scss" scoped>
 ion-content {

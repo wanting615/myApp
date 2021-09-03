@@ -23,7 +23,7 @@ export function useFormatTime(fmt: string, date: string | Date): string {
  * 秒
  * @param time 
  */
-export function useTimerFormat(time: number, fmt = "MM:SS") {
+export function useTimerFormat(time: number, fmt = "MM:SS"): string {
   const hour = Math.floor(time / 3600);
   const minutes = Math.floor(Math.floor(time % 3600) / 60);
   const second = Math.floor(time % 60);

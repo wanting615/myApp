@@ -37,7 +37,7 @@
                 <div>{{ item.name }}</div>
                 <div>{{ item.tip }}</div>
               </div>
-              <img :src="item.image" alt="" />
+              <img :src="item.image" alt />
             </div>
           </div>
         </div>
@@ -55,71 +55,56 @@
   </ion-page>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, reactive, toRefs } from "vue";
+<script lang="ts" setup>
+import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { settingsOutline, chatboxEllipsesOutline } from "ionicons/icons";
 import { useStore } from "@/store";
+import { useIcons } from "@/hooks/useIcons";
 
-export default defineComponent({
-  name: "Ucenter",
-  setup() {
-    const store = useStore();
-    const userInfo = computed(() => {
-      return store.state.user.userInfo;
-    });
-    const data = reactive({
-      popularFun: [
-        { name: "红包卡劵", icon: "assets/colour-svg/red-envelop.svg", num: userInfo?.value?.gift_amount, url: "/hongbao" },
-        { name: "店铺关注", icon: "assets/colour-svg/follow.svg", url: "" },
-        { name: "购物车", icon: "assets/colour-svg/shop-cart.svg", url: "" },
-        { name: "评价中心", icon: "assets/colour-svg/evaluate.svg", url: "" },
-      ],
-      wallet: [
-        {
-          name: "冲吧饿小宝",
-          tip: "10分爱心餐待领",
-          image: "assets/images/1.jpg",
-        },
-        {
-          name: "赚吃货豆",
-          tip: "可兑大红包",
-          image: "assets/images/2.jpg",
-        },
-        {
-          name: "签到领现金",
-          tip: "满10元提现",
-          image: "assets/images/3.jpg",
-        },
-        {
-          name: "推荐有奖",
-          tip: "满点外卖也能赚钱",
-          image: "assets/images/4.jpg",
-        },
-      ],
-      moreFun: [
-        { name: "我的地址", icon: "assets/colour-svg/red-envelop.svg", routerUrl: "/address" },
-        { name: "品牌会员", icon: "assets/colour-svg/follow.svg" },
-        { name: "服务中心", icon: "assets/colour-svg/shop-cart.svg" },
-        { name: "我的订单", icon: "assets/colour-svg/evaluate.svg" },
-        { name: "我的优惠", icon: "assets/colour-svg/evaluate.svg" },
-      ],
-    });
-    const router = useRouter();
-    const toPage = (item: { name: string; icon: string; routerUrl: string }) => {
-      router.push(item.routerUrl);
-    };
-
-    // data.popularFun[0].num = userInfo?.gift_amount || 0;
-    return {
-      userInfo,
-      toPage,
-      ...toRefs(data),
-      settingsOutline,
-      chatboxEllipsesOutline,
-    };
-  },
+const store = useStore();
+const userInfo = computed(() => {
+  return store.state.user.userInfo;
 });
+const popularFun = [
+  { name: "红包卡劵", icon: useIcons("redEnvelop"), num: userInfo?.value?.gift_amount, url: "/hongbao" },
+  { name: "店铺关注", icon: useIcons('follow'), url: "" },
+  { name: "购物车", icon: useIcons('shopCart'), url: "" },
+  { name: "评价中心", icon: useIcons('evaluate'), url: "" },
+]
+const wallet = [
+  {
+    name: "冲吧饿小宝",
+    tip: "10分爱心餐待领",
+    image: "assets/images/1.jpg",
+  },
+  {
+    name: "赚吃货豆",
+    tip: "可兑大红包",
+    image: "assets/images/2.jpg",
+  },
+  {
+    name: "签到领现金",
+    tip: "满10元提现",
+    image: "assets/images/3.jpg",
+  },
+  {
+    name: "推荐有奖",
+    tip: "满点外卖也能赚钱",
+    image: "assets/images/4.jpg",
+  },
+]
+const moreFun = [
+  { name: "我的地址", icon: useIcons("redEnvelop"), routerUrl: "/address" },
+  { name: "品牌会员", icon: useIcons('follow'), routerUrl: "/address" },
+  { name: "服务中心", icon: useIcons('shopCart'), routerUrl: "/address" },
+  { name: "我的订单", icon: useIcons('evaluate'), routerUrl: "/address" },
+  { name: "我的优惠", icon: useIcons('evaluate'), routerUrl: "/address" },
+]
+const router = useRouter();
+const toPage = (item: { name: string; icon: string; routerUrl: string }) => {
+  router.push(item.routerUrl);
+};
 </script>
 <style lang="scss" scoped>
 @import "@/theme/theme.scss";

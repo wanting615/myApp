@@ -9,7 +9,7 @@
         <ion-toolbar color="danger">
           <ion-button @click="showModal">
             <ion-icon :icon="locationOutline"></ion-icon>
-            {{ address }}
+            {{ homeData.address }}
           </ion-button>
           <ion-title></ion-title>
           <ion-buttons slot="end">
@@ -34,10 +34,15 @@
         </div>
       </div>
       <NavComponnet />
-      <ShopList :shopsList="shopsList" v-if="!isLoading" />
-      <HomeSkeleton v-if="isLoading"></HomeSkeleton>
-      <ion-infinite-scroll threshold="100px" @ionInfinite="loadMore($event)" id="infinite-scroll" :disabled="isDisabled">
-        <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="加载中"> </ion-infinite-scroll-content>
+      <ShopList :shopsList="homeData.shopsList" v-if="!homeData.isLoading" />
+      <HomeSkeleton v-if="homeData.isLoading"></HomeSkeleton>
+      <ion-infinite-scroll
+        threshold="100px"
+        @ionInfinite="loadMore($event)"
+        id="infinite-scroll"
+        :disabled="homeData.isDisabled"
+      >
+        <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="加载中"></ion-infinite-scroll-content>
       </ion-infinite-scroll>
     </ion-content>
     <Modal :is-open="isOpenRef" height="100%">
@@ -46,8 +51,9 @@
   </ion-page>
 </template>
 
-<script lang="ts">
-import { defineComponent, onMounted, reactive, ref, toRefs, unref } from "vue";
+<script lang="ts" setup>
+import { onMounted } from "vue";
+import { reactive, ref, unref } from "@vue/reactivity"
 import ShopList from "@/components/shop-list/shoplist.componnent.vue";
 import HomeSkeleton from "@/components/home/homeSkeleton.vue";
 import NavComponnet from "@/components/home/nav.component.vue";
@@ -59,141 +65,114 @@ import { getShopListAction } from "@/api/shop/shop";
 import { scanOutline, locationOutline, cartOutline } from "ionicons/icons";
 import { useStore } from "@/store";
 
-export default defineComponent({
-  name: "Home",
-  components: {
-    HomeSkeleton,
-    ShopList,
-    NavComponnet,
-    Modal,
-    HomeModal,
-  },
-  setup() {
-    const searchArea = ref<Nullable<ElRef>>(null);
-    const searchInner = ref<Nullable<ElRef>>(null);
-    const stroe = useStore();
-    const isOpenRef = ref(false); //控制搜索弹窗
-    const showModal = () => {
-      isOpenRef.value = true;
-      stroe.commit("changeShowTabs", false);
-    };
+const searchArea = ref<Nullable<ElRef>>(null);
+const searchInner = ref<Nullable<ElRef>>(null);
+const stroe = useStore();
+const isOpenRef = ref(false); //控制搜索弹窗
+const showModal = () => {
+  isOpenRef.value = true;
+  stroe.commit("changeShowTabs", false);
+};
 
-    const homeData = reactive<{
-      address: string;
-      page: number;
-      shopsList: ShopInfo[];
-      lat: number;
-      lng: number;
-      isDisabled: boolean;
-      isLoading: boolean;
-    }>({
-      address: "定位中",
-      page: 1,
-      shopsList: [],
-      lat: 0,
-      lng: 0,
-      isDisabled: false,
-      isLoading: true,
+const homeData = reactive<{
+  address: string;
+  page: number;
+  shopsList: ShopInfo[];
+  lat: number;
+  lng: number;
+  isDisabled: boolean;
+  isLoading: boolean;
+}>({
+  address: "定位中",
+  page: 1,
+  shopsList: [],
+  lat: 0,
+  lng: 0,
+  isDisabled: false,
+  isLoading: true,
+});
+
+//获取首页商店列表
+const getShopList = async (e?: CustomEvent, loadMore?: boolean, order?: string): Promise<void> => {
+  const result = await getShopListAction({
+    page: homeData.page,
+    latitude: homeData.lat,
+    longitude: homeData.lng,
+    orderBy: order || "7",
+  });
+  if (!result.status) return;
+  if (loadMore) {
+    homeData.shopsList = homeData.shopsList.concat(result.data);
+  } else {
+    homeData.shopsList = result.data;
+    homeData.isLoading = false;
+  }
+  if (e) (e.target as any).complete();
+};
+
+//通过经纬度获取位置信息
+const getPostion = async (e?: CustomEvent): Promise<void> => {
+  getShopList(e);
+  const result = await getPosition(homeData.lat, homeData.lng);
+  if (result.state) {
+    homeData.address = result.city + result.name;
+  } else {
+    homeData.address = "定位失败，请手动选择地址";
+  }
+};
+
+const doRefresh = (e: CustomEvent): void => {
+  homeData.page = 1;
+  getShopList(e);
+};
+const loadMore = (e: CustomEvent): void => {
+  homeData.page += 1;
+  getShopList(e, true);
+};
+
+/**
+ * 滚动事件
+ */
+let scrollFlag = true;
+const onScroll = (e: CustomEvent): void => {
+  const wrapRef = unref(searchArea);
+  const innerRef = unref(searchInner);
+  if (!wrapRef || !innerRef) return;
+  if (e.detail.scrollTop > innerRef.offsetTop) {
+    if (scrollFlag) return;
+    scrollFlag = true;
+    wrapRef.style.position = "fixed";
+  } else if (e.detail.scrollTop < innerRef.offsetTop) {
+    if (!scrollFlag) return;
+    wrapRef.style.position = "absolute";
+    scrollFlag = false;
+  }
+};
+
+//关闭弹窗
+const closeModal = (item: { lng: number; lat: number; addressName: string }) => {
+  if (item) {
+    homeData.address = item.addressName;
+    homeData.lat = item.lat;
+    homeData.lng = item.lng;
+    getShopList(undefined, false, "2");
+    stroe.commit("setLoaction", {
+      lat: item.lat,
+      lng: item.lng,
     });
+  }
+  isOpenRef.value = false;
+  stroe.commit("changeShowTabs", true);
+};
 
-    //获取首页商店列表
-    const getShopList = async (e?: CustomEvent, loadMore?: boolean, order?: string): Promise<void> => {
-      const result = await getShopListAction({
-        page: homeData.page,
-        latitude: homeData.lat,
-        longitude: homeData.lng,
-        orderBy: order || "7",
-      });
-      if (!result.status) return;
-      if (loadMore) {
-        homeData.shopsList = homeData.shopsList.concat(result.data);
-      } else {
-        homeData.shopsList = result.data;
-        homeData.isLoading = false;
-      }
-      if (e) (e.target as any).complete();
-    };
-
-    //通过经纬度获取位置信息
-    const getPostion = async (e?: CustomEvent): Promise<void> => {
-      getShopList(e);
-      const result = await getPosition(homeData.lat, homeData.lng);
-      if (result.state) {
-        homeData.address = result.city + result.name;
-      } else {
-        homeData.address = "定位失败，请手动选择地址";
-      }
-    };
-
-    const doRefresh = (e: CustomEvent): void => {
-      homeData.page = 1;
-      getShopList(e);
-    };
-    const loadMore = (e: CustomEvent): void => {
-      homeData.page += 1;
-      getShopList(e, true);
-    };
-
-    /**
-     * 滚动事件
-     */
-    let scrollFlag = true;
-    const onScroll = (e: CustomEvent): void => {
-      const wrapRef = unref(searchArea);
-      const innerRef = unref(searchInner);
-      if (!wrapRef || !innerRef) return;
-      if (e.detail.scrollTop > innerRef.offsetTop) {
-        if (scrollFlag) return;
-        scrollFlag = true;
-        wrapRef.style.position = "fixed";
-      } else if (e.detail.scrollTop < innerRef.offsetTop) {
-        if (!scrollFlag) return;
-        wrapRef.style.position = "absolute";
-        scrollFlag = false;
-      }
-    };
-
-    //关闭弹窗
-    const closeModal = (item: { lng: number; lat: number; addressName: string }) => {
-      if (item) {
-        homeData.address = item.addressName;
-        homeData.lat = item.lat;
-        homeData.lng = item.lng;
-        getShopList(undefined, false, "2");
-        stroe.commit("setLoaction", {
-          lat: item.lat,
-          lng: item.lng,
-        });
-      }
-      isOpenRef.value = false;
-      stroe.commit("changeShowTabs", true);
-    };
-
-    onMounted(async () => {
-      const result = await getPosstionByIp();
-      //app 获取地位再写
-      if (result && result.state) {
-        homeData.lat = result.data.lat;
-        homeData.lng = result.data.lng;
-        getPostion();
-      }
-    });
-
-    return {
-      isOpenRef,
-      ...toRefs(homeData),
-      scanOutline,
-      locationOutline,
-      cartOutline,
-      doRefresh,
-      loadMore,
-      onScroll,
-      showModal,
-      closeModal,
-      searchArea,
-      searchInner,
-    };
-  },
+onMounted(async () => {
+  const result = await getPosstionByIp();
+  //app 获取地位再写
+  if (result && result.state) {
+    homeData.lat = result.data.lat;
+    homeData.lng = result.data.lng;
+    getPostion();
+  }
 });
 </script>
 <style lang="scss" scoped>

@@ -1,4 +1,5 @@
 import { Food } from '@/interface/foodsInterface';
+import { Activity } from './shopInfoInterface';
 
 export interface OrderInfo {
   userId: number;
@@ -22,6 +23,12 @@ export interface OrderInfo {
   invoice: Invoice;//发票
   delivery: Delivery;//配送信息
   tableware: string;//餐具
+  shopName: string;//商品名称
+  activities: Activity[];//商店活动
+  imagePath: string;//商店头像
+  addressName: string;//配送地址名称
+  userName: string;//收货人
+  phone: string;//收货人手机
 }
 
 interface Redbag {

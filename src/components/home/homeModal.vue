@@ -2,7 +2,7 @@
   <ion-page>
     <ion-header>
       <ion-toolbar>
-        <ion-buttons @click="didDismiss(false)">
+        <ion-buttons @click="didDismiss(null)">
           <ion-icon :icon="closeOutline"></ion-icon>
         </ion-buttons>
         <ion-title>选择收货地址</ion-title>
@@ -27,12 +27,20 @@
             <span class="refresn">重新定位</span>
           </div>
         </div>
-        <div class="address-list list" v-if="userAddresses.length > 0">
+        <div class="address-list list" v-if="userAddressData.userAddresses.length > 0">
           <div class="title">
-            收货地址 <span class="fr"><router-link to="/address">管理</router-link></span>
+            收货地址
+            <span class="fr">
+              <router-link to="/address">管理</router-link>
+            </span>
           </div>
           <ion-list>
-            <ion-item lines="none" v-for="item in userAddresses" :key="item.id" @click="didDismiss(item, true)">
+            <ion-item
+              lines="none"
+              v-for="item in userAddressData.userAddresses"
+              :key="item.id"
+              @click="didDismiss(item)"
+            >
               <div class="inner">
                 <div class="address_detail">
                   <span v-if="item.tag" class="tag">{{ item.tag }}</span>
@@ -49,7 +57,12 @@
         <div class="search-list list">
           <div class="title">附近地址</div>
           <ion-list>
-            <ion-item lines="none" v-for="item in searchList" :key="item.id" @click="didDismiss(item)">
+            <ion-item
+              lines="none"
+              v-for="item in data.searchList"
+              :key="item.id"
+              @click="didDismiss(item)"
+            >
               <div class="inner">
                 <div class="address_detail">
                   <span>{{ item.name }}</span>
@@ -63,78 +76,59 @@
   </ion-page>
 </template>
 
-<script lang="ts">
-import { defineComponent, onMounted, reactive, toRefs, watch } from "vue";
+<script lang="ts" setup>
+import { onMounted, reactive, watch } from "vue";
 import { IonInput, IonList, IonItem } from "@ionic/vue";
 import { closeOutline, chevronDownOutline, searchOutline, locationOutline } from "ionicons/icons";
-import { DeliveryAddressInfo, Pois } from "@/interface/addressInterface";
+import { DeliveryAddressInfo } from "@/interface/addressInterface";
 import { getUserAddress } from "@/api/user/user";
 import { useRoute, useRouter } from "vue-router";
 import { useMap } from "@/hooks/useMap";
 import { useStore } from "@/store";
 
-export default defineComponent({
-  components: {
-    IonInput,
-    IonList,
-    IonItem,
-  },
-  setup(props, context) {
-    const store = useStore();
-    const route = useRoute();
-    const router = useRouter();
-    const userAddressData = reactive<{
-      userAddresses: DeliveryAddressInfo[];
-    }>({
-      userAddresses: [],
+const emit = defineEmits(['closeModal']);
+const store = useStore();
+const route = useRoute();
+const router = useRouter();
+const userAddressData = reactive<{
+  userAddresses: DeliveryAddressInfo[];
+}>({
+  userAddresses: [],
+});
+
+const { data } = useMap(false, store.state.address.location.lat, store.state.address.location.lng); //关键字搜索函数
+const didDismiss = (item: any) => {
+  store.commit("setDeliveryAddressInfo", item)
+  if (item) {
+    emit("closeModal", {
+      lng: item.lng || item.location.lng,
+      lat: item.lat || item.location.lat,
+      addressName: item.addressName || item.name,
     });
+  } else {
+    emit("closeModal");
+  }
+};
 
-    const { data } = useMap(false, store.state.address.location.lat, store.state.address.location.lng); //关键字搜索函数
-    const didDismiss = (item: Pois & DeliveryAddressInfo, isDelivery: boolean) => {
-      isDelivery ? store.commit("setDeliveryAddressInfo", item) : store.commit("setDeliveryAddressInfo", null);
-      if (item) {
-        context.emit("closeModal", {
-          lng: item.lng || item.location.lng,
-          lat: item.lat || item.location.lat,
-          addressName: item.addressName || item.name,
-        });
-      } else {
-        context.emit("closeModal");
-      }
-    };
+const showSeachModal = () => {
+  router.push("/map");
+};
+const userAddress = () => {
+  getUserAddress().then((res) => {
+    userAddressData.userAddresses = res.data;
+  });
+};
 
-    const showSeachModal = () => {
-      router.push("/map");
-    };
-    const userAddress = () => {
-      getUserAddress().then((res) => {
-        userAddressData.userAddresses = res.data;
-      });
-    };
-
-    watch(
-      () => route.path,
-      (to) => {
-        if (to === "/tabs/home") {
-          userAddress();
-        }
-      }
-    );
-    onMounted(() => {
+watch(
+  () => route.path,
+  (to) => {
+    if (to === "/tabs/home") {
       userAddress();
-    });
-
-    return {
-      closeOutline,
-      chevronDownOutline,
-      searchOutline,
-      locationOutline,
-      didDismiss,
-      showSeachModal,
-      ...toRefs(data),
-      ...toRefs(userAddressData),
-    };
-  },
+    }
+  }
+);
+onMounted(() => {
+  userAddress();
 });
 </script>
 <style lang="scss" scoped>

@@ -1,8 +1,11 @@
 <template>
   <div class="order-info" v-if="orderInfo">
-    <div class="shop-info">1点点<ion-icon :icon="chevronForwardOutline"></ion-icon></div>
+    <div class="shop-info">
+      1点点
+      <ion-icon :icon="chevronForwardOutline"></ion-icon>
+    </div>
     <ul class="food-list">
-      <li v-for="item in orderInfo.foods" :key="item.id">
+      <li v-for="item in orderInfo.foods" :key="item.item_id">
         <img :src="config.imagePath + item.image_path" />
         <div class="flex1">
           <div>{{ item.name }}</div>
@@ -23,18 +26,22 @@
         </div>
       </li>
       <li v-if="orderInfo.discountAmount">
-        <span class="icon-font">减</span><span class="flex1">店铺满减</span>
-        <span class="bold red"> -¥{{ orderInfo.discountAmount }}</span>
+        <span class="icon-font">减</span>
+        <span class="flex1">店铺满减</span>
+        <span class="bold red">-¥{{ orderInfo.discountAmount }}</span>
       </li>
       <li v-if="orderInfo.redBag.amount">
-        <span class="icon-font">¥</span><span class="flex1">红包/抵用卷</span>
-        <span class="bold red"> -¥{{ orderInfo.redBag.amount }}</span>
+        <span class="icon-font">¥</span>
+        <span class="flex1">红包/抵用卷</span>
+        <span class="bold red">-¥{{ orderInfo.redBag.amount }}</span>
       </li>
       <li>
         <span></span>
-        <span
-          >总优惠<span class="red">¥{{ orderDiscount }}</span> <span class="bold">总计¥{{ orderInfo.payAmount }}</span></span
-        >
+        <span>
+          总优惠
+          <span class="red">¥{{ orderDiscount }}</span>
+          <span class="bold">总计¥{{ orderInfo.payAmount }}</span>
+        </span>
       </li>
     </ul>
 
@@ -47,64 +54,66 @@
         </div>
       </li>
       <li>
-        <span>备注</span><span>{{ orderInfo.remarks ? orderInfo.remarks : "无" }}</span>
+        <span>备注</span>
+        <span>{{ orderInfo.remarks ? orderInfo.remarks : "无" }}</span>
       </li>
       <li>
         <span>发票信息</span>
         <span v-if="orderInfo.invoice.header">{{ orderInfo.invoice.header }}</span>
-        <span v-else>申请补开发票<ion-icon :icon="chevronForwardOutline"></ion-icon></span>
+        <span v-else>
+          申请补开发票
+          <ion-icon :icon="chevronForwardOutline"></ion-icon>
+        </span>
       </li>
       <li>
-        <span>订单号码</span><span>{{ orderInfo.orderId }} <ion-icon :icon="copyOutline"></ion-icon></span>
+        <span>订单号码</span>
+        <span>
+          {{ orderInfo.orderId }}
+          <ion-icon :icon="copyOutline"></ion-icon>
+        </span>
       </li>
       <li>
-        <span>送达时间</span><span>{{ orderInfo.delivery.timeType }}</span>
+        <span>送达时间</span>
+        <span>{{ orderInfo.delivery.timeType }}</span>
       </li>
       <li>
-        <span>配送方式</span><span>{{ orderInfo.delivery.name }}</span>
+        <span>配送方式</span>
+        <span>{{ orderInfo.delivery.name }}</span>
       </li>
       <li>
-        <span>配送骑士</span><span>{{ orderInfo.delivery.personName }}</span>
+        <span>配送骑士</span>
+        <span>{{ orderInfo.delivery.personName }}</span>
       </li>
-      <li><span>支付方式</span><span>在线支付</span></li>
       <li>
-        <span>下单时间</span><span>{{ useFormatTime("YYYY-mm-dd HH-MM", orderInfo.orderTime) }}</span>
+        <span>支付方式</span>
+        <span>在线支付</span>
+      </li>
+      <li>
+        <span>下单时间</span>
+        <span>{{ useFormatTime("YYYY-mm-dd HH-MM", orderInfo.orderTime) }}</span>
       </li>
     </ul>
   </div>
 </template>
-<script lang="ts">
-import { computed, defineComponent, PropType } from "vue";
+<script lang="ts" setup>
+import { computed } from "vue";
 import { chevronForwardOutline, copyOutline } from "ionicons/icons";
 import config from "@/config/config";
 import { OrderInfo } from "@/interface/order";
 import { useFormatTime } from "@/hooks/format";
 
-export default defineComponent({
-  props: {
-    orderInfo: {
-      type: Object as PropType<OrderInfo>,
-      default: null,
-    },
-  },
-  setup(props) {
-    //计算总优惠金额
-    const orderDiscount = computed(() => {
-      // //总金额 = 食品总原价 + 打包费 + 配送费
-      // const totalAMount = props.orderInfo.originalTotalAmount + props.orderInfo.packingFee + props.orderInfo.delivery.amount;
-      //总优惠金额 = 满减 + 配送减免 + 红包 + 补贴
-      const hongbao = props.orderInfo.redBag.amount || 0;
-      const totalDisccount = props.orderInfo.discountAmount + props.orderInfo.delivery.discountAmount + hongbao + props.orderInfo.subsidyAmount;
-      return totalDisccount;
-    });
-    return {
-      config,
-      chevronForwardOutline,
-      copyOutline,
-      orderDiscount,
-      useFormatTime,
-    };
-  },
+const props = defineProps<{
+  orderInfo: OrderInfo
+}>();
+
+//计算总优惠金额
+const orderDiscount = computed(() => {
+  // //总金额 = 食品总原价 + 打包费 + 配送费
+  // const totalAMount = props.orderInfo.originalTotalAmount + props.orderInfo.packingFee + props.orderInfo.delivery.amount;
+  //总优惠金额 = 满减 + 配送减免 + 红包 + 补贴
+  const hongbao = props.orderInfo.redBag.amount || 0;
+  const totalDisccount = props.orderInfo.discountAmount + props.orderInfo.delivery.discountAmount + hongbao + props.orderInfo.subsidyAmount;
+  return totalDisccount;
 });
 </script>
 <style lang="scss" scoped>

@@ -11,7 +11,7 @@
 
     <ion-content>
       <div class="about">
-        <img src="assets/logo.png" alt="" />
+        <img src="assets/logo.png" alt />
         <div>v9.11.11 (14948294)</div>
       </div>
       <ion-list>
@@ -23,10 +23,7 @@
   </ion-page>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-
-export default defineComponent({});
+<script lang="ts" setup>
 </script>
 <style lang="scss" scoped>
 @import "../../../../theme/theme.scss";

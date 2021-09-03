@@ -61,8 +61,7 @@
   </ion-page>
 </template>
 
-<script lang="ts">
-import { defineComponent, reactive, toRefs } from "vue";
+<script lang="ts" setup>
 import { IonItem, IonList, IonItemSliding, IonItemOptions, IonItemOption, onIonViewWillEnter } from "@ionic/vue";
 import { createOutline } from "ionicons/icons";
 import { getUserAddress, getUserAddressByTime } from "@/api/user/user";
@@ -70,98 +69,86 @@ import { DeliveryAddressInfo } from "@/interface/addressInterface";
 import { useRoute, useRouter } from "vue-router";
 import { userDelAddress } from "@/hooks/address";
 import { useStore } from "@/store";
+import { onMounted } from "@vue/runtime-core";
 
-export default defineComponent({
-  components: {
-    IonItem,
-    IonList,
-    IonItemSliding,
-    IonItemOptions,
-    IonItemOption,
-  },
-  setup() {
-    const router = useRouter();
-    const route = useRoute();
-    const store = useStore();
+const router = useRouter();
+const route = useRoute();
+const store = useStore();
 
-    const from = route.query.from; //从何页面过来
+const from = route.query.from; //从何页面过来
 
-    const data = reactive<{
-      userAddresses: DeliveryAddressInfo[];
-      unavailableAddress: DeliveryAddressInfo[]; //超出配送距离的地址
-    }>({
-      userAddresses: [],
-      unavailableAddress: [],
+let userAddresses: Required<DeliveryAddressInfo>[] = [];//用户地址
+const unavailableAddress: Required<DeliveryAddressInfo>[] = []; //超出配送距离的地址
+
+//修改地址
+const updateAddress = (item: Required<DeliveryAddressInfo>) => {
+  store.commit("setAddAddressInfo", {
+    addressName: item.addressName,
+    lat: item.lat,
+    lng: item.lng,
+    city: item.city,
+    adname: item.adname,
+    address: item.address,
+  });
+  router.push({
+    name: "/addAddress",
+    params: {
+      id: item.id,
+      name: item.name,
+      sex: item.sex,
+      phone: item.phone,
+      addressDetail: item.addressDetail,
+      tag: item.tag,
+    },
+  });
+};
+
+const goAddAddress = () => {
+  router.push({
+    path: "/addAddress",
+    query: route.query,
+  });
+};
+//删除地址
+const delAddress = async (item: Required<DeliveryAddressInfo>) => {
+  const status = await userDelAddress(item.id);
+  if (!status) return;
+  userAddresses.splice(
+    userAddresses.findIndex((i) => i.id === item.id),
+    1
+  );
+};
+
+//选择收货地址
+const saveDeliveryAddress = (item: DeliveryAddressInfo) => {
+  if (from === "comfirmOrder") {
+    store.commit("setDeliveryAddressInfo", item);
+    router.back();
+  }
+};
+
+onMounted(async () => {
+  if (from === "comfirmOrder") {
+    const from = route.query.lat + "," + route.query.lng;
+    const addresses = (await getUserAddressByTime(from)).data as unknown as Required<DeliveryAddressInfo>[]; //带所需到达时间
+    addresses.forEach((item) => {
+      item.orderLeadTime && (parseInt(item.orderLeadTime) > 7200 ? unavailableAddress.push(item) : userAddresses.push(item));
     });
+  } else {
+    userAddresses = (await getUserAddress()).data as unknown as Required<DeliveryAddressInfo>[];
+  }
+})
 
-    //修改地址
-    const updateAddress = (item: Required<DeliveryAddressInfo>) => {
-      store.commit("setAddAddressInfo", {
-        addressName: item.addressName,
-        lat: item.lat,
-        lng: item.lng,
-        city: item.city,
-        adname: item.adname,
-        address: item.address,
-      });
-      router.push({
-        name: "/addAddress",
-        params: {
-          id: item.id,
-          name: item.name,
-          sex: item.sex,
-          phone: item.phone,
-          addressDetail: item.addressDetail,
-          tag: item.tag,
-        },
-      });
-    };
-
-    const goAddAddress = () => {
-      router.push({
-        path: "/addAddress",
-        query: route.query,
-      });
-    };
-    //删除地址
-    const delAddress = async (item: Required<DeliveryAddressInfo>) => {
-      const status = await userDelAddress(item.id);
-      if (!status) return;
-      data.userAddresses.splice(
-        data.userAddresses.findIndex((i) => i.id === item.id),
-        1
-      );
-    };
-
-    //选择收货地址
-    const saveDeliveryAddress = (item: DeliveryAddressInfo) => {
-      if (from === "comfirmOrder") {
-        store.commit("setDeliveryAddressInfo", item);
-        router.back();
-      }
-    };
-
-    onIonViewWillEnter(async () => {
-      if (from === "comfirmOrder") {
-        const from = route.query.lat + "," + route.query.lng;
-        const addresses = (await getUserAddressByTime(from)).data; //带所需到达时间
-        addresses.forEach((item) => {
-          item.orderLeadTime && (parseInt(item.orderLeadTime) > 7200 ? data.unavailableAddress.push(item) : data.userAddresses.push(item));
-        });
-      } else {
-        data.userAddresses = (await getUserAddress()).data;
-      }
+onIonViewWillEnter(async () => {
+  if (from === "comfirmOrder") {
+    const from = route.query.lat + "," + route.query.lng;
+    const addresses = (await getUserAddressByTime(from)).data as unknown as Required<DeliveryAddressInfo>[]; //带所需到达时间
+    addresses.forEach((item) => {
+      item.orderLeadTime && (parseInt(item.orderLeadTime) > 7200 ? unavailableAddress.push(item) : userAddresses.push(item));
     });
-    return {
-      ...toRefs(data),
-      from,
-      createOutline,
-      delAddress,
-      updateAddress,
-      goAddAddress,
-      saveDeliveryAddress,
-    };
-  },
+  } else {
+    userAddresses = (await getUserAddress()).data as unknown as Required<DeliveryAddressInfo>[];
+  }
 });
 </script>
 <style lang="scss" scoped>

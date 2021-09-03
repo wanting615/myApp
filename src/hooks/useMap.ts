@@ -1,4 +1,5 @@
-import { onMounted, reactive } from "vue";
+import { onMounted } from "vue";
+import { reactive } from "@vue/reactivity";
 import "@amap/amap-jsapi-types";
 import AMapLoader from '@amap/amap-jsapi-loader';
 import { SeachResultAddress, Pois } from "@/interface/addressInterface";

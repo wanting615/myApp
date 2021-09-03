@@ -16,13 +16,8 @@
     </ion-list>
   </div>
 </template>
-<script lang="ts">
-import { defineComponent } from "vue";
+<script lang="ts" setup>
 import { IonLabel, IonList, IonItem, IonThumbnail, IonSkeletonText } from "@ionic/vue";
-
-export default defineComponent({
-  components: { IonLabel, IonList, IonItem, IonThumbnail, IonSkeletonText },
-});
 </script>
 <style lang="scss" scoped>
 ion-list {

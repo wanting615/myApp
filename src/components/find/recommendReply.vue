@@ -11,11 +11,12 @@
     </div>
     <div class="replys-detail">
       <div class="replys-item" v-for="item in replaysDetails" :key="item.replyId">
-        <img :src="config.imagePath + item.userAvatar" alt="" width="35" />
+        <img :src="config.imagePath + item.userAvatar" alt width="35" />
         <div class="reply-info">
           <div>{{ item.username }}</div>
           <div class="detail">
-            {{ item.detail }}<span>{{ useFormatTime("mm-dd", item.time) }}</span>
+            {{ item.detail }}
+            <span>{{ useFormatTime("mm-dd", item.time) }}</span>
           </div>
         </div>
         <div class="reply-praise">
@@ -25,12 +26,18 @@
       </div>
     </div>
     <div class="reply-input">
-      <ion-input type="text" placeholder="饿了馋了,说两句～" enterkeyhint="send | enter" @keyup.enter="reply" v-model="replyMsg"></ion-input>
+      <ion-input
+        type="text"
+        placeholder="饿了馋了,说两句～"
+        enterkeyhint="send | enter"
+        @keyup.enter="reply"
+        v-model="replyMsg"
+      ></ion-input>
     </div>
   </ion-content>
 </template>
-<script lang="ts">
-import { defineComponent, PropType, ref } from "vue";
+<script lang="ts" setup>
+import { ref } from "vue";
 import { IonInput } from "@ionic/vue";
 import { Reply } from "@/interface/recommend";
 import { closeOutline } from "ionicons/icons";
@@ -38,41 +45,26 @@ import config from "@/config/config";
 import { replyFind } from "@/api/find/recommend";
 import { useFormatTime } from "@/hooks/format";
 
-export default defineComponent({
-  components: {
-    IonInput,
-  },
-  props: {
-    id: Number,
-    name: String,
-    orderLeadTime: Number,
-    replys: Number,
-    replaysDetails: {
-      type: Array as PropType<Reply[]>,
-      defalut: [],
-    },
-  },
-  setup(props) {
-    const replyMsg = ref("");
-    const reply = () => {
-      if (props.id) {
-        replyFind(props.id, replyMsg.value).then((res) => {
-          if (res.status) {
-            props.replaysDetails?.push(res.data);
-            replyMsg.value = "";
-          }
-        });
+const props = defineProps<{
+  id: number,
+  name: string,
+  orderLeadTime: number,
+  replys: number,
+  replaysDetails: Reply[]
+}>();
+
+const replyMsg = ref("");
+const reply = () => {
+  if (props.id) {
+    replyFind(props.id, replyMsg.value).then((res) => {
+      if (res.status) {
+        // eslint-disable-next-line vue/no-mutating-props
+        props.replaysDetails?.push(res.data);
+        replyMsg.value = "";
       }
-    };
-    return {
-      closeOutline,
-      config,
-      reply,
-      replyMsg,
-      useFormatTime,
-    };
-  },
-});
+    });
+  }
+};
 </script>
 <style lang="scss" scoped>
 .title {

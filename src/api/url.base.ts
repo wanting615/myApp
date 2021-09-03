@@ -31,6 +31,8 @@ export class UrlService {
 
   public static getTags = UrlService.baseUrl + "/rating/tags/";//查询评价分类
 
+  public static getCateGoryList = UrlService.baseUrl + "/category/list";//查看所有食品分类
+
 
   //用户相关接口
   public static login = UrlService.baseUrl + "/user/login";//登陆

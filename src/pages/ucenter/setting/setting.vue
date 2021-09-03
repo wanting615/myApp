@@ -11,11 +11,19 @@
 
     <ion-content>
       <ion-list>
-        <ion-item detail="true"><router-link to="/account">账号与安全</router-link></ion-item>
-        <ion-item detail="true"><router-link to="/general">通用</router-link></ion-item>
-        <ion-item detail="true"><router-link to="/systemMsg">消息通知</router-link></ion-item>
+        <ion-item detail="true">
+          <router-link to="/account">账号与安全</router-link>
+        </ion-item>
+        <ion-item detail="true">
+          <router-link to="/general">通用</router-link>
+        </ion-item>
+        <ion-item detail="true">
+          <router-link to="/systemMsg">消息通知</router-link>
+        </ion-item>
         <ion-item detail="true" @click="scroeApp">欢迎评分</ion-item>
-        <ion-item detail="true"><router-link to="/about">关于饿了么</router-link></ion-item>
+        <ion-item detail="true">
+          <router-link to="/about">关于饿了么</router-link>
+        </ion-item>
         <ion-item detail="true">隐私</ion-item>
         <ion-item detail="true" lines="none">意见反馈</ion-item>
       </ion-list>
@@ -24,35 +32,21 @@
   </ion-page>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from "vue";
+<script lang="ts" setup>
 import { IonItem, IonList } from "@ionic/vue";
 import { useStore } from "@/store";
 import alertService from "@/until/alert.service";
 
-export default defineComponent({
-  components: {
-    IonItem,
-    IonList,
-  },
-  setup() {
-    const isLoginoOut = ref(true);
-    const store = useStore();
-    const scroeApp = () => {
-      alertService.msgToast("暂无法跳转至appStore或应用商店进行评分");
-    };
-    const loginOut = () => {
-      store.commit("delUserInfo");
-      store.commit("delLoginToken");
-      isLoginoOut.value = false;
-    };
-    return {
-      scroeApp,
-      loginOut,
-      isLoginoOut,
-    };
-  },
-});
+let isLoginoOut = true;
+const store = useStore();
+const scroeApp = () => {
+  alertService.msgToast("暂无法跳转至appStore或应用商店进行评分");
+};
+const loginOut = () => {
+  store.commit("delUserInfo");
+  store.commit("delLoginToken");
+  isLoginoOut = false;
+};
 </script>
 <style lang="scss" scoped>
 @import "../../../theme/theme.scss";
