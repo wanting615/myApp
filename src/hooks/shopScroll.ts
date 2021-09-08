@@ -24,20 +24,31 @@ let useScrollSlideFlag = true;
 let useScollToolbarFlag = true;
 
 
-export function useClearEl() {
+export function useClearEl(): void {
   scrollEl = undefined;
   useScrollSlideFlag = true;
   useScollToolbarFlag = true;
 }
 
-export function setScrollEl(navEl: Nullable<ElRef>, foodMenuEl: Nullable<MenuRef>, toolbar: Nullable<ToobarlRef>, slidesEl: Nullable<IonSlidesRef>) {
+export function setScrollEl(navEl: Nullable<ElRef>, foodMenuEl: Nullable<MenuRef>, toolbar: Nullable<ToobarlRef>, slidesEl: Nullable<IonSlidesRef>): void {
   if (scrollEl === undefined) {
     if (navEl === null || foodMenuEl === null || slidesEl === null) return;
     const toolbarEl = unref(toolbar?.$el);
     if (!toolbarEl) return;
+    //foodMenuEl 获取不到实例方法？？？？？
+    // const menuEl = slidesEl.$el.querySelector(".menu") as HTMLDivElement;
+    // const menuLeft = slidesEl.$el.querySelector('menu-left') as HTMLDivElement;
+    // const menuRight = slidesEl.$el.querySelector('menu-right') as HTMLDivElement;
+    // const foodMenuEl1: MenuRef = {
+    //   menuEl: menuEl,
+    //   menuLeft: menuLeft,
+    //   menuRight: menuRight
+    // }
+
     const navChildNode = navEl.firstElementChild as HTMLElement;
     const toolbarChildEl = toolbarEl?.querySelectorAll('ion-icon,ion-back-button');
     const foodMenuOffsetHeight = navEl.offsetTop + navEl.offsetHeight + unref(foodMenuEl.menuEl).offsetTop - navEl.offsetHeight - toolbarEl.offsetHeight;
+    // const foodMenuOffsetHeight = navEl.offsetTop + navEl.offsetHeight + unref(foodMenuEl1.menuEl).offsetTop - navEl.offsetHeight - toolbarEl.offsetHeight;
     const foodMenuHeight = document.body.offsetHeight - toolbarEl?.offsetHeight - navEl.offsetHeight;
     const navOffsettop = navEl.offsetTop - toolbarEl.offsetHeight;
     scrollEl = {
@@ -45,15 +56,16 @@ export function setScrollEl(navEl: Nullable<ElRef>, foodMenuEl: Nullable<MenuRef
       toolbarEl,
       toolbarChildEl,
       foodMenuEl,
+      // foodMenuEl: foodMenuEl1,
       navOffsettop,
       foodMenuOffsetHeight,
       foodMenuHeight,
       slidesEl,
     }
     //设置菜单列表高度
-    foodMenuEl.menuEl.style.height = foodMenuHeight + "px";
+    scrollEl.foodMenuEl.menuEl.style.height = foodMenuHeight + "px";
     //设置slide高度
-    const slide = slidesEl.$el.querySelectorAll('.swiper-slide') as unknown as HTMLElement[];
+    const slide = slidesEl.$el.querySelectorAll('.slides-page') as unknown as HTMLElement[];
     slide.forEach((el: HTMLElement) => {
       el.style.height = foodMenuHeight + "px";
     })
@@ -61,7 +73,7 @@ export function setScrollEl(navEl: Nullable<ElRef>, foodMenuEl: Nullable<MenuRef
 }
 
 //页面ion-content滚动行为
-export function useScoll(e: CustomEvent) {
+export function useScoll(e: CustomEvent): void {
   if (!scrollEl) return;
   //change toolbar background color
   // eslint-disable-next-line @typescript-eslint/no-use-before-define
@@ -73,14 +85,14 @@ export function useScoll(e: CustomEvent) {
 }
 
 //滚动到content中foodsmenu位置
-export function useScrollTo(contentEl: Nullable<ContentRef>) {
+export function useScrollTo(contentEl: Nullable<ContentRef>): void {
   const content = contentEl?.$el;
   content && (content.scrollByPoint(0, scrollEl?.foodMenuOffsetHeight || 0, 300));
 }
 
 //food slide 滚动行为
 
-export function useScrollFoodSlide(e: Event) {
+export function useScrollFoodSlide(e: Event): void {
   if (!scrollEl) return;
   const target = e.target as HTMLElement;
   const top = scrollEl?.foodMenuEl.menuEl.offsetTop || 0;
@@ -114,7 +126,7 @@ function changeMenuSlides(e: CustomEvent) {
   }
 }
 
-function animateToolbar(e: CustomEvent) {
+function animateToolbar(e: CustomEvent): void {
   if (!scrollEl) return;
   if (e.detail.scrollTop <= 50) {
     if (scrollEl.toolbarEl) scrollEl.toolbarEl.style.background = `rgba(255, 255, 255,${e.detail.scrollTop * 0.02})`;

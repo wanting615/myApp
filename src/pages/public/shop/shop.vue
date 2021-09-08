@@ -52,15 +52,15 @@
           v-if="shopData.shopMenu && shopData.shopMenu.length > 0"
         >
           <!-- 食品栏 -->
-          <ion-slide class="slides-page" @scroll="scrollFoodSlide($event)">
-            <div class="slide-item">
+          <ion-slide class="slides-page" @scroll="useScrollFoodSlide($event)">
+            <div class="slide-item" v-show="shopData.selectSlide === '0'">
               <HotFood :hotFoods="shopData.hotFoods" :menu="shopData.shopMenu[0]" />
-              <FoodMenu :shopMenu="shopData.shopMenu" ref="foodMenuEl" @contentScroll="scrollTo" />
+              <FoodMenu :shopMenu="shopData.shopMenu" @contentScroll="scrollTo" ref="foodMenuEl" />
             </div>
           </ion-slide>
           <!-- 评价栏 -->
           <ion-slide class="slides-page">
-            <Rating :shopId="shopId"></Rating>
+            <Rating :shopId="shopId" v-if="shopData.selectSlide === '1'"></Rating>
           </ion-slide>
           <!-- 商家 -->
           <ion-slide class="slides-page">
@@ -81,7 +81,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onBeforeUnmount, reactive, ref, unref } from "vue";
+import { onBeforeUnmount, reactive, ref, unref, watchEffect } from "vue";
 import { IonSlides, IonSlide, IonFooter } from "@ionic/vue";
 import { useRoute } from "vue-router";
 import { useStore } from "@/store";
@@ -153,12 +153,16 @@ const getData = async () => {
   if (shopData && shopData.shopMenu) {
     shopData.hotFoods = shopData.shopMenu[0]?.foods.filter((item: Food, index: number) => index < 3);
   }
-
-  //存储页面元素的获取
-  setTimeout(() => {
-    setScrollEl(unref(navEl), unref(foodMenuEl), unref(toolbarEl), unref(slidesEl));
-  }, 300);
 };
+
+watchEffect(() => {
+  //存储页面元素的获取
+  setScrollEl(unref(navEl), unref(foodMenuEl), unref(toolbarEl), unref(slidesEl));
+  console.log(foodMenuEl.value)
+}, {
+  flush: 'post'
+})
+
 
 //切换slide
 const changeSlide = (event: Event) => {
@@ -178,7 +182,7 @@ const ionSlideDidChange = () => {
 
 //内容滚动事件
 const onScroll = (event: CustomEvent) => {
-  setScrollEl(unref(navEl), unref(foodMenuEl), unref(toolbarEl), unref(slidesEl));
+  // setScrollEl(unref(navEl), unref(foodMenuEl), unref(toolbarEl), unref(slidesEl));
   useScoll(event);
 };
 //菜单栏滚动事件
@@ -186,9 +190,7 @@ const scrollTo = () => {
   useScrollTo(unref(contentEl));
 };
 
-const scrollFoodSlide = (e: Event) => {
-  useScrollFoodSlide(e);
-};
+
 onBeforeUnmount(() => {
   useClearEl();
 });

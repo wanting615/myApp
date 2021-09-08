@@ -58,71 +58,89 @@
     </div>
   </div>
 </template>
-<script lang="ts" setup>
-import { onUpdated, ref, unref } from "vue";
+<script lang="ts">
+import { defineComponent, onUpdated, PropType, ref, unref } from "vue";
 import config from "@/config/config";
 import { FoodsMenu } from "@/interface/foodsInterface";
 import { addOutline, removeCircleOutline } from "ionicons/icons";
 import { addCarts, delCarts } from "@/hooks/addCarts";
 
+export default defineComponent({
+  props: {
+    shopMenu: {
+      type: Array as PropType<FoodsMenu[]>,
+      required: true,
+      default: () => [],
+    },
+  },
+  emits: {
+    'contentScroll': () => true,
+  },
+  setup(_props, { emit }) {
+    const menuEl = ref<Nullable<ElRef>>();
+    const menuLeft = ref<Nullable<ElRef>>();
+    const menuRight = ref<Nullable<ElRef>>();
+    const selecIndex = ref(0);
+    let foodList: Undefinedable<NodeListOf<Element>>;
+    const foodListOffset: number[] = [];
 
-withDefaults(defineProps<{ shopMenu: FoodsMenu[] }>(), {
-  shopMenu: () => []
-})
+    // //默认取第一个menu标题信息
+    // const menuTitleInfo = computed(() => {
+    //   const obj = {
+    //     name: "",
+    //     description: "",
+    //   };
+    //   if (props.shopMenu && props.shopMenu[0]) {
+    //     obj.name = props.shopMenu[0].name;
+    //     obj.description = props.shopMenu[0].description;
+    //   }
+    //   return obj;
+    // });
 
-const emit = defineEmits<{
-  (e: 'contentScroll'): void
-}>()
-
-const menuEl = ref<Nullable<ElRef>>();
-const menuLeft = ref<Nullable<ElRef>>();
-const menuRight = ref<Nullable<ElRef>>();
-const selecIndex = ref(0);
-let foodList: Undefinedable<NodeListOf<Element>>;
-const foodListOffset: number[] = [];
-
-// //默认取第一个menu标题信息
-// const menuTitleInfo = computed(() => {
-//   const obj = {
-//     name: "",
-//     description: "",
-//   };
-//   if (props.shopMenu && props.shopMenu[0]) {
-//     obj.name = props.shopMenu[0].name;
-//     obj.description = props.shopMenu[0].description;
-//   }
-//   return obj;
-// });
-
-onUpdated(() => {
-  if (!foodList || foodList.length === 0) {
-    foodList = unref(menuRight)?.querySelectorAll(".food-list");
-    foodList?.forEach((item: Element) => {
-      foodListOffset.push((item as HTMLElement).offsetTop);
+    onUpdated(() => {
+      if (!foodList || foodList.length === 0) {
+        foodList = unref(menuRight)?.querySelectorAll(".food-list");
+        foodList?.forEach((item: Element) => {
+          foodListOffset.push((item as HTMLElement).offsetTop);
+        });
+      }
     });
-  }
+
+    //点击选菜单栏
+    const selectMenu = (index: number) => {
+      emit("contentScroll");
+      selecIndex.value = index;
+      if (foodList) {
+        const foodItem = foodList[index] as HTMLElement;
+        unref(menuRight)?.scrollTo({
+          top: foodItem.offsetTop,
+        });
+      }
+    };
+
+    //食物列表滑动事件
+    const scollEvent = (e: Event) => {
+      const nowIndex =
+        foodListOffset.findIndex((item: number) => {
+          return (e.target as HTMLElement).scrollTop < item;
+        }) || 1;
+      selecIndex.value = nowIndex - 1;
+    };
+    return {
+      config,
+      addOutline,
+      removeCircleOutline,
+      addCarts,
+      delCarts,
+      menuEl,
+      menuLeft,
+      menuRight,
+      selecIndex,
+      selectMenu,
+      scollEvent,
+    };
+  },
 });
-
-//点击选菜单栏
-const selectMenu = (index: number) => {
-  emit("contentScroll");
-  selecIndex.value = index;
-  if (foodList) {
-    const foodItem = foodList[index] as HTMLElement;
-    unref(menuRight)?.scrollTo({
-      top: foodItem.offsetTop,
-    });
-  }
-};
-
-//食物列表滑动事件
-const scollEvent = (e: Event) => {
-  const nowIndex =
-    foodListOffset.findIndex((item: number) => {
-      return (e.target as HTMLElement).scrollTop < item;
-    }) || 1;
-  selecIndex.value = nowIndex - 1;
-};
 </script>
 <style lang="scss" scoped>
 @import "./foodMenu.scss";
