@@ -36,7 +36,8 @@
 import { IonItem, IonList } from "@ionic/vue";
 import { useStore } from "@/store";
 import alertService from "@/until/alert.service";
-
+import { useRouter } from "vue-router";
+const router = useRouter();
 let isLoginoOut = true;
 const store = useStore();
 const scroeApp = () => {
@@ -46,6 +47,7 @@ const loginOut = () => {
   store.commit("delUserInfo");
   store.commit("delLoginToken");
   isLoginoOut = false;
+  router.back();
 };
 </script>
 <style lang="scss" scoped>

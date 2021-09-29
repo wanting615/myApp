@@ -64,7 +64,7 @@
 
 
 <script lang="ts" setup>
-import { computed, onMounted, onUnmounted } from "vue";
+import { computed, onMounted, onUnmounted, reactive } from "vue";
 import { IonItem, IonList, IonLabel, IonInput } from "@ionic/vue";
 import { trashOutline } from "ionicons/icons";
 import { useRouter, useRoute } from "vue-router";
@@ -80,13 +80,13 @@ const router = useRouter();
 const store = useStore();
 const route = useRoute();
 
-const userAddress: Omit<DeliveryAddressInfo, keyof AddAddressInfo> = {
+const userAddress = reactive<Omit<DeliveryAddressInfo, keyof AddAddressInfo>>({
   name: "",
   sex: "",
   phone: "",
   addressDetail: "",
   tag: "",
-};
+})
 //选择地址
 const addressName = computed(() => {
   addressInfo = store.state.address.addAddressInfo;
@@ -135,7 +135,7 @@ const delAddress = async () => {
   if (status) router.back();
 };
 onMounted(() => {
-  const params = route.params as unknown as DeliveryAddressInfo;
+  const params = route.query as unknown as DeliveryAddressInfo;
   if (params.id) {
     userAddress.id = params.id;
     userAddress.name = params.name;

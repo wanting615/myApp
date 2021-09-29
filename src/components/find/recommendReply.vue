@@ -44,6 +44,7 @@ import { closeOutline } from "ionicons/icons";
 import config from "@/config/config";
 import { replyFind } from "@/api/find/recommend";
 import { useFormatTime } from "@/hooks/format";
+import alertService from "@/until/alert.service";
 
 const props = defineProps<{
   id: number,
@@ -61,6 +62,8 @@ const reply = () => {
         // eslint-disable-next-line vue/no-mutating-props
         props.replaysDetails?.push(res.data);
         replyMsg.value = "";
+      } else {
+        alertService.msgToast(res.message)
       }
     });
   }

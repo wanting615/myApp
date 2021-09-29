@@ -12,7 +12,7 @@
 
     <ion-content>
       <ion-list>
-        <ion-item-sliding v-for="item in userAddresses" :key="item.id" class="sliding">
+        <ion-item-sliding v-for="item in addressData.userAddresses" :key="item.id" class="sliding">
           <ion-item lines="none" @click="saveDeliveryAddress(item)">
             <div class="inner">
               <div class="address_detail">
@@ -36,7 +36,11 @@
 
       <ion-list v-if="from === 'comfirmOrder'">
         <div class="title">以下地址超出配送范围</div>
-        <ion-item-sliding v-for="item in unavailableAddress" :key="item.id" disabled="true">
+        <ion-item-sliding
+          v-for="item in addressData.unavailableAddress"
+          :key="item.id"
+          disabled="true"
+        >
           <ion-item lines="none" disabled="true">
             <div class="inner">
               <div class="address_detail">
@@ -62,6 +66,7 @@
 </template>
 
 <script lang="ts" setup>
+import { onMounted, reactive } from "vue";
 import { IonItem, IonList, IonItemSliding, IonItemOptions, IonItemOption, onIonViewWillEnter } from "@ionic/vue";
 import { createOutline } from "ionicons/icons";
 import { getUserAddress, getUserAddressByTime } from "@/api/user/user";
@@ -69,7 +74,6 @@ import { DeliveryAddressInfo } from "@/interface/addressInterface";
 import { useRoute, useRouter } from "vue-router";
 import { userDelAddress } from "@/hooks/address";
 import { useStore } from "@/store";
-import { onMounted } from "@vue/runtime-core";
 
 const router = useRouter();
 const route = useRoute();
@@ -77,8 +81,16 @@ const store = useStore();
 
 const from = route.query.from; //从何页面过来
 
-let userAddresses: Required<DeliveryAddressInfo>[] = [];//用户地址
-const unavailableAddress: Required<DeliveryAddressInfo>[] = []; //超出配送距离的地址
+const addressData = reactive<{
+  userAddresses: Required<DeliveryAddressInfo>[],//用户地址
+  unavailableAddress: Required<DeliveryAddressInfo>[]//超出配送距离的地址
+}>({
+  userAddresses: [],
+  unavailableAddress: []
+})
+
+// let userAddresses: Required<DeliveryAddressInfo>[] = [];//用户地址
+// const unavailableAddress: Required<DeliveryAddressInfo>[] = []; //超出配送距离的地址
 
 //修改地址
 const updateAddress = (item: Required<DeliveryAddressInfo>) => {
@@ -91,8 +103,8 @@ const updateAddress = (item: Required<DeliveryAddressInfo>) => {
     address: item.address,
   });
   router.push({
-    name: "/addAddress",
-    params: {
+    path: "/addAddress",
+    query: {
       id: item.id,
       name: item.name,
       sex: item.sex,
@@ -113,8 +125,8 @@ const goAddAddress = () => {
 const delAddress = async (item: Required<DeliveryAddressInfo>) => {
   const status = await userDelAddress(item.id);
   if (!status) return;
-  userAddresses.splice(
-    userAddresses.findIndex((i) => i.id === item.id),
+  addressData.userAddresses.splice(
+    addressData.userAddresses.findIndex((i) => i.id === item.id),
     1
   );
 };
@@ -132,10 +144,10 @@ onMounted(async () => {
     const from = route.query.lat + "," + route.query.lng;
     const addresses = (await getUserAddressByTime(from)).data as unknown as Required<DeliveryAddressInfo>[]; //带所需到达时间
     addresses.forEach((item) => {
-      item.orderLeadTime && (parseInt(item.orderLeadTime) > 7200 ? unavailableAddress.push(item) : userAddresses.push(item));
+      item.orderLeadTime && (parseInt(item.orderLeadTime) > 7200 ? addressData.unavailableAddress.push(item) : addressData.userAddresses.push(item));
     });
   } else {
-    userAddresses = (await getUserAddress()).data as unknown as Required<DeliveryAddressInfo>[];
+    addressData.userAddresses = (await getUserAddress()).data as unknown as Required<DeliveryAddressInfo>[];
   }
 })
 
@@ -144,10 +156,10 @@ onIonViewWillEnter(async () => {
     const from = route.query.lat + "," + route.query.lng;
     const addresses = (await getUserAddressByTime(from)).data as unknown as Required<DeliveryAddressInfo>[]; //带所需到达时间
     addresses.forEach((item) => {
-      item.orderLeadTime && (parseInt(item.orderLeadTime) > 7200 ? unavailableAddress.push(item) : userAddresses.push(item));
+      item.orderLeadTime && (parseInt(item.orderLeadTime) > 7200 ? addressData.unavailableAddress.push(item) : addressData.userAddresses.push(item));
     });
   } else {
-    userAddresses = (await getUserAddress()).data as unknown as Required<DeliveryAddressInfo>[];
+    addressData.userAddresses = (await getUserAddress()).data as unknown as Required<DeliveryAddressInfo>[];
   }
 });
 </script>

@@ -10,6 +10,8 @@ routetFiles.keys().forEach((key) => {
   routerModule = routerModule.concat(routetFiles(key).default)
 })
 
+console.log(routerModule)
+
 const routes: Array<AppRouteRecordRaw> = [
   {
     path: '/',

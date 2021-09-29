@@ -42,7 +42,7 @@ export interface ShopInfo {
   opening_hours: string[]; //开门时间
   order_lead_time: string; //配送时间
   phone: string;  //手机号
-  piecewise_agent_fee: { tips: string }[]; //配送费tips
+  piecewise_agent_fee: { tips: string }; //配送费tips
   promotion_info: string; //描述
   rating: number; //评分
   rating_count: number; //评分人数

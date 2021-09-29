@@ -38,31 +38,19 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from "vue";
+<script lang="ts" setup>
 import config from "@/config/config";
 import { ShopInfo } from "@/interface/shopInfoInterface";
 import { useRouter } from "vue-router";
-
-export default defineComponent({
-  name: "ShopList",
-  props: {
-    shopsList: Array as PropType<ShopInfo[]>,
-  },
-  setup() {
-    const router = useRouter();
-    const goDetail = (id: number) => {
-      router.push({
-        path: `/shop/${id}`,
-      });
-    }
-    return {
-      config,
-      goDetail
-    };
-  },
-
-});
+defineProps<{
+  shopsList: ShopInfo[]
+}>();
+const router = useRouter();
+const goDetail = (id: number) => {
+  router.push({
+    path: `/shop/${id}`,
+  });
+}
 </script>
 <style lang="scss" scoped>
 @import "../../theme/theme.scss";
