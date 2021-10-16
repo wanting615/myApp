@@ -22,21 +22,21 @@
           maxlength="50"
           placeholder="无接触配送,辛苦将商品挂门把手上、放前台桌子上或者指定地点"
           autoGrow="true"
-          v-model="tipsValue"
+          v-model="data.tipsValue"
         ></ion-textarea>
-        <span>{{ tipsValue.length }}/50</span>
+        <span>{{ data.tipsValue.length }}/50</span>
       </div>
       <div class="tips-list">
         <span>快捷输入</span>
         <ul>
-          <li v-for="(item, index) in tips" :key="index" @click="selectTips(item)">{{ item }}</li>
+          <li v-for="(item, index) in data.tips" :key="index" @click="selectTips(item)">{{ item }}</li>
         </ul>
       </div>
     </ion-content>
   </ion-page>
 </template>
 <script lang="ts" setup>
-import { defineComponent, reactive, toRefs } from "vue";
+import { reactive } from "vue";
 import { IonTextarea } from "@ionic/vue";
 import { useStore } from "@/store";
 import { useRouter } from "vue-router";

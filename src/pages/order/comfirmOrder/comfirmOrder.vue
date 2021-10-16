@@ -42,7 +42,7 @@
         <ul>
           <li class="gray-color">福荣烧腊(乌鲁木齐路)</li>
           <li class="food" v-for="item in data.foods" :key="item.item_id">
-            <img src="https://elm.cangdu.org/img/1678178095423339.jpg" alt />
+            <img src="https://elm.cangdu.org/img/1678178095423339.jpg" />
             <div class="flex">
               <div class="bold">{{ item.name }}</div>
               <span class="gray-color">x {{ item.num }}</span>

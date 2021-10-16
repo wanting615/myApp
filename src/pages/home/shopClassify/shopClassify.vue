@@ -76,8 +76,8 @@ const openPopover = async (ev: Event, item: ClassifyTitle) => {
     }
   })
   await popover.present();
-  const { role } = await popover.onDidDismiss();
-  console.log(role)
+  const data = await popover.onDidDismiss();
+  console.log(data)
 }
 </script>
 <style lang="scss" scoped>
