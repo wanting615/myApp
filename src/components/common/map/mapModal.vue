@@ -27,56 +27,40 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType, ref, unref } from "vue";
+<script lang="ts" setup>
+import { ref, unref } from "vue";
 import { IonInput } from "@ionic/vue";
 import { chevronDownOutline, searchOutline } from "ionicons/icons";
 import { Pois } from "@/interface/addressInterface";
 import { useRouter } from "vue-router";
 import { useStore } from "@/store";
-
-export default defineComponent({
-  props: {
-    modalList: Array as PropType<Pois[]>,
-    default: [],
-  },
-  components: {
-    IonInput,
-  },
-  setup(props, context) {
-    const searchKey = ref(""); //搜索关键字
-    //监听关键字修改
-    const changeInput = () => {
-      context.emit("keySearch", unref(searchKey));
-    };
-    //关闭弹窗
-    const closeModal = () => {
-      context.emit("closeModal");
-    };
-    //选择地址-存储-返回
-    const router = useRouter();
-    const store = useStore();
-    const chooseAddress = (item: Pois) => {
-      store.commit("setAddAddressInfo", {
-        addressName: item.name,
-        lat: item.location.lat,
-        lng: item.location.lng,
-        city: item.cityname,
-        adname: item.adname,
-        address: item.address,
-      });
-      router.back();
-    };
-    return {
-      searchKey,
-      changeInput,
-      closeModal,
-      chooseAddress,
-      chevronDownOutline,
-      searchOutline,
-    };
-  },
-});
+defineProps<{
+  modalList: Pois[]
+}>()
+const emit = defineEmits(['keySearch', 'closeModal'])
+const searchKey = ref(""); //搜索关键字
+//监听关键字修改
+const changeInput = () => {
+  emit("keySearch", unref(searchKey));
+};
+//关闭弹窗
+const closeModal = () => {
+  emit("closeModal");
+};
+//选择地址-存储-返回
+const router = useRouter();
+const store = useStore();
+const chooseAddress = (item: Pois) => {
+  store.commit("setAddAddressInfo", {
+    addressName: item.name,
+    lat: item.location.lat,
+    lng: item.location.lng,
+    city: item.cityname,
+    adname: item.adname,
+    address: item.address,
+  });
+  router.back();
+};
 </script>
 <style lang="scss" scoped>
 .search-modal {

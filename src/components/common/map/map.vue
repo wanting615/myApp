@@ -19,10 +19,15 @@
           <ion-input type="text" placeholder="请输入您的收货地址" @click="showSeachModal" readonly></ion-input>
         </div>
       </div>
-      <img src="assets/icon/marker.png" alt="" class="marker" />
+      <img src="assets/icon/marker.png" class="marker" />
       <div id="mapContainer"></div>
       <div class="search-list">
-        <div class="list-item" v-for="(item, index) in searchList" :key="item.id" @click="chooseAddress(item)">
+        <div
+          class="list-item"
+          v-for="(item, index) in data.searchList"
+          :key="item.id"
+          @click="chooseAddress(item)"
+        >
           <img v-if="index === 0" src="assets/icon/marker.png" />
           <div v-if="index !== 0" class="circle"></div>
           <div class="item-name">{{ item.name }}</div>
@@ -30,14 +35,14 @@
         </div>
       </div>
       <Modal :isOpen="isOpenRef" class="mapModal" height="100%">
-        <MapModal @keySearch="keySearch" :modalList="modalList" @closeModal="closeModal"></MapModal>
+        <MapModal @keySearch="keySearch" :modalList="data.modalList" @closeModal="closeModal"></MapModal>
       </Modal>
     </ion-content>
   </ion-page>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, toRefs } from "vue";
+<script lang="ts" setup>
+import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { IonInput } from "@ionic/vue";
 import { useMap } from "@/hooks/useMap";
@@ -47,50 +52,32 @@ import MapModal from "./mapModal.vue";
 import { Pois } from "@/interface/addressInterface";
 import { useStore } from "@/store";
 
-export default defineComponent({
-  components: {
-    IonInput,
-    Modal,
-    MapModal,
-  },
-  setup() {
-    const location = useRoute().query;
-    const { keySearch, data } = useMap(true, Number(location.lat as string), Number(location.lng as string)); //关键字搜索函数
-    const isOpenRef = ref(false); //控制搜索弹窗
-    const showSeachModal = () => {
-      //展示关键字搜索弹窗
-      isOpenRef.value = true;
-    };
-    //关闭弹窗
-    const closeModal = () => {
-      isOpenRef.value = false;
-    };
-    //选择地址后、存储返回
-    const router = useRouter();
-    const store = useStore();
-    const chooseAddress = (item: Pois) => {
-      store.commit("setAddAddressInfo", {
-        addressName: item.name,
-        lat: item.location.lat,
-        lng: item.location.lng,
-        city: item.cityname,
-        adname: item.adname,
-        address: item.address,
-      });
-      router.back();
-    };
-    return {
-      ...toRefs(data),
-      isOpenRef,
-      chevronDownOutline,
-      searchOutline,
-      showSeachModal,
-      keySearch,
-      closeModal,
-      chooseAddress,
-    };
-  },
-});
+
+const location = useRoute().query;
+const { keySearch, data } = useMap(true, Number(location.lat as string), Number(location.lng as string)); //关键字搜索函数
+const isOpenRef = ref(false); //控制搜索弹窗
+const showSeachModal = () => {
+  //展示关键字搜索弹窗
+  isOpenRef.value = true;
+};
+//关闭弹窗
+const closeModal = () => {
+  isOpenRef.value = false;
+};
+//选择地址后、存储返回
+const router = useRouter();
+const store = useStore();
+const chooseAddress = (item: Pois) => {
+  store.commit("setAddAddressInfo", {
+    addressName: item.name,
+    lat: item.location.lat,
+    lng: item.location.lng,
+    city: item.cityname,
+    adname: item.adname,
+    address: item.address,
+  });
+  router.back();
+};
 </script>
 <style lang="scss" scoped>
 ion-content {

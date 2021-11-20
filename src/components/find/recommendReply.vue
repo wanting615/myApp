@@ -11,7 +11,7 @@
     </div>
     <div class="replys-detail">
       <div class="replys-item" v-for="item in replaysDetails" :key="item.replyId">
-        <img :src="config.imagePath + item.userAvatar" alt width="35" />
+        <img :src="config.imagePath + item.userAvatar" width="35" />
         <div class="reply-info">
           <div>{{ item.username }}</div>
           <div class="detail">

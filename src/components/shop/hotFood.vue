@@ -8,7 +8,7 @@
   <div class="hoot-title">商家推荐</div>
   <div class="hoot-foods">
     <div v-for="item in hotFoods" :key="item.item_id" class="hoot-item">
-      <img :src="config.imagePath + item.image_path" alt />
+      <img :src="config.imagePath + item.image_path" />
       <div class="food-name ellipsis">{{ item.name }}</div>
       <div class="food-price">
         <span>
@@ -26,18 +26,13 @@
 </template>
 
 <script lang="ts" setup>
-import { PropType } from "vue";
 import config from "@/config/config";
 import { Food, FoodsMenu } from "@/interface/foodsInterface";
 import { addCarts } from "@/hooks/addCarts";
-
-defineProps({
-  hotFoods: Array as PropType<Food[]>,
-  menu: {
-    type: Object as PropType<FoodsMenu>,
-    default: null,
-  },
-});
+defineProps<{
+  hotFoods: Food[],
+  menu: FoodsMenu
+}>()
 </script>
 
 <style lang="scss" scoped>
