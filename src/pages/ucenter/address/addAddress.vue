@@ -109,6 +109,7 @@ const commitAddress = () => {
   if (!validatorService.checkNotEmpty<Nullable<AddAddressInfo>>(addressInfo, "请选择地址")) return;
   if (!validatorService.checkNotEmpty<string>(userAddress.addressDetail, "请输入门牌号")) return;
   const userAddressInfo = Object.assign(userAddress, addressInfo);
+  console.log(11)
   addUserAddress(userAddressInfo).then((res) => {
     alertService.msgToast(res.message);
     if (res.status) {

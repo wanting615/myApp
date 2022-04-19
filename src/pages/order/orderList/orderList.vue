@@ -31,7 +31,7 @@
           <div class="food-info" @click="goOrderDetail(item.orderId)">
             <div class="food-list">
               <div class="food-item" v-for="food in item.foods" :key="food.item_id">
-                <img :src="config.imagePath + food.imagePath" alt />
+                <img :src="config.imagePath + food.imagePath" />
               </div>
             </div>
             <div class="food-name" v-if="item.foods.length === 1">{{ item.foods[0].name }}</div>
